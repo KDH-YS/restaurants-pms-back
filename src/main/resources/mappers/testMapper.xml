@@ -1,1 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="com.mysite.restaurantt.js.mapper.ReviewMapper">
+
+	<insert id="InsertReview" parameterType="Reviews">
+		INSERT INTO reviews(
+		review_id, restaurant_id, user_id, reservation_id, taste_rating, service_rating,
+		atmosphere_rating, value_rating, review_content, is_verified_visit, helpful_count
+		)
+		VALUES (1,1,1,1,5.0,5.0,5.0,5.0,'너무 맛있어요',1,null);
+	</insert>
+	
+	<insert id="insertreplie" parameterType="Replies">
+		INSERT INTO review_replies(
+			reply_id,
+			review_id,
+			user_id,
+			replies_content
+			)
+		VALUES (1,1,2,'감사합니다');
+	</insert>
+	
+</mapper>
