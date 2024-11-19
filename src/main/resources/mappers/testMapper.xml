@@ -3,20 +3,18 @@
 
 	<insert id="InsertReview" parameterType="Reviews">
 		INSERT INTO reviews(
-		review_id, restaurant_id, user_id, reservation_id, taste_rating, service_rating,
+		restaurant_id, user_id, reservation_id, taste_rating, service_rating,
 		atmosphere_rating, value_rating, review_content, is_verified_visit, helpful_count
 		)
-		VALUES (1,1,1,1,5.0,5.0,5.0,5.0,'너무 맛있어요',1,null);
+		VALUES (1, 1, 1, 5.0, 5.0, 5.0, 5.0, '너무 맛있어요', 1, null);
 	</insert>
-	<insert id="InsertReview" parameterType="Reviews">
+	<insert id="InsertReviewImg" parameterType="Reviews">
 		INSERT INTO review_images(
-			review_image_id,
 			review_id,
 			image_url,
 			image_order
 		)
 		VALUES (
-		1,
 		1,
 		'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20240617_62%2F1718627619510FTrfs_JPEG%2F3%25B9%25F8.jpg',
 		1
@@ -25,34 +23,31 @@
 	
 	<insert id="InsertReplie" parameterType="Replies">
 		INSERT INTO review_replies(
-			reply_id,
 			review_id,
 			user_id,
 			replies_content
 			)
-		VALUES (1,1,2,'감사합니다');
+		VALUES (1, 2, '감사합니다');
 	</insert>
 	
 	<inserrt id="InsertReport" parameterType="Reports">
 		INSERT INTO review_reports(
-			report_id,
 			review_id,
 			user_id,
 			reason,
 			report_description,
 			status
 		)
-		VALUES (1, 1, 1, 'other', '가짜 글이에요', 'pending');
+		VALUES (1, 1, 'other', '가짜 글이에요', 'pending');
 	</inserrt>
 	
 	<insert id="InsertHelpful" parameterType="Helpful">
 		INSERT INTO helpful_votes(
-			vote_id,
 			review_id,
 			user_id,
 			state
 		)
-		VALUES (1,1,1,1);
+		VALUES (1,1,1);
 	</insert>
 	
 	<select id="SelectReview" parameterType="int">
@@ -62,31 +57,18 @@
 			rev.review_content,
 			rev.is_verified_visit,
 			rev.created_at,
-			rev.helpful_count
-		FROM reviews rev
-		JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
-		JOIN users u ON rev.user_id = u.user_id
-		JOIN review_images ri ON rev.review_id = ri.review_id;
-	</select>
-	
-	<select id="SelectReview" parameterType="int">
-		SELECT
-			ri.image_url,
-			rev.review_content,
-			r.address,
-			rev.created_at,
+			rev.helpful_count,
 			u2.name,
-			rr.replies_content,
-			rr.created_at
+			rr.replies_content
 		FROM reviews rev
 		JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
 		JOIN users u ON rev.user_id = u.user_id
 		JOIN review_images ri ON rev.review_id = ri.review_id
-		JOIN review_replies rr ON rev.review_id = rr.review_id
+		LEFT JOIN review_replies rr ON rev.review_id = rr.review_id
 		JOIN users u2 ON rr.user_id = u2.user_id;
 	</select>
 	
-	<select id="SelectReview" parameterType="int">
+	<select id="SelectMyReview" parameterType="int">
 		SELECT
 			ri.image_url,
 			rev.review_content,
@@ -99,7 +81,7 @@
 		JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
 		JOIN users u ON rev.user_id = u.user_id
 		JOIN review_images ri ON rev.review_id = ri.review_id
-		JOIN review_replies rr ON rev.review_id = rr.review_id
+		LEFT JOIN review_replies rr ON rev.review_id = rr.review_id
 		JOIN users u2 ON rr.user_id = u2.user_id;
 	</select>
 	
@@ -120,6 +102,11 @@
 		JOIN restaurants r ON r.restaurant_id = rev.restaurant_id;
 	</select>
 	
+	<delete id="DeleteReview" parameterType="int">
+		DELETE FROM reviews
+		WHERE review_id = 4;
+	</delete>
+		
 	<delete id="DeleteReport" parameterType="int">
 		DELETE FROM review_reports
 		WHERE report_id = 4;
