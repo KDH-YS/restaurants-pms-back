@@ -46,7 +46,7 @@
     </update>
 
     <!-- 예약 취소 (사용자) -->
-    <update id="cancelReservationRequest" parameterType="int">
+    <update id="cancelReservationRequest" parameterType="Long">
         UPDATE reservation
         SET 
             status = 'CANCELREQUEST'

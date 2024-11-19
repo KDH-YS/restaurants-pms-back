@@ -13,6 +13,6 @@ public interface ReservationMapper {
     // 예약 생성 (Insert)
     void insertReservation(ReservationEntity reservation);
     List<ReservationEntity> selectReservationsByEmail(@Param("email") String email);
-    
-
+    int updateReservation(ReservationEntity reservationEntity);
+    int cancelReservationRequest(Long reservationId);
 }

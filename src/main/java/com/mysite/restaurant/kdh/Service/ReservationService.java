@@ -24,4 +24,18 @@ public class ReservationService {
     public List<ReservationEntity> getReservationsByEmail(String email) {
         return reservationMapper.selectReservationsByEmail(email);
     }
+    public ReservationEntity updateReservation(ReservationEntity reservationEntity) {
+        int rowsAffected = reservationMapper.updateReservation(reservationEntity);
+        
+        // 수정이 성공하면 수정된 객체를 반환
+        if (rowsAffected > 0) {
+            return reservationEntity;
+        } else {
+            return null;  // 수정이 실패한 경우
+        }
+    }
+    public boolean cancelReservationRequest(Long reservationId) {
+        int rowsAffected = reservationMapper.cancelReservationRequest(reservationId);
+        return rowsAffected > 0; // 업데이트 성공 여부 반환
+    }
 }
