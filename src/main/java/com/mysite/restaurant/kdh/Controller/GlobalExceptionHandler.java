@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
     // HttpMessageNotReadableException 예외 처리
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleJsonParseException(HttpMessageNotReadableException ex) {
-        // 예외가 발생했을 때 클라이언트에 적절한 응답을 반환합니다.
+        // 예외가 발생했을 때 클라이언트에 적절한 응답을 반환합니다.`
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)  // 400 Bad Request
                 .body("잘못된 데이터 형식이 전송되었습니다. 유효한 숫자 값을 입력해주세요.");

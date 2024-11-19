@@ -21,7 +21,9 @@
             r.reservation_time,
             r.request,
             r.status,
-            r.number_of_people
+            r.number_of_people,
+            r.created_at,
+            r.updated_at
         FROM 
             reservation r
         JOIN 
@@ -83,5 +85,9 @@
         WHERE 
             r.name = #{restaurantName};
     </update>
+
+
+
+
 
 </mapper>
