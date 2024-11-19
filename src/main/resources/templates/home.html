@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 추가</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>예약 추가</h2>
+        <form id="reservationForm">
+            <div class="mb-3">
+                <label for="userId" class="form-label">사용자 ID</label>
+                <input type="text" class="form-control" id="userId" name="userId" required>
+            </div>
+            <div class="mb-3">
+                <label for="restaurantId" class="form-label">레스토랑 ID</label>
+                <input type="text" class="form-control" id="restaurantId" name="restaurantId" required>
+            </div>
+            <div class="mb-3">
+                <label for="reservationTime" class="form-label">예약 시간</label>
+                <input type="datetime-local" class="form-control" id="reservationTime" name="reservationTime" required>
+            </div>
+            <div class="mb-3">
+                <label for="request" class="form-label">요청 사항</label>
+                <textarea class="form-control" id="request" name="request"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="numberOfPeople" class="form-label">인원 수</label>
+                <input type="number" class="form-control" id="numberOfPeople" name="numberOfPeople" required>
+            </div>
+            <button type="submit" class="btn btn-primary">예약 추가</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('reservationForm').addEventListener('submit', function (e) {
+            e.preventDefault();  // 폼의 기본 제출을 방지
+
+            const formData = {
+                userId: document.getElementById('userId').value,
+                restaurantId: document.getElementById('restaurantId').value,
+                reservationTime: document.getElementById('reservationTime').value,
+                request: document.getElementById('request').value,
+                numberOfPeople: document.getElementById('numberOfPeople').value
+            };
+
+            // JSON 형태로 POST 요청 보내기
+            fetch('/api/reservations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)  // 폼 데이터를 JSON으로 변환
+            })
+            .then(response => response.json())  // 응답을 JSON으로 처리
+            .then(data => {
+                console.log('성공:', data);
+                alert('예약이 추가되었습니다.');
+            })
+            .catch(error => {
+                console.error('실패:', error);
+                alert('예약 추가에 실패했습니다.');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mysite.restaurant.kdh.Mappers.ReservationMapper">
+
+    <!-- 예약 추가 -->
+    <insert id="insertReservation" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+        INSERT INTO reservation 
+        (user_id, restaurant_id, reservation_time, request, number_of_people, created_at, updated_at)
+        VALUES 
+        (#{userId}, #{restaurantId}, #{reservationTime}, #{request}, #{numberOfPeople}, NOW(), NOW());
+    </insert>
+
+    <!-- 내 예약 목록 조회 (사용자 이메일로 조회) -->
+    <select id="selectReservationsByEmail" resultType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+        SELECT 
+            r.reservation_id,
+            r.user_id,
+            r.restaurant_id,
+            res.name AS restaurant_name,  <!-- 레스토랑 이름 -->
+            r.reservation_time,
+            r.request,
+            r.status,
+            r.number_of_people
+        FROM 
+            reservation r
+        JOIN 
+            users u ON r.user_id = u.user_id
+        JOIN 
+            restaurants res ON r.restaurant_id = res.restaurant_id
+        WHERE 
+            u.email = #{email};
+    </select>
+
+    <!-- 예약 수정 -->
+    <update id="updateReservation" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+        UPDATE reservation
+        SET 
+            reservation_time = #{reservationTime}, 
+            request = #{request}, 
+            number_of_people = #{numberOfPeople}
+        WHERE 
+            reservation_id = #{reservationId};
+    </update>
+
+    <!-- 예약 취소 (사용자) -->
+    <update id="cancelReservationRequest" parameterType="int">
+        UPDATE reservation
+        SET 
+            status = 'CANCELREQUEST'
+        WHERE 
+            reservation_id = #{reservationId};
+    </update>
+
+    <!-- 예약 취소 (업주) -->
+    <update id="cancelReservationByManager" parameterType="int">
+        UPDATE reservation
+        SET 
+            status = 'CANCELED'
+        WHERE 
+            reservation_id = #{reservationId};
+    </update>
+
+    <!-- 영업시간 입력 (레스토랑 등록시 함께) -->
+    <insert id="insertRestaurantOpenTime" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+        INSERT INTO restaurant_manage
+        (restaurant_id, start_time, end_time, is_open, break_start, break_end, created_at, updated_at)
+        VALUES 
+        (#{restaurantId}, #{startTime}, #{endTime}, #{isOpen}, #{breakStart}, #{breakEnd}, NOW(), NOW());
+    </insert>
+
+    <!-- 영업시간 수정 -->
+    <update id="updateRestaurantOpenTime" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+        UPDATE restaurant_manage rm
+        JOIN restaurants r ON rm.restaurant_id = r.restaurant_id
+        SET 
+            rm.start_time = #{startTime},   
+            rm.end_time = #{endTime},     
+            rm.is_open = #{isOpen},                
+            rm.break_start = #{breakStart},   
+            rm.break_end = #{breakEnd},     
+            rm.updated_at = NOW()          
+        WHERE 
+            r.name = #{restaurantName};
+    </update>
+
+</mapper>
