@@ -1,18 +1,14 @@
 package com.mysite.restaurant.js.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 
 
 @Controller
 public class TestController {
 
-	@PostMapping("/test")
-	public String posttest(@RequestBody String entity) {
-		
-		
-		return entity;
+	@GetMapping("/")
+	public String home() {
+		return "testHtml";
 	}
-	
 }
