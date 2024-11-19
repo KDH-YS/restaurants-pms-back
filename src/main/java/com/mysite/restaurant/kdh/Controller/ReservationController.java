@@ -23,7 +23,6 @@ public class ReservationController {
     public ResponseEntity<?> createReservation(@RequestBody ReservationEntity reservation) {
         // 예약 생성
         ReservationEntity createdReservation = reservationService.createReservation(reservation);
-
         // 생성된 예약 정보를 JSON 형식으로 반환
         return ResponseEntity.ok().body(createdReservation);
     }
@@ -32,5 +31,4 @@ public class ReservationController {
     public List<ReservationEntity> getReservationsByEmail(@RequestParam("email") String email) {
         return reservationService.getReservationsByEmail(email);
     }
-
 }
