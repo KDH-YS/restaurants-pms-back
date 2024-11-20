@@ -16,7 +16,6 @@ public class ReservationEntity {
     private LocalDateTime updatedAt;
 
     private String restaurantName;
-
     private UsersEntity user;
     
     public enum ReservationStatus {

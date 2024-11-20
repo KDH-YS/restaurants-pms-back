@@ -1,7 +1,9 @@
 package com.mysite.restaurant.kdh.Service;
 
 import com.mysite.restaurant.kdh.Entity.ReservationEntity;
+import com.mysite.restaurant.kdh.Entity.ScheduleEntity;
 import com.mysite.restaurant.kdh.Mappers.ReservationMapper;
+
 
 import java.util.List;
 
@@ -52,4 +54,20 @@ public class ReservationService {
         int rowsAffected = reservationMapper.deleteReservation(reservationId);
         return rowsAffected > 0; // 업데이트 성공 여부 반환
     }
+
+    public ScheduleEntity createSchedule(ScheduleEntity schedule) {
+    		reservationMapper.insertSchedule(schedule);
+    	return schedule;
+    	
+    }
+    public ScheduleEntity updateSchedule(ScheduleEntity schedule) {
+        int rowsAffected = reservationMapper.updateSchedule(schedule);        
+        // 수정이 성공하면 수정된 객체를 반환
+        if (rowsAffected > 0) {
+            return schedule;
+        } else {
+            return null;  // 수정이 실패한 경우
+        }
+    }
+
 }

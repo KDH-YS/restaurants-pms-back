@@ -1,6 +1,7 @@
 package com.mysite.restaurant.kdh.Controller;
 
 import com.mysite.restaurant.kdh.Entity.ReservationEntity;
+import com.mysite.restaurant.kdh.Entity.ScheduleEntity;
 import com.mysite.restaurant.kdh.Service.ReservationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class ReservationController {
 
     // 예약 생성 API (POST)
     @PostMapping
-    public ResponseEntity<?> createReservation(@RequestBody ReservationEntity reservation) {
+    public ResponseEntity<ReservationEntity> createReservation(@RequestBody ReservationEntity reservation) {
         // 예약 생성
         ReservationEntity createdReservation = reservationService.createReservation(reservation);
         // 생성된 예약 정보를 JSON 형식으로 반환
@@ -80,5 +81,6 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약 취소 요청에 실패했습니다.");
         }
     }
+
     
 }
