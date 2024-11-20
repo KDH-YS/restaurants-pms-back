@@ -31,17 +31,37 @@
             </tr>
         </tbody>
     </table>
+    
+<div id="pagination">
+    <!-- 이전 버튼 -->
+    <button th:if="${currentPage > 1}" 
+            th:attr="onclick='window.location.href=&quot;/restaurant?page=' + (${currentPage - 1}) + '&size=' + ${pageSize} + '&quot;'">
+        이전
+    </button>
 
-    <!-- 페이지네이션 (간단한 예시) -->
-    <div>
-        <!-- 페이지가 null이면 1로 초기화 -->
-        <span th:if="${page != null and page > 1}">
-            <a th:href="@{/restaurant(page=${page - 1})}">Previous</a>
-        </span>
-        <span th:if="${restaurants != null and restaurants.size() == 16}">
-            <a th:href="@{/restaurant(page=${page != null ? page + 1 : 2})}">Next</a>
-        </span>
-    </div>
+    <!-- 페이지 번호 버튼 -->
+    <span th:each="pageNum : ${#numbers.sequence(startPageGroup, endPageGroup)}">
+        <button th:text="${pageNum}"
+                th:classappend="${pageNum == currentPage} ? 'active' : ''"
+                th:attr="onclick='window.location.href=&quot;/restaurant?page=' + ${pageNum} + '&size=' + ${pageSize} + '&quot;'">
+        </button>
+    </span>
+
+    <!-- 다음 버튼 -->
+    <button th:if="${currentPage < totalPages}" 
+            th:attr="onclick='window.location.href=&quot;/restaurant?page=' + (${currentPage + 1}) + '&size=' + ${pageSize} + '&quot;'">
+        다음
+    </button>
+</div>
+
+
+
+
+
+<h1>페이지 번호: [[${currentPage}]]</h1>
+<h2>전체 페이지 수: [[${totalPages}]]</h2>
+<h2>전체 페이지 수: [[${startPageGroup}]]</h2>
+<h2>전체 페이지 수: [[${endPageGroup}]]</h2>
 </div>
 
 </body>
