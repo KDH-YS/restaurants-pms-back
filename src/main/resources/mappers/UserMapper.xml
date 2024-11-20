@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="src.main.java.com.mysite.restaurant.hj.mapper.UserMapper">
+
 	<!-- 회원가입 -->
 	<insert id="userSignup">
 		INSERT INTO users (email, PASSWORD, NAME, phone, notification_agreed)
