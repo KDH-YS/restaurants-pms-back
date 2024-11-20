@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant List</title>
+</head>
+<body>
+
+<h1>Restaurant List</h1>
+
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th>Restaurant Name</th>
+                <th>City</th>
+                <th>District</th>
+                <th>Neighborhood</th>
+                <th>Food Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- restaurants 리스트를 순회하며 출력 -->
+            <tr th:each="restaurant : ${restaurants}">
+                <td th:text="${restaurant.name != null ? restaurant.name : 'No Name'}">Restaurant Name</td>
+                <td th:text="${restaurant.city != null ? restaurant.city : 'No City'}">City</td>
+                <td th:text="${restaurant.district != null ? restaurant.district : 'No District'}">District</td>
+                <td th:text="${restaurant.neighborhood != null ? restaurant.neighborhood : 'No Neighborhood'}">Neighborhood</td>
+                <td th:text="${restaurant.foodType != null ? restaurant.foodType : 'No Food Type'}">Food Type</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 페이지네이션 (간단한 예시) -->
+    <div>
+        <!-- 페이지가 null이면 1로 초기화 -->
+        <span th:if="${page != null and page > 1}">
+            <a th:href="@{/restaurant(page=${page - 1})}">Previous</a>
+        </span>
+        <span th:if="${restaurants != null and restaurants.size() == 16}">
+            <a th:href="@{/restaurant(page=${page != null ? page + 1 : 2})}">Next</a>
+        </span>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mysite.restaurant.jh.RestaurantMapper">
+    
+    <!-- 검색 쿼리 -->
+    <select id="getSearch" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+    SELECT * FROM restaurants
+    <where>
+        <if test="city != null">
+            AND city = #{city}
+        </if>
+        <if test="district != null">
+            AND district = #{district}
+        </if>
+        <if test="neighborhood != null">
+            AND neighborhood = #{neighborhood}
+        </if>
+        <if test="food_type != null">
+            AND food_type = #{food_type}
+        </if>
+        <if test="parking_available != null">
+            AND parking_available = #{parking_available}
+        </if>
+        <if test="reservation_available != null">
+            AND reservation_available = #{reservation_available}
+        </if>
+    </where>
+</select>
+
+<select id="getRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+    SELECT * FROM restaurants
+    ORDER BY restaurant_id DESC
+    LIMIT 16 OFFSET #{offset}
+</select>
+
+</mapper>
