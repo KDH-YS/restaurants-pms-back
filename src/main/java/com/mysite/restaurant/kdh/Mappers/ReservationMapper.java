@@ -15,4 +15,6 @@ public interface ReservationMapper {
     List<ReservationEntity> selectReservationsByEmail(@Param("email") String email);
     int updateReservation(ReservationEntity reservationEntity);
     int cancelReservationRequest(Long reservationId);
+    List<ReservationEntity> selectReservationsByRestaurant(Long restaurantId);
+    int deleteReservation(Long reservationId);
 }

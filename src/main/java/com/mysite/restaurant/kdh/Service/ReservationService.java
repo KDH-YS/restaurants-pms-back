@@ -16,14 +16,17 @@ public class ReservationService {
         this.reservationMapper = reservationMapper;
     }
 
-    // 예약 생성 후 생성된 예약 객체 반환
+    // 예약 
     public ReservationEntity createReservation(ReservationEntity reservation) {
         reservationMapper.insertReservation(reservation);  // 예약 저장
         return reservation;  // 생성된 예약 객체 반환
     }
+    // 내 예약 조회
     public List<ReservationEntity> getReservationsByEmail(String email) {
         return reservationMapper.selectReservationsByEmail(email);
     }
+    
+    //내 예약 수정
     public ReservationEntity updateReservation(ReservationEntity reservationEntity) {
         int rowsAffected = reservationMapper.updateReservation(reservationEntity);
         
@@ -34,8 +37,19 @@ public class ReservationService {
             return null;  // 수정이 실패한 경우
         }
     }
+    //내 예약 취소
     public boolean cancelReservationRequest(Long reservationId) {
         int rowsAffected = reservationMapper.cancelReservationRequest(reservationId);
+        return rowsAffected > 0; // 업데이트 성공 여부 반환
+    }
+    
+    //내 가게 예약 조회
+    public List<ReservationEntity> getReservationsByRestaurant(Long restaurantId) {
+        return reservationMapper.selectReservationsByRestaurant(restaurantId);
+    }
+    //예약 삭제(업주)
+    public boolean DeleteReservation(Long reservationId) {
+        int rowsAffected = reservationMapper.deleteReservation(reservationId);
         return rowsAffected > 0; // 업데이트 성공 여부 반환
     }
 }

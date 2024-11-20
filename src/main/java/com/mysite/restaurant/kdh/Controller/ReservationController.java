@@ -3,12 +3,15 @@ package com.mysite.restaurant.kdh.Controller;
 import com.mysite.restaurant.kdh.Entity.ReservationEntity;
 import com.mysite.restaurant.kdh.Service.ReservationService;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {
@@ -47,7 +50,8 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
+    
+    //예약 취소 요청
     @PatchMapping("/user/{reservationId}")
     public ResponseEntity<String> cancelReservationRequest(@PathVariable("reservationId") Long reservationId) {
         boolean isCancelled = reservationService.cancelReservationRequest(reservationId);
@@ -58,4 +62,23 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약 취소 요청에 실패했습니다.");
         }
     }
+    
+    //예약 목록 조회(업주)
+    @GetMapping("/manager/{restaurantId}")
+    public List<ReservationEntity> getReservationsByRestaurant(@PathVariable("restaurantId") Long restaurantId) {
+    	log.info("Fetching reservations for restaurantId: {}", restaurantId);
+        return reservationService.getReservationsByRestaurant(restaurantId);
+    }      
+
+    @DeleteMapping("/manager/{reservationId}")
+    public ResponseEntity<String> DeleteReservation(@PathVariable("reservationId") long reservationId){
+        boolean isCancelled = reservationService.DeleteReservation(reservationId);
+        
+        if (isCancelled) {
+            return ResponseEntity.ok("예약이 취소되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약 취소 요청에 실패했습니다.");
+        }
+    }
+    
 }

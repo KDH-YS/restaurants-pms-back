@@ -53,15 +53,48 @@
         WHERE 
             reservation_id = #{reservationId};
     </update>
+       <!-- 예약 조회 (업주) -->
+	<select id="selectReservationsByRestaurant" resultMap="reservationResultMap" parameterType="Long">
+    SELECT  
+        u.email, 
+        u.phone, 
+        r.reservation_id,
+        r.user_id,
+        r.restaurant_id,
+        r.reservation_time,
+        r.request,
+        r.status,
+        r.number_of_people,
+        r.created_at,        
+        r.updated_at 
+    	FROM reservation r
+    	JOIN users u ON r.user_id = u.user_id
+    	WHERE r.restaurant_id = #{restaurantId};
+	</select>
 
+    <resultMap id="reservationResultMap" type="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+    <result property="reservationId" column="reservation_id" />
+    <result property="userId" column="user_id" />
+    <result property="restaurantId" column="restaurant_id" />
+    <result property="reservationTime" column="reservation_time" jdbcType="TIMESTAMP"/>
+    <result property="request" column="request" />
+    <result property="status" column="status" />
+    <result property="numberOfPeople" column="number_of_people" />
+    <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+    <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>   
+    
+    <!-- UserEntity 매핑 -->
+    <association property="user" javaType="com.mysite.restaurant.kdh.Entity.UsersEntity">
+        <result property="userId" column="user_id" />
+        <result property="email" column="email" />
+        <result property="phone" column="phone" />
+    </association>
+</resultMap>
     <!-- 예약 취소 (업주) -->
-    <update id="cancelReservationByManager" parameterType="int">
-        UPDATE reservation
-        SET 
-            status = 'CANCELED'
-        WHERE 
-            reservation_id = #{reservationId};
-    </update>
+	<delete id="deleteReservation" parameterType="Long">
+   		DELETE FROM reservation
+    	WHERE reservation_id = #{reservationId}
+	</delete>
 
     <!-- 영업시간 입력 (레스토랑 등록시 함께) -->
     <insert id="insertRestaurantOpenTime" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
@@ -70,7 +103,7 @@
         VALUES 
         (#{restaurantId}, #{startTime}, #{endTime}, #{isOpen}, #{breakStart}, #{breakEnd}, NOW(), NOW());
     </insert>
-
+    
     <!-- 영업시간 수정 -->
     <update id="updateRestaurantOpenTime" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
         UPDATE restaurant_manage rm
@@ -85,9 +118,5 @@
         WHERE 
             r.name = #{restaurantName};
     </update>
-
-
-
-
-
+    
 </mapper>
