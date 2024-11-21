@@ -1,21 +1,32 @@
 package com.mysite.restaurant.jh;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequiredArgsConstructor
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
-
+    
+    
     @GetMapping("/restaurant")
-    public String searchRestaurants(
+    public String listRestaurants(
         @RequestParam(name ="page", defaultValue = "1") int page,  // 페이지 파라미터
         @RequestParam(name= "size", defaultValue = "16") int size,  // 페이지 파라미터
         Model model) {
@@ -47,4 +58,36 @@ public class RestaurantController {
         model.addAttribute("restaurants", restaurants);
         return "restaurant/search";
     }
+    
+    @GetMapping("/restaurant/{restaurantId}")
+    @ResponseBody
+   public RestaurantDTO restaurantDetail(@PathVariable("restaurantId")int restaurantId) {
+	   return restaurantService.getRestaurantById(restaurantId);
+   }
+    @GetMapping("/restaurant/menu/{restaurantId}")
+    @ResponseBody
+    public MenuDTO getMenusByRestaurantId(@PathVariable("restaurantId")int restaurantId) {
+    	return restaurantService.getMenusByRestaurantId(restaurantId);
+    }
+    
+	@GetMapping("/create")
+	public String create() {
+		return "restaurant/create";
+	}
+	@PostMapping("/create")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> insertRestaurant(@RequestBody RestaurantDTO restaurant) {
+	    try {
+	        restaurantService.insertRestaurant(restaurant);
+	        Map<String, String> response = new HashMap<>();
+	        response.put("message", "레스토랑 등록 성공");
+	        return ResponseEntity.ok(response);  // 200 OK 응답
+	    } catch (Exception e) {
+	        Map<String, String> errorResponse = new HashMap<>();
+	        errorResponse.put("error", "레스토랑 등록에 실패했습니다.");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // 500 오류 응답
+	    }
+	}
+
+    
 }

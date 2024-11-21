@@ -26,4 +26,14 @@ public class RestaurantService {
     public int countTotal() {
     	return restaurantMapper.countTotal();
     }
+    public RestaurantDTO getRestaurantById(int restaurantId) {
+    	return restaurantMapper.getRestaurantById(restaurantId);
+    };
+	public MenuDTO getMenusByRestaurantId(int restaurantId) {
+		return restaurantMapper.getMenusByRestaurantId(restaurantId);
+	};
+
+	public void insertRestaurant(RestaurantDTO restaurant) {
+		restaurantMapper.insertRestaurant(restaurant);
+	}
 }

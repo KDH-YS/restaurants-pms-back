@@ -42,14 +42,33 @@
             AND reservation_available = #{reservationAvailable}
         </if>
     </where>
-</select>
+	</select>
 
-<select id="getRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+	<select id="getRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
     SELECT * FROM restaurants
     ORDER BY restaurant_id DESC
     LIMIT #{size} OFFSET #{offset}
-</select>
-<select id="countTotal" resultType="int">
+	</select>
+
+	<select id="countTotal" resultType="int">
 		SELECT count(*) FROM restaurants
 	</select>
+	
+	 <select id="getRestaurantById" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+        SELECT * FROM restaurants
+        WHERE restaurant_id = #{restaurantId}
+    </select>
+    
+    <insert id="insertRestaurant" >
+    INSERT INTO restaurants (
+        name, description, address, phone, food_type, parking_available, total_seats
+    ) VALUES (
+        #{name}, #{description}, #{address}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+    )
+	</insert>
+    
+    <select id="getMenusByRestaurantId" resultType="com.mysite.restaurant.jh.MenuDTO">
+    SELECT * FROM menus
+    WHERE restaurant_id = #{restaurantId}
+</select>
 </mapper>
