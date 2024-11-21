@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -88,6 +90,26 @@ public class RestaurantController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // 500 오류 응답
 	    }
 	}
+	
+	 // 레스토랑 정보 수정 폼 페이지로 이동
+    @GetMapping("/updateRestaurant/{restaurantId}")
+    public String showUpdateForm(@PathVariable("restaurantId") int restaurantId, Model model) {
+        RestaurantDTO restaurant = restaurantService.getRestaurantById(restaurantId);
+        model.addAttribute("restaurant", restaurant);
+        return "restaurant/updateRestaurant"; // Thymeleaf 템플릿을 사용하는 경우
+    }
 
+    // 레스토랑 정보 수정 처리
+    @PostMapping("/updateRestaurant")
+    public String updateRestaurant(@ModelAttribute RestaurantDTO restaurant) {
+        restaurantService.updateRestaurant(restaurant);  // 서비스에서 수정 처리
+        return "redirect:/restaurant/" + restaurant.getRestaurantId(); // 수정 후 레스토랑 상세 페이지로 리디렉션
+    }
+    
+    @DeleteMapping("/api/restaurant/delete/{restaurantId}")
+    public void deleteRestaurant(@PathVariable("restaurantId") int restaurantId) {
+    	restaurantService.deleteRestaurant(restaurantId);
+    	
+    }
     
 }

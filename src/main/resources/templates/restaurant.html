@@ -28,6 +28,17 @@
                 <td th:text="${restaurant.district != null ? restaurant.district : 'No District'}">District</td>
                 <td th:text="${restaurant.neighborhood != null ? restaurant.neighborhood : 'No Neighborhood'}">Neighborhood</td>
                 <td th:text="${restaurant.foodType != null ? restaurant.foodType : 'No Food Type'}">Food Type</td>
+				<td>
+				    <!-- 디테일 페이지로 이동하는 버튼 -->
+				    <button th:onclick="|window.location.href='/restaurant/' + ${restaurant.restaurantId}|">
+				        디테일
+				    </button>
+				    <!-- 수정 페이지로 이동하는 버튼 -->
+				    <button th:onclick="|window.location.href='/updateRestaurant/' + ${restaurant.restaurantId}|">
+				        수정
+				    </button>
+				</td>
+
             </tr>
         </tbody>
     </table>

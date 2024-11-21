@@ -98,4 +98,21 @@
 	                       END
 	</update>
 	
+	<update id="updateRestaurant">
+	    UPDATE restaurants
+	    SET 
+	        name = #{name},
+	        description = #{description},
+	        address = #{address},
+	        phone = #{phone},
+	        food_type = #{foodType},
+	        parking_available = #{parkingAvailable},
+	        total_seats = #{totalSeats}
+	    WHERE restaurant_id = #{restaurantId}
+	</update>
+	
+	<delete id="deleteRestaurant">
+	    DELETE FROM restaurants
+	    WHERE restaurant_id = #{restaurantId}
+	</delete>
 </mapper>

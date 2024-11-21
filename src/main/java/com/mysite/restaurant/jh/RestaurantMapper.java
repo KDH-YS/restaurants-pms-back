@@ -14,5 +14,7 @@ public interface RestaurantMapper {
 	public RestaurantDTO getRestaurantById(int restaurantId);
 	void insertRestaurant(RestaurantDTO restaurant);
 	void updateAddress();
+	void updateRestaurant(RestaurantDTO restaurant);
 	public MenuDTO getMenusByRestaurantId(int restaurantId);
+	void  deleteRestaurant(int restaurantId);
    }
