@@ -22,15 +22,17 @@ public class RestaurantController {
     public RestaurantController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
-
+    
+    //스케줄 입력
     @PostMapping("/schedule")    
     public ResponseEntity<ScheduleEntity> insertSchedule(@RequestBody ScheduleEntity schedule){
     		ScheduleEntity insertedschedule = reservationService.createSchedule(schedule);
     	return ResponseEntity.ok(insertedschedule);
     }
+    //스케줄 변경
     @PutMapping("/schedule/{id}")
-    public ResponseEntity<ScheduleEntity> updateSchedule(@PathVariable("id")Long id, ScheduleEntity schedule){
-    	schedule.setScheduleId(id);  // URL에서 받은 id로 예약 ID 설정
+    public ResponseEntity<ScheduleEntity> updateSchedule(@PathVariable("id")Long scheduleId, @RequestBody ScheduleEntity schedule){
+    	schedule.setScheduleId(scheduleId);  // URL에서 받은 id로 예약 ID 설정
 
         // 예약 수정
     	ScheduleEntity updatedSchedule = reservationService.updateSchedule(schedule);

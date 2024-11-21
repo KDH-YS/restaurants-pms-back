@@ -111,8 +111,8 @@
         start_time = #{startTime},
         end_time = #{endTime},
         is_open = #{isOpen},
-        break_start_time = #{breakStart},
-        break_end_time = #{breakEnd},
+        break_start = #{breakStart},
+        break_end = #{breakEnd},
         updated_at = NOW()  
     WHERE schedule_id = #{scheduleId};  
 </update>

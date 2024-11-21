@@ -54,12 +54,13 @@ public class ReservationService {
         int rowsAffected = reservationMapper.deleteReservation(reservationId);
         return rowsAffected > 0; // 업데이트 성공 여부 반환
     }
-
+    //가게 스케줄 입력
     public ScheduleEntity createSchedule(ScheduleEntity schedule) {
     		reservationMapper.insertSchedule(schedule);
     	return schedule;
     	
     }
+    //가게 스케줄 변경
     public ScheduleEntity updateSchedule(ScheduleEntity schedule) {
         int rowsAffected = reservationMapper.updateSchedule(schedule);        
         // 수정이 성공하면 수정된 객체를 반환
