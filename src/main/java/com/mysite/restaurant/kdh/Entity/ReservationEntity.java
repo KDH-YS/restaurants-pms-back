@@ -14,8 +14,9 @@ public class ReservationEntity {
     private int numberOfPeople;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    
     private String restaurantName;
+    
     private UsersEntity user;
     
     public enum ReservationStatus {

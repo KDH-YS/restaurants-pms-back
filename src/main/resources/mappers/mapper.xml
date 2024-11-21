@@ -105,16 +105,16 @@
     </insert>
     
     <!-- 영업시간 수정 -->
-<update id="updateSchedule" parameterType="com.mysite.restaurant.kdh.Entity.ScheduleEntity">
-    UPDATE schedule
-    SET 
-        start_time = #{startTime},
-        end_time = #{endTime},
-        is_open = #{isOpen},
-        break_start = #{breakStart},
-        break_end = #{breakEnd},
-        updated_at = NOW()  
-    WHERE schedule_id = #{scheduleId};  
-</update>
+	<update id="updateSchedule" parameterType="com.mysite.restaurant.kdh.Entity.ScheduleEntity">
+    	UPDATE schedule
+    	SET 
+        	start_time = #{startTime},
+       		end_time = #{endTime},
+        	is_open = #{isOpen},
+        	break_start = #{breakStart},
+        	break_end = #{breakEnd},
+        	updated_at = NOW()  
+    	WHERE schedule_id = #{scheduleId};  
+	</update>
     
 </mapper>

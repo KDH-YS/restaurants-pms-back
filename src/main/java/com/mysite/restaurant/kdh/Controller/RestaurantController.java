@@ -29,6 +29,7 @@ public class RestaurantController {
     		ScheduleEntity insertedschedule = reservationService.createSchedule(schedule);
     	return ResponseEntity.ok(insertedschedule);
     }
+    
     //스케줄 변경
     @PutMapping("/schedule/{id}")
     public ResponseEntity<ScheduleEntity> updateSchedule(@PathVariable("id")Long scheduleId, @RequestBody ScheduleEntity schedule){
