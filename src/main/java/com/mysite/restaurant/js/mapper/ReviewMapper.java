@@ -3,6 +3,7 @@ package com.mysite.restaurant.js.mapper;
 import com.mysite.restaurant.js.model.Reviews;
 import com.mysite.restaurant.js.model.Replies;
 import com.mysite.restaurant.js.model.Reports;
+import com.mysite.restaurant.js.model.ReviewImg;
 import com.mysite.restaurant.js.model.Helpful;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,26 +13,25 @@ import java.util.List;
 public interface ReviewMapper {
 	
     List<Reviews> getReviewById(Long reviewId);
-
     int insertReview(Reviews review);
+    int insertReviewImg(ReviewImg reviewImg);
+    int updateReview(Reviews review);
+    int updateReviewImage(ReviewImg reviewImg);
+    int deleteReview(Long reviewId);
+    int deleteReviewImg(Long reviewImgId);
 
-    int insertReviewImg(Reviews review);
-
+    List<Replies> selectReplies(Long replyId);
     int insertReplie(Replies replies);
+    int updateReplies(Replies replies);
+    int deleteReply(Long replyId);
 
     int insertReport(Reports reports);
+    List<Reports> selectReports(Long reportId);
+    int deleteReport(Long reportId);
 
     int insertHelpful(Helpful helpful);
-
-    int updateReview(Reviews review);
-
-    int updateReviewImage(Reviews review);
-
-    int deleteReview(Long reviewId);
-
-    int deleteReport(Long reportId);
+    int deleteHelpful(Long voteId);
 
     List<Reviews> selectMyReviews(Long userId);
 
-    List<Reports> selectReport(Long reviewId);
 }

@@ -24,7 +24,7 @@
         );
     </insert>
 
-    <!-- 리뷰 댓글 등록 -->
+    <!-- 답글 등록 -->
     <insert id="insertReplie" parameterType="com.mysite.restaurant.js.model.Replies">
         INSERT INTO review_replies (
             review_id, user_id, replies_content
@@ -96,9 +96,19 @@
         LEFT JOIN review_replies rr ON rev.review_id = rr.review_id
         JOIN users u2 ON rr.user_id = u2.user_id;
     </select>
+    
+    <!-- 답글 조회 조회 -->
+    <select id="selectReplies" resultType="com.mysite.restaurant.js.model.Replies">
+        SELECT * FROM review_replies WHERE reply_id = #{replyId};
+    </select>
+    
+    <!-- 신고 목록 조회 -->
+    <select id="selectReports" resultType="com.mysite.restaurant.js.model.Reports">
+        SELECT * FROM review_reports WHERE report_id = #{reportId};
+    </select>
 
-    <!-- 리뷰 신고 조회 -->
-    <select id="selectReports" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reports">
+    <!-- 신고 상세 조회 -->
+    <select id="selectReport" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reports">
         SELECT
             rev.review_id,
             u.name,
@@ -119,10 +129,25 @@
     <delete id="deleteReview" parameterType="Long">
         DELETE FROM reviews WHERE review_id = #{reviewId};
     </delete>
+    
+    <!-- 답글 삭제 -->
+    <delete id="deleteReply" parameterType="Long">
+        DELETE FROM review_replies WHERE reply_id = #{replyId};
+    </delete>
 
     <!-- 리뷰 신고 삭제 -->
     <delete id="deleteReport" parameterType="Long">
         DELETE FROM review_reports WHERE report_id = #{reportId};
+    </delete>
+    
+    <!-- 리뷰 이미지 삭제 -->
+    <delete id="deleteReviewImg" parameterType="Long">
+        DELETE FROM review_images WHERE review_image_id = #{reviewImgId};
+    </delete>
+    
+    <!-- 도움 삭제 -->
+    <delete id="deleteHelpful" parameterType="Long">
+        DELETE FROM helpful_votes WHERE vote_id = #{voteId};
     </delete>
 
     <!-- 리뷰 수정 -->
@@ -136,7 +161,14 @@
     <update id="updateReviewImage" parameterType="com.mysite.restaurant.js.model.Reviews">
         UPDATE review_images
         SET image_url = #{imageUrl}
-        WHERE review_id = #{reviewId} AND image_order = #{imageOrder};
+        WHERE review_image_id = #{reviewImageId};
+    </update>
+    
+    <!-- 답글 수정 -->
+    <update id="updateReplies" parameterType="com.mysite.restaurant.js.model.Reviews">
+        UPDATE review_replies
+        SET replies_content = #{repliesContent}
+        WHERE reply_id = #{replyId};
     </update>
 
 </mapper>
