@@ -29,9 +29,9 @@ public class RestaurantService {
     public RestaurantDTO getRestaurantById(int restaurantId) {
     	return restaurantMapper.getRestaurantById(restaurantId);
     };
-	public MenuDTO getMenusByRestaurantId(int restaurantId) {
-		return restaurantMapper.getMenusByRestaurantId(restaurantId);
-	};
+    public List<MenuDTO> getMenusByRestaurantId(int restaurantId) {
+        return restaurantMapper.getMenusByRestaurantId(restaurantId);  // List로 반환
+    }
 
 	public void insertRestaurant(RestaurantDTO restaurant) {
 		restaurantMapper.insertRestaurant(restaurant);
@@ -43,5 +43,13 @@ public class RestaurantService {
     };
     public void deleteRestaurant(int restaurantId) {
     	restaurantMapper.deleteRestaurant(restaurantId);
+    }
+    
+	public void insertMenu(MenuDTO menu) {
+		restaurantMapper.insertMenu(menu);
+	}
+	
+	public void deleteMenu(int restaurantId,int menuId) {
+        restaurantMapper.deleteMenu(restaurantId,menuId);
     }
 }

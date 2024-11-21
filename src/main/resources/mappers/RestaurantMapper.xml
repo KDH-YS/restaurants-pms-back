@@ -115,4 +115,17 @@
 	    DELETE FROM restaurants
 	    WHERE restaurant_id = #{restaurantId}
 	</delete>
+	
+	<insert id="insertMenu">
+	    INSERT INTO menus (
+	        restaurant_id, name, price
+	    ) VALUES (
+	        #{restaurantId}, #{name}, #{price}
+	    )
+	</insert>
+
+	<delete id="deleteMenu">
+	    DELETE FROM menus
+	    WHERE menu_id = #{menuId} AND restaurant_id = #{restaurantId}
+	</delete>
 </mapper>

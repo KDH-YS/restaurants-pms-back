@@ -66,11 +66,7 @@ public class RestaurantController {
    public RestaurantDTO restaurantDetail(@PathVariable("restaurantId")int restaurantId) {
 	   return restaurantService.getRestaurantById(restaurantId);
    }
-    @GetMapping("/restaurant/menu/{restaurantId}")
-    @ResponseBody
-    public MenuDTO getMenusByRestaurantId(@PathVariable("restaurantId")int restaurantId) {
-    	return restaurantService.getMenusByRestaurantId(restaurantId);
-    }
+
     
 	@GetMapping("/create")
 	public String create() {
@@ -107,9 +103,41 @@ public class RestaurantController {
     }
     
     @DeleteMapping("/api/restaurant/delete/{restaurantId}")
+    @ResponseBody
     public void deleteRestaurant(@PathVariable("restaurantId") int restaurantId) {
     	restaurantService.deleteRestaurant(restaurantId);
     	
     }
     
+    //메뉴 불러오
+    @GetMapping("/api/restaurant/menu/{restaurantId}")
+    public ResponseEntity<List<MenuDTO>> getMenusByRestaurantId(@PathVariable("restaurantId") int restaurantId) {
+        try {
+            List<MenuDTO> menus = restaurantService.getMenusByRestaurantId(restaurantId);
+            return ResponseEntity.ok(menus);  // 200 OK와 함께 메뉴 목록 반환
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // 예외 발생 시 500 반환
+        }
+    }
+    
+    //메뉴등록하
+    @PostMapping("/api/restaurant/menu/{restaurantId}/insert")
+    public ResponseEntity<Void> insertMenu(@PathVariable("restaurantId") int restaurantId, @RequestBody MenuDTO menu) {
+        try {
+            menu.setRestaurantId(restaurantId);  // 레스토랑 ID 설정
+            restaurantService.insertMenu(menu);   // 서비스 호출하여 메뉴 추가
+            return ResponseEntity.status(HttpStatus.CREATED).build();  // 성공 시 201 Created 반환
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // 예외 발생 시 500 반환
+        }
+    }
+
+    //메뉴 삭제하기
+    // 메뉴 삭제 API
+    @DeleteMapping("/api/restaurant/menu/{restaurantId}/{menuId}/delete")
+    public ResponseEntity<Void> deleteMenu(@PathVariable("restaurantId") int restaurantId, @PathVariable("menuId") int menuId) {
+    	restaurantService.deleteMenu( restaurantId,menuId);
+    	return ResponseEntity.noContent().build();
+    }
+
 }
