@@ -35,5 +35,6 @@ public class RestaurantService {
 
 	public void insertRestaurant(RestaurantDTO restaurant) {
 		restaurantMapper.insertRestaurant(restaurant);
+		restaurantMapper.updateAddress();
 	}
 }

@@ -71,4 +71,31 @@
     SELECT * FROM menus
     WHERE restaurant_id = #{restaurantId}
 </select>
+
+	<update id="updateAddress">
+	    UPDATE restaurants 
+	    SET 
+	        city = SUBSTRING_INDEX(address, ' ', 1),
+	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 2), ' ', -1),
+	        neighborhood = SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 3), ' ', -1),
+	        detail_addr = TRIM(REGEXP_REPLACE(address, '^[^ ]+ [^ ]+ [^ ]+ ', '')),
+	        -- 세종특별자치시에 대해 특별한 처리를 위한 조건
+	        city = CASE 
+	                  WHEN address LIKE '%세종특별자치시%' THEN SUBSTRING_INDEX(address, ' ', 1) 
+	                  ELSE city 
+	               END,
+	        district = CASE 
+              		WHEN address LIKE '%세종특별자치시%' THEN NULL
+            		ELSE district
+           		END,
+	        neighborhood = CASE 
+	                         WHEN address LIKE '%세종특별자치시%' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 2), ' ', -1)
+	                         ELSE neighborhood
+	                       END,
+	        detail_addr = CASE 
+	                         WHEN address LIKE '%세종특별자치시%' THEN TRIM(REGEXP_REPLACE(address, '^[^ ]+ [^ ]+ ', ''))
+	                         ELSE detail_addr
+	                       END
+	</update>
+	
 </mapper>

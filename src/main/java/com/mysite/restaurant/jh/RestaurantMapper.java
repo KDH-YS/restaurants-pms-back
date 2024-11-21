@@ -13,5 +13,6 @@ public interface RestaurantMapper {
 	public int countTotal(); 
 	public RestaurantDTO getRestaurantById(int restaurantId);
 	void insertRestaurant(RestaurantDTO restaurant);
+	void updateAddress();
 	public MenuDTO getMenusByRestaurantId(int restaurantId);
    }
