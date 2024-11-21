@@ -13,7 +13,7 @@ public class User {
 	private String name;
 	private String phone;
 	private String profileImageUrl;
-	private String notificationAgreed;
+	private Integer notificationAgreed;
 	private UserType userType;			// 사용자 권한
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;

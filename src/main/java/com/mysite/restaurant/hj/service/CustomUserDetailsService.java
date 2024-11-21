@@ -19,13 +19,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 	private final UserMapper userMapper;
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userMapper.findByUsername(username);
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		User user = userMapper.userLogin(email);
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}
 		
-		List<GrantedAuthority> authorities = user.getRoles().stream()
+		List<GrantedAuthority> authorities = user.getUserType().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName()))
 				.collect(Collectors.toList());
 		
