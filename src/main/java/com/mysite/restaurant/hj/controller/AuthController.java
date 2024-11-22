@@ -20,7 +20,7 @@ import com.mysite.restaurant.hj.service.CustomUserDetailsService;
 
 @RestController
 @RequestMapping("/api/auth")
-public class UserController {
+public class AuthController {
 
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
