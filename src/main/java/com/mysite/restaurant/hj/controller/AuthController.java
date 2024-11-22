@@ -21,7 +21,7 @@ import com.mysite.restaurant.hj.service.CustomUserDetailsService;
 
 @RestController
 @RequestMapping("/api/auth")
-public class UserController {
+public class AuthController {
 
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
@@ -61,7 +61,7 @@ public class UserController {
     
 //  회원 탈퇴
     @DeleteMapping("/deleteUser")
-    public String deleteUser(@RequestParam("email") String email) {
+    public int deleteUser(@RequestParam("email") String email) {
     	return customUserDetailsService.deleteUser(email);
     }
     
