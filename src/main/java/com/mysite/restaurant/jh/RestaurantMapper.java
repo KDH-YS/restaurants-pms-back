@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 public interface RestaurantMapper {
 	
 	public List<RestaurantDTO> getSearch(RestaurantDTO restaurant);
+	List<RestaurantDTO> getRestaurantsAll();
 	 List<RestaurantDTO> getRestaurants(@Param("offset") int offset, @Param("size") int size);
 	public int countTotal(); 
 	public RestaurantDTO getRestaurantById(int restaurantId);

@@ -28,7 +28,7 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
     
-    
+    //레스토랑 페이지네이션
     @GetMapping("/restaurant")
     public String listRestaurants(
         @RequestParam(name ="page", defaultValue = "1") int page,  // 페이지 파라미터
@@ -52,6 +52,7 @@ public class RestaurantController {
         return "restaurant";  // 검색 결과를 보여줄 JSP 또는 Thymeleaf 템플릿
     }
     
+    //레스토랑 검색
     @GetMapping("/restaurant/search")
     public String searchRestaurants(RestaurantDTO restaurant,
          Model model) {
@@ -63,13 +64,14 @@ public class RestaurantController {
         return "restaurant/search";
     }
     
+    //레스토랑디테일
     @GetMapping("/restaurant/{restaurantId}")
     @ResponseBody
    public RestaurantDTO restaurantDetail(@PathVariable("restaurantId")int restaurantId) {
 	   return restaurantService.getRestaurantById(restaurantId);
    }
 
-    
+    //레스토랑 등록
 	@GetMapping("/create")
 	public String create() {
 		return "restaurant/create";
@@ -89,7 +91,7 @@ public class RestaurantController {
 	    }
 	}
 	
-	 // 레스토랑 정보 수정 폼 페이지로 이동
+	 // 레스토랑 정보 수정
     @GetMapping("/updateRestaurant/{restaurantId}")
     public String showUpdateForm(@PathVariable("restaurantId") int restaurantId, Model model) {
         RestaurantDTO restaurant = restaurantService.getRestaurantById(restaurantId);
@@ -104,77 +106,41 @@ public class RestaurantController {
         return "redirect:/restaurant/" + restaurant.getRestaurantId(); // 수정 후 레스토랑 상세 페이지로 리디렉션
     }
     
+    //레스토랑 조회api 역순, 페이지네이션없
+    @GetMapping("/api/restaurant")
+    public ResponseEntity<List<RestaurantDTO>> restaurantListApi(RestaurantDTO restaurant){
+    	List<RestaurantDTO> restaurants = restaurantService.getRestaurantsAll();
+    	return ResponseEntity.ok(restaurants);
+    }
+    
+    //레스토랑삭제
     @DeleteMapping("/api/restaurant/delete/{restaurantId}")
     @ResponseBody
     public void deleteRestaurant(@PathVariable("restaurantId") int restaurantId) {
     	restaurantService.deleteRestaurant(restaurantId);
-    	
     }
     
-    //메뉴 불러오
-    @GetMapping("/api/restaurant/menu/{restaurantId}")
-    public ResponseEntity<List<MenuDTO>> getMenusByRestaurantId(@PathVariable("restaurantId") int restaurantId) {
+    //레스토랑 검색
+    @GetMapping("api/restaurant/search")
+    public ResponseEntity<List<RestaurantDTO>> searchRestaurantsApi(@ModelAttribute RestaurantDTO restaurant) {
         try {
-            List<MenuDTO> menus = restaurantService.getMenusByRestaurantId(restaurantId);
-            return ResponseEntity.ok(menus);  // 200 OK와 함께 메뉴 목록 반환
+            // 서비스 호출로 레스토랑 검색
+            List<RestaurantDTO> restaurants = restaurantService.searchRestaurants(restaurant);
+            
+            // 검색 결과가 없으면 204 No Content 반환
+            if (restaurants.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+
+            // 검색 결과가 있으면 200 OK와 함께 데이터 반환
+            return ResponseEntity.ok(restaurants);
+            
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // 예외 발생 시 500 반환
-        }
-    }
-    
-    //메뉴등록하
-    @PostMapping("/api/restaurant/menu/{restaurantId}/insert")
-    public ResponseEntity<Void> insertMenu(@PathVariable("restaurantId") int restaurantId, @RequestBody MenuDTO menu) {
-        try {
-            menu.setRestaurantId(restaurantId);  // 레스토랑 ID 설정
-            restaurantService.insertMenu(menu);   // 서비스 호출하여 메뉴 추가
-            return ResponseEntity.status(HttpStatus.CREATED).build();  // 성공 시 201 Created 반환
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // 예외 발생 시 500 반환
+            // 예외 처리: 서버 에러 500 반환
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    //메뉴 삭제하기
-    // 메뉴 삭제 API
-    @DeleteMapping("/api/restaurant/menu/{restaurantId}/{menuId}/delete")
-    public ResponseEntity<Void> deleteMenu(@PathVariable("restaurantId") int restaurantId, @PathVariable("menuId") int menuId) {
-    	restaurantService.deleteMenu( restaurantId,menuId);
-    	return ResponseEntity.noContent().build();
-    }
 
-    
-    //이미지 컨트롤러
-    //이미지 조회하기
-    @GetMapping("/api/restaurant/{restaurantId}/image")
-	public ResponseEntity<List<ImageDTO>> getRestaurantImageById(@PathVariable("restaurantId") int restaurantId){
-		 List<ImageDTO> images = restaurantService.getRestaurantImageById(restaurantId);
-         return ResponseEntity.ok(images);  // 200 OK와 함께 메뉴 목록 반환
-	}
-    
-    //이미지등록하기
-    @PostMapping("/api/restaurant/{restaurantId}/image/insert")
-	public ResponseEntity<Void> insertImage(@PathVariable("restaurantId")int restaurantId,
-			//@RequestParam("file") MultipartFile file,
-			@RequestBody ImageDTO image) {
-    	String uid =  UUID.randomUUID().toString();
-    	image.setUid(uid);
-    	
-    	//업로드 파일 확장자 추
-    	//String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-    	//새로운 파일명 uuid+확장자
-    	//String newFileName = uid + extension;
-    	//파일을 원하는 디렉토리에 저장
-    	// String uploadDir = "";
-    	
-    	image.setRestaurantId(restaurantId);  
-    	restaurantService.insertImage(image);
-    	return ResponseEntity.status(HttpStatus.CREATED).build();
-	}
-    
-    //이미지삭제
-    @DeleteMapping("/api/restaurant/{restaurantId}/image/{imageId}/delete")
-    public ResponseEntity<Void> deleteImage(@PathVariable("restaurantId") int restaurantId, @PathVariable("imageId") int imageId) {
-    	restaurantService.deleteImage( restaurantId,imageId);
-    	return ResponseEntity.noContent().build();
-    }
 }

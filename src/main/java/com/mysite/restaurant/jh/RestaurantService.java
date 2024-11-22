@@ -19,6 +19,10 @@ public class RestaurantService {
     	int offset = (page-1) * size; //페이지네이션 오프셋 계
             return restaurantMapper.getRestaurants(offset,size);
     }
+    public 	List<RestaurantDTO> getRestaurantsAll(){
+    	return restaurantMapper.getRestaurantsAll();
+    };
+
     
     public List<RestaurantDTO> searchRestaurants(RestaurantDTO restaurant) {
 
