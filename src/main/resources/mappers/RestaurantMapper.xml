@@ -128,4 +128,23 @@
 	    DELETE FROM menus
 	    WHERE menu_id = #{menuId} AND restaurant_id = #{restaurantId}
 	</delete>
+	
+	<insert id="insertImage">
+	    INSERT INTO restaurant_images (
+	        restaurant_id, image_url, image_order, uid
+	    ) VALUES (
+	        #{restaurantId}, #{imageUrl}, #{imageOrder}, #{uid}
+	    )
+	</insert> 
+	
+	 <select id="getRestaurantImageById" resultType="com.mysite.restaurant.jh.ImageDTO">
+    SELECT * FROM restaurant_images
+    WHERE restaurant_id = #{restaurantId}
+	</select>
+	
+		<delete id="deleteImage">
+	    DELETE FROM restaurant_images
+	    WHERE image_id = #{imageId} AND restaurant_id = #{restaurantId}
+	</delete>
+	
 </mapper>

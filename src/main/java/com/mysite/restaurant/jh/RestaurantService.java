@@ -1,5 +1,6 @@
 package com.mysite.restaurant.jh;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
@@ -52,4 +53,16 @@ public class RestaurantService {
 	public void deleteMenu(int restaurantId,int menuId) {
         restaurantMapper.deleteMenu(restaurantId,menuId);
     }
+	
+	
+	public List<ImageDTO> getRestaurantImageById(int restaurantId){
+		return restaurantMapper.getRestaurantImageById(restaurantId);
+	}
+	public void insertImage(ImageDTO image) {
+		restaurantMapper.insertImage(image);
+	}
+	public void deleteImage(int restaurantId,int imageId) {
+		restaurantMapper.deleteImage(restaurantId, imageId);
+	}
+
 }
