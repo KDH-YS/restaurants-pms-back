@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant List</title>
+</head>
+<body>
+
+<h1>Restaurant List</h1>
+
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th>Restaurant Name</th>
+                <th>City</th>
+                <th>District</th>
+                <th>Neighborhood</th>
+                <th>Food Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- restaurants 리스트를 순회하며 출력 -->
+            <tr th:each="restaurant : ${restaurants}">
+                <td th:text="${restaurant.name != null ? restaurant.name : 'No Name'}">Restaurant Name</td>
+                <td th:text="${restaurant.city != null ? restaurant.city : 'No City'}">City</td>
+                <td th:text="${restaurant.district != null ? restaurant.district : 'No District'}">District</td>
+                <td th:text="${restaurant.neighborhood != null ? restaurant.neighborhood : 'No Neighborhood'}">Neighborhood</td>
+                <td th:text="${restaurant.foodType != null ? restaurant.foodType : 'No Food Type'}">Food Type</td>
+				<td>
+				    <!-- 디테일 페이지로 이동하는 버튼 -->
+				    <button th:onclick="|window.location.href='/restaurant/' + ${restaurant.restaurantId}|">
+				        디테일
+				    </button>
+				    <!-- 수정 페이지로 이동하는 버튼 -->
+				    <button th:onclick="|window.location.href='/updateRestaurant/' + ${restaurant.restaurantId}|">
+				        수정
+				    </button>
+				</td>
+
+            </tr>
+        </tbody>
+    </table>
+    
+<div id="pagination">
+    <!-- 이전 버튼 -->
+    <button th:if="${currentPage > 1}" 
+            th:attr="onclick='window.location.href=&quot;/restaurant?page=' + (${currentPage - 1}) + '&size=' + ${pageSize} + '&quot;'">
+        이전
+    </button>
+
+    <!-- 페이지 번호 버튼 -->
+    <span th:each="pageNum : ${#numbers.sequence(startPageGroup, endPageGroup)}">
+        <button th:text="${pageNum}"
+                th:classappend="${pageNum == currentPage} ? 'active' : ''"
+                th:attr="onclick='window.location.href=&quot;/restaurant?page=' + ${pageNum} + '&size=' + ${pageSize} + '&quot;'">
+        </button>
+    </span>
+
+    <!-- 다음 버튼 -->
+    <button th:if="${currentPage < totalPages}" 
+            th:attr="onclick='window.location.href=&quot;/restaurant?page=' + (${currentPage + 1}) + '&size=' + ${pageSize} + '&quot;'">
+        다음
+    </button>
+</div>
+
+
+
+
+
+<h1>페이지 번호: [[${currentPage}]]</h1>
+<h2>전체 페이지 수: [[${totalPages}]]</h2>
+<h2>전체 페이지 수: [[${startPageGroup}]]</h2>
+<h2>전체 페이지 수: [[${endPageGroup}]]</h2>
+</div>
+
+</body>
+</html>

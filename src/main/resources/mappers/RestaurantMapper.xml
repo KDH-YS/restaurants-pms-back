@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mysite.restaurant.jh.RestaurantMapper">
+
+ <resultMap id="restaurantMap" type="com.mysite.restaurant.jh.RestaurantDTO">
+    <result property="restaurantId" column="restaurant_id"/>
+    <result property="name" column="name"/>
+    <result property="description" column="description"/>
+    <result property="address" column="address"/>
+    <result property="phone" column="phone"/>
+    <result property="foodType" column="food_type"/>
+    <result property="parkingAvailable" column="parking_available"/>
+    <result property="reservationAvailable" column="reservation_available"/>
+    <result property="totalSeats" column="total_seats"/>
+    <result property="averageRating" column="average_rating"/>
+    <result property="city" column="city"/>
+    <result property="district" column="district"/>
+    <result property="neighborhood" column="neighborhood"/>
+    <result property="detailAddr" column="detail_addr"/>
+</resultMap>
+    
+    <!-- 검색 쿼리 -->
+    <select id="getSearch" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+    SELECT * FROM restaurants
+    <where>
+        <if test="city != null">
+            AND city = #{city}
+        </if>
+        <if test="district != null">
+            AND district = #{district}
+        </if>
+        <if test="neighborhood != null">
+            AND neighborhood = #{neighborhood}
+        </if>
+        <if test="foodType != null">
+            AND food_type = #{foodType}
+        </if>
+        <if test="parkingAvailable != null">
+            AND parking_available = #{parkingAvailable}
+        </if>
+        <if test="reservationAvailable != null">
+            AND reservation_available = #{reservationAvailable}
+        </if>
+    </where>
+	</select>
+
+	<select id="getRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+    SELECT * FROM restaurants
+    ORDER BY restaurant_id DESC
+    LIMIT #{size} OFFSET #{offset}
+	</select>
+	
+		<select id="getRestaurantsAll" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+    SELECT * FROM restaurants
+    ORDER BY restaurant_id DESC
+	</select>
+	
+	<select id="countTotal" resultType="int">
+		SELECT count(*) FROM restaurants
+	</select>
+	
+	 <select id="getRestaurantById" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+        SELECT * FROM restaurants
+        WHERE restaurant_id = #{restaurantId}
+    </select>
+    
+    <insert id="insertRestaurant" >
+    INSERT INTO restaurants (
+        name, description, address, phone, food_type, parking_available, total_seats
+    ) VALUES (
+        #{name}, #{description}, #{address}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+    )
+	</insert>
+    
+    <select id="getMenusByRestaurantId" resultType="com.mysite.restaurant.jh.MenuDTO">
+    SELECT * FROM menus
+    WHERE restaurant_id = #{restaurantId}
+</select>
+
+	<update id="updateAddress">
+	    UPDATE restaurants 
+	    SET 
+	        city = SUBSTRING_INDEX(address, ' ', 1),
+	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 2), ' ', -1),
+	        neighborhood = SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 3), ' ', -1),
+	        detail_addr = TRIM(REGEXP_REPLACE(address, '^[^ ]+ [^ ]+ [^ ]+ ', '')),
+	        -- 세종특별자치시에 대해 특별한 처리를 위한 조건
+	        city = CASE 
+	                  WHEN address LIKE '%세종특별자치시%' THEN SUBSTRING_INDEX(address, ' ', 1) 
+	                  ELSE city 
+	               END,
+	        district = CASE 
+              		WHEN address LIKE '%세종특별자치시%' THEN NULL
+            		ELSE district
+           		END,
+	        neighborhood = CASE 
+	                         WHEN address LIKE '%세종특별자치시%' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 2), ' ', -1)
+	                         ELSE neighborhood
+	                       END,
+	        detail_addr = CASE 
+	                         WHEN address LIKE '%세종특별자치시%' THEN TRIM(REGEXP_REPLACE(address, '^[^ ]+ [^ ]+ ', ''))
+	                         ELSE detail_addr
+	                       END
+	</update>
+	
+	<update id="updateRestaurant">
+	    UPDATE restaurants
+	    SET 
+	        name = #{name},
+	        description = #{description},
+	        address = #{address},
+	        phone = #{phone},
+	        food_type = #{foodType},
+	        parking_available = #{parkingAvailable},
+	        total_seats = #{totalSeats}
+	    WHERE restaurant_id = #{restaurantId}
+	</update>
+	
+	<delete id="deleteRestaurant">
+	    DELETE FROM restaurants
+	    WHERE restaurant_id = #{restaurantId}
+	</delete>
+	
+	<insert id="insertMenu">
+	    INSERT INTO menus (
+	        restaurant_id, name, price
+	    ) VALUES (
+	        #{restaurantId}, #{name}, #{price}
+	    )
+	</insert>
+
+	<delete id="deleteMenu">
+	    DELETE FROM menus
+	    WHERE menu_id = #{menuId} AND restaurant_id = #{restaurantId}
+	</delete>
+	
+	<insert id="insertImage">
+	    INSERT INTO restaurant_images (
+	        restaurant_id, image_url, image_order, uid
+	    ) VALUES (
+	        #{restaurantId}, #{imageUrl}, #{imageOrder}, #{uid}
+	    )
+	</insert> 
+	
+	 <select id="getRestaurantImageById" resultType="com.mysite.restaurant.jh.ImageDTO">
+    SELECT * FROM restaurant_images
+    WHERE restaurant_id = #{restaurantId}
+	</select>
+	
+		<delete id="deleteImage">
+	    DELETE FROM restaurant_images
+	    WHERE image_id = #{imageId} AND restaurant_id = #{restaurantId}
+	</delete>
+	
+</mapper>
