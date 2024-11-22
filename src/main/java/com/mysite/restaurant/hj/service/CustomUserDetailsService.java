@@ -47,7 +47,7 @@ public class CustomUserDetailsService  {
 	}
 	
 //	회원 탈퇴
-	public String deleteUser(String email) {
+	public int deleteUser(String email) {
 		return userMapper.deleteUser(email);
 	}
 	

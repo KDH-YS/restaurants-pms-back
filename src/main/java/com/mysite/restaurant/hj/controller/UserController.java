@@ -1,6 +1,6 @@
 package com.mysite.restaurant.hj.controller;
 
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,7 +60,7 @@ public class UserController {
     
 //  회원 탈퇴
     @DeleteMapping("/deleteUser")
-    public String deleteUser(@RequestParam("email") String email) {
+    public int deleteUser(@RequestParam("email") String email) {
     	return customUserDetailsService.deleteUser(email);
     }
     
