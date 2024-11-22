@@ -31,11 +31,12 @@ public class ReservationController {
         // 생성된 예약 정보를 JSON 형식으로 반환
         return ResponseEntity.ok().body(createdReservation);
     }
-    
+    //예약 목록 조회
     @GetMapping
     public List<ReservationEntity> getReservationsByEmail(@RequestParam("email") String email) {
         return reservationService.getReservationsByEmail(email);
     }
+    
  // 예약 수정
     @PutMapping("/{id}")
     public ResponseEntity<ReservationEntity> updateReservation(@PathVariable("id") Long id, @RequestBody ReservationEntity reservationEntity) {
@@ -70,7 +71,8 @@ public class ReservationController {
     	log.info("Fetching reservations for restaurantId: {}", restaurantId);
         return reservationService.getReservationsByRestaurant(restaurantId);
     }      
-
+    
+    //예약 삭제
     @DeleteMapping("/manager/{reservationId}")
     public ResponseEntity<String> DeleteReservation(@PathVariable("reservationId") long reservationId){
         boolean isCancelled = reservationService.DeleteReservation(reservationId);

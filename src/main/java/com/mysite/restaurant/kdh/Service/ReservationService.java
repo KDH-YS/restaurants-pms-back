@@ -23,6 +23,7 @@ public class ReservationService {
         reservationMapper.insertReservation(reservation);  // 예약 저장
         return reservation;  // 생성된 예약 객체 반환
     }
+    
     // 내 예약 조회
     public List<ReservationEntity> getReservationsByEmail(String email) {
         return reservationMapper.selectReservationsByEmail(email);

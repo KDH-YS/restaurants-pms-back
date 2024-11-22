@@ -1,0 +1,98 @@
+### 가게 목록
+GET http://localhost:8080/api/restaurants/1/reviews
+Content-Type: application/json
+
+### 리뷰 등록
+POST http://localhost:8080/api/reviews
+Content-Type: application/json
+
+{
+  "restaurantId": 100,
+  "userId": 5,
+  "reservationId": 19,
+  "tasteRating": 5,
+  "serviceRating": 5,
+  "atmosphereRating": 5,
+  "valueRating": 5,
+  "reviewContent": "너무너무 잘 먹었습니다",
+  "isVerifiedVisit": 1,
+  "helpfulCount": 11
+}
+### 리뷰 이미지 등록
+POST http://localhost:8080/api/reviews/5/img
+Content-Type: application/json
+
+{
+  "reviewId": 5,
+  "imageUrl": "http://example.com/images/review1.jpg",
+  "imageOrder": 2
+}
+### 리뷰 수정
+PUT http://localhost:8080/api/reviews/6
+Content-Type: application/json
+
+{
+  "reviewContent": "너무너무 잘 먹었습니다."
+}
+### 리뷰 이미지 수정
+PUT http://localhost:8080/api/reviews/5/img
+Content-Type: application/json
+
+{
+  "imageUrl": "http://example.com/images/updated_review.jpg"
+}
+### 리뷰 삭제
+DELETE http://localhost:8080/api/reviews/1
+Content-Type: application/json
+
+### 리뷰 이미지 삭제
+DELETE http://localhost:8080/api/reviews/1/img
+Content-Type: application/json
+
+### 내 리뷰
+GET http://localhost:8080/api/mypage/1/reviews
+Content-Type: application/json
+
+### 답글 조회
+GET http://localhost:8080/api/reviews/1/replies
+Content-Type: application/json
+### 답글 등록
+POST http://localhost:8080/api/reviews/1/replies
+Content-Type: application/json
+{
+  "reviewId": 1,
+  "userId": 3,
+  "replyContent": "This is a reply to the review."
+}
+### 답글 수정
+PUT http://localhost:8080/api/reviews/2/replies
+Content-Type: application/json
+{
+  "repliesContent": "너무 감사합니다."
+}
+### 답글 삭제
+DELETE http://localhost:8080/api/replies/2
+Content-Type: application/json
+### 신고 상세보기
+GET http://localhost:8080/api/admin/reports/1
+Content-Type: application/json
+### 신고 등록 1
+POST http://localhost:8080/api/reviews/{report_id}
+Content-Type: application/json
+{
+  "reviewId": 1,
+  "userId": 3,
+  "reason": "FAKE",
+  "reportDescription": "Inappropriate content"
+}
+### 신고 삭제
+DELETE http://localhost:8080/api/admin/reports/6
+Content-Type: application/json
+### 도움 버튼
+POST http://localhost:8080/api/reviews/1/helpful
+Content-Type: application/json
+{
+  "reviewId": 1,
+  "userId": 5,
+  "state": 1
+}
