@@ -75,7 +75,7 @@ public class RestaurantController {
 	@GetMapping("/create")
 	public String create() {
 		return "restaurant/create";
-	}
+	}   
 	@PostMapping("/create")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> insertRestaurant(@RequestBody RestaurantDTO restaurant) {
