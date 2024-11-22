@@ -27,7 +27,9 @@ public class CustomUserDetailsService  {
 		return userMapper.findByUserEmail(email);
 	}
 	
-//	내 정보 조회
+//	로그아웃
+	
+//	사용자 정보 조회
 	public User selectUserProfile(Long userId) {
         // 데이터베이스에서 유저 조회
         User user = userMapper.selectUserProfile(userId);
@@ -39,7 +41,7 @@ public class CustomUserDetailsService  {
         return user;
     }
 	
-//	내 정보 수정
+//	사용자 정보 수정
 	public int updateUserProfile(User user) {
 		return userMapper.updateUserProfile(user);
 	}
@@ -48,5 +50,13 @@ public class CustomUserDetailsService  {
 	public String deleteUser(String email) {
 		return userMapper.deleteUser(email);
 	}
+	
+//	소셜 로그인
+	
+//	휴대폰 인증
+	
+//	사업자 인증
+	
+//	사업자 인증 후 사용자 정보 수정
 	
 }

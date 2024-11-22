@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +39,9 @@ public class UserController {
     	return customUserDetailsService.findByUserEmail(email);
     }
     
-//	내 정보 조회
+//  로그아웃
+    
+//	사용자 정보 조회
     @GetMapping("/user/{user_id}")
     public ResponseEntity<User> getUser(@PathVariable("user_id") Long userId) {
         User user = customUserDetailsService.selectUserProfile(userId);
@@ -50,7 +53,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
     
-//  내 정보 수정
+//  사용자 정보 수정
     @PutMapping("/user")
     public int updateUserProfile(@RequestBody User user) {
     	return customUserDetailsService.updateUserProfile(user);

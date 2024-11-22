@@ -19,14 +19,14 @@
 	
 	<!-- 소셜 로그인 -->
 	
-	<!-- 내 정보 조회 -->
+	<!-- 사용자 정보 조회 -->
 	<select id="selectUserProfile" resultType="com.mysite.restaurant.hj.domain.User">
 		SELECT email, NAME, phone, notification_agreed
 		FROM users
 		WHERE user_id = #{user_id};
 	</select>
 	
-	<!-- 내 정보 수정 -->
+	<!-- 사용자 정보 수정 -->
 	<update id="updateUserProfile">
 		UPDATE users
 		SET NAME = #{name}, phone = #{phone}, notification_agreed = #{notification_agreed}
