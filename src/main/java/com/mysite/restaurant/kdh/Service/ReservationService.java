@@ -24,8 +24,8 @@ public class ReservationService {
         return reservation;  // 생성된 예약 객체 반환
     }
     // 내 예약 조회
-    public List<ReservationEntity> getReservationsByEmail(String email) {
-        return reservationMapper.selectReservationsByEmail(email);
+    public List<ReservationEntity> getReservationsByEmail(Long userId) {
+        return reservationMapper.selectReservationsByEmail(userId);
     }
     
     //내 예약 수정

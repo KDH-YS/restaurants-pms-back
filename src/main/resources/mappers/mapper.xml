@@ -31,7 +31,7 @@
         JOIN 
             restaurants res ON r.restaurant_id = res.restaurant_id
         WHERE 
-            u.email = #{email};
+            u.user_id = #{userId};
     </select>
 
     <!-- 예약 수정 -->

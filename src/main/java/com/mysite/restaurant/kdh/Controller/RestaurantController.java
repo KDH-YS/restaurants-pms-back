@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mysite.restaurant.kdh.Entity.ReservationEntity;
 import com.mysite.restaurant.kdh.Entity.ScheduleEntity;
 import com.mysite.restaurant.kdh.Service.ReservationService;
 
