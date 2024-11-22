@@ -1,7 +1,3 @@
-### 가게 목록
-GET http://localhost:8080/api/restaurants/1/reviews
-Content-Type: application/json
-
 ### 리뷰 등록
 POST http://localhost:8080/api/reviews
 Content-Type: application/json
@@ -18,6 +14,35 @@ Content-Type: application/json
   "isVerifiedVisit": 1,
   "helpfulCount": 11
 }
+
+### 리뷰 조회(가게ID)
+GET http://localhost:8080/api/restaurants/1/reviews
+Content-Type: application/json
+
+### 리뷰 수정
+PUT http://localhost:8080/api/reviews/8
+Content-Type: application/json
+
+{
+  "reviewContent": "리뷰 테스트"
+}
+
+### 리뷰 이미지 수정
+PUT http://localhost:8080/api/reviews/1/img
+Content-Type: application/json
+
+{
+  "imageUrl": "http://example.com/images/updated_review.jpg"
+}
+
+### 리뷰 삭제
+DELETE http://localhost:8080/api/reviews/1
+Content-Type: application/json
+
+### 내 리뷰
+GET http://localhost:8080/api/mypage/1/reviews
+Content-Type: application/json
+
 ### 리뷰 이미지 등록
 POST http://localhost:8080/api/reviews/5/img
 Content-Type: application/json
@@ -27,31 +52,11 @@ Content-Type: application/json
   "imageUrl": "http://example.com/images/review1.jpg",
   "imageOrder": 2
 }
-### 리뷰 수정
-PUT http://localhost:8080/api/reviews/6
-Content-Type: application/json
-
-{
-  "reviewContent": "너무너무 잘 먹었습니다."
-}
-### 리뷰 이미지 수정
-PUT http://localhost:8080/api/reviews/5/img
-Content-Type: application/json
-
-{
-  "imageUrl": "http://example.com/images/updated_review.jpg"
-}
-### 리뷰 삭제
-DELETE http://localhost:8080/api/reviews/1
-Content-Type: application/json
 
 ### 리뷰 이미지 삭제
 DELETE http://localhost:8080/api/reviews/1/img
 Content-Type: application/json
 
-### 내 리뷰
-GET http://localhost:8080/api/mypage/1/reviews
-Content-Type: application/json
 
 ### 답글 조회
 GET http://localhost:8080/api/reviews/1/replies

@@ -28,7 +28,8 @@ public class ReviewController {
     public int createReview(@RequestBody Reviews review) {
         return reviewService.insertReview(review);
     }
-
+    
+    //리뷰 조회(가게 ID로)
     @GetMapping("/restaurants/{restaurant_id}/reviews")
     public List<Reviews> getReview(@PathVariable("restaurant_id") Long restaurantId) {
         return reviewService.getReviewById(restaurantId);
