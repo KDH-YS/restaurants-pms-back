@@ -1,0 +1,12 @@
+
+### 레스토랑조회
+GET http://localhost:8080/api/restaurant
+Content-Type: application/json
+
+### 레스토랑검색
+GET http://localhost:8080/api/restaurant/search?foodType=중식&city=경상북도
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/api/restaurant/menu/123

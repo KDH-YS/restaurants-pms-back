@@ -15,11 +15,11 @@ import com.mysite.restaurant.kdh.Service.ReservationService;
 
 @RestController
 @RequestMapping("/api/restaurants")
-public class RestaurantController {
+public class RestaurantsController {
 	
     private final ReservationService reservationService;
 
-    public RestaurantController(ReservationService reservationService) {
+    public RestaurantsController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
     
