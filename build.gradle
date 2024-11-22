@@ -28,8 +28,14 @@ dependencies {
   	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
   	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'  	
   	runtimeOnly 'com.mysql:mysql-connector-j'  	
-/*  	implementation 'org.springframework.boot:spring-boot-starter-security'*/
-/*  	testImplementation 'org.springframework.security:spring-security-test'  	*/
+/*  implementation 'org.springframework.boot:spring-boot-starter-security'*/
+/*  testImplementation 'org.springframework.security:spring-security-test'  	*/
+  	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+  	
+  	runtimeOnly 'com.mysql:mysql-connector-j'  	
+  	// implementation 'org.springframework.boot:spring-boot-starter-security'
+  	// testImplementation 'org.springframework.security:spring-security-test' 	
+
   	// 테스트에서도 lombok 사용
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
