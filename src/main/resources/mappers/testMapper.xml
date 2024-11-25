@@ -15,7 +15,7 @@
     </insert>
 
     <!-- 리뷰 이미지 등록 -->
-    <insert id="insertReviewImg" parameterType="com.mysite.restaurant.js.model.Reviews">
+    <insert id="insertReviewImg" parameterType="com.mysite.restaurant.js.model.ReviewImg">
         INSERT INTO review_images (
             review_id, image_url, image_order
         )
@@ -62,6 +62,7 @@
     <!-- 특정 리뷰 조회 -->
     <select id="selectReview" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reviews">
         SELECT
+        	rev.review_id,
             u.name AS reviewer_name,
             ri.image_url,
             rev.review_content,
@@ -81,7 +82,7 @@
 
     <!-- 내 리뷰 조회 -->
     <select id="selectMyReviews" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reviews">
-        SELECT
+        <!--SELECT
             ri.image_url,
             rev.review_content,
             r.address,
@@ -94,7 +95,10 @@
         JOIN users u ON rev.user_id = u.user_id
         JOIN review_images ri ON rev.review_id = ri.review_id
         LEFT JOIN review_replies rr ON rev.review_id = rr.review_id
-        JOIN users u2 ON rr.user_id = u2.user_id;
+        JOIN users u2 ON rr.user_id = u2.user_id;-->
+	    SELECT * 
+	    FROM reviews 
+	    WHERE user_id = #{userId};
     </select>
     
     <!-- 답글 조회 조회 -->
@@ -170,5 +174,10 @@
         SET replies_content = #{repliesContent}
         WHERE reply_id = #{replyId};
     </update>
+    
+    <!-- 가게 조회 -->
+    <select id="selectShop" resultType="com.mysite.restaurant.js.model.Restaurants">
+        SELECT * FROM restaurants WHERE restaurant_id = #{restaurantId};
+    </select>
 
 </mapper>
