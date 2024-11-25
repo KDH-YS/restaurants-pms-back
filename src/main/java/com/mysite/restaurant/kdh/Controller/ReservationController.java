@@ -71,7 +71,7 @@ public class ReservationController {
     }      
 
     @DeleteMapping("/manager/{reservationId}")
-    public ResponseEntity<String> DeleteReservation(@PathVariable("reservationId") long reservationId){
+    public ResponseEntity<String> DeleteReservation(@PathVariable("reservationId") Long reservationId){
         boolean isCancelled = reservationService.DeleteReservation(reservationId);
         
         if (isCancelled) {
@@ -79,6 +79,12 @@ public class ReservationController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약 취소 요청에 실패했습니다.");
         }
+    }
+    @PutMapping("/manager/{reservationId}")
+    public ResponseEntity<ReservationEntity> putReservationManager(@PathVariable("reservationId") Long reservationId, @RequestBody ReservationEntity reservation){
+    	reservation.setReservationId(reservationId);
+    		ReservationEntity update= reservationService.updateReservationManager(reservation);
+    	return ResponseEntity.ok().body(update);
     }
 
     

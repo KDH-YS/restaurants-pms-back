@@ -20,4 +20,6 @@ public interface ReservationMapper {
     int deleteReservation(Long reservationId);
     void insertSchedule(ScheduleEntity schedule);
     int updateSchedule(ScheduleEntity schedule);
+    void updateReservationManager(ReservationEntity reservation);
+    ReservationEntity selectReservation(Long reservationId);
 }

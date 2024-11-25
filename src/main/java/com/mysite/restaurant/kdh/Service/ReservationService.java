@@ -70,5 +70,10 @@ public class ReservationService {
             return null;  // 수정이 실패한 경우
         }
     }
+    //예약 상태변경(업주)
+    public ReservationEntity updateReservationManager(ReservationEntity reservation) {
+    		 reservationMapper.updateReservationManager(reservation);
+    	return reservationMapper.selectReservation(reservation.getReservationId());
+    }
 
 }
