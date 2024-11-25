@@ -1,5 +1,7 @@
 package com.mysite.restaurant.hj.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,22 +13,42 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class UserService {
 
 	private final UserMapper userMapper;
 	
 	public boolean existsByUserId(String email) {
-		return userMapper.selectByUserEmail(email) != null;
+		return userMapper.selectByUserId(email) != null;
 	}
 	
+//	@Transactional
+//	public void signup(UserDTO user) {
+//		userMapper.create(user);
+//		
+//		UserAuthDTO userAuth = UserAuthDTO.builder()
+//				.userId(user.getUserId())
+//				.auth("USER")
+//				.build();
+//		userMapper.createAuth(userAuth);
+//	}
+	
+    public void signup(UserDTO userDTO) {
+        UserDTO user = new UserDTO();
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        user.setName(userDTO.getName());
+        user.setPhone(userDTO.getPhone());
+        // userId는 자동 생성되므로 설정하지 않음
+        userMapper.save(user);
+    }
+	
 	@Transactional
-	public void signup(UserDTO user) {
-		userMapper.create(user);
-		
-		UserAuthDTO userAuth = UserAuthDTO.builder()
-				.userId(user.getUserId())
-				.auth("USER")
-				.build();
+	public void updateLacstLogin(String email) {
+		userMapper.selectLastLogin(email);
+	}
+	
+	public Optional<UserDTO> getUserByUsername(String userName) {
+		return userMapper.selectByUsername(userName);
 	}
 }

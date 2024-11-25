@@ -16,7 +16,7 @@ import lombok.Setter;
 public class UserAuthDTO {
 
 	private Long authNo;
-	private Long userNo;
+	private Long userId;
 	private String auth;
 	private boolean isDeleted;
 	private LocalDateTime createdAt;

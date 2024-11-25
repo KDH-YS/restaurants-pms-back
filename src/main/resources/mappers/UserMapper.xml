@@ -3,7 +3,7 @@
 <mapper namespace="com.mysite.restaurant.hj.mapper.UserMapper">
 
 	<!-- 회원가입 -->
-	<insert id="save" parameterType="com.mysite.restaurant.hj.domain.User">
+	<insert id="save" parameterType="com.mysite.restaurant.hj.dto.UserDTO" useGeneratedKeys="true" keyProperty="user_id" keyColumn="user_id">
 		INSERT INTO users (email, PASSWORD, NAME, phone, notification_agreed)
 		VALUES (#{email}, #{password}, #{name}, #{phone}, #{notification_agreed});
 	</insert>
@@ -11,7 +11,7 @@
 	<!-- 이메일 중복 여부 -->
 	
 	<!-- 로그인 -->
-	<select id="findByUserEmail" resultType="com.mysite.restaurant.hj.domain.User">
+	<select id="findByUserEmail" resultType="com.mysite.restaurant.hj.dto.UserDTO">
 		SELECT email, PASSWORD
 		FROM users
 		WHERE email = #{email};
@@ -20,10 +20,10 @@
 	<!-- 소셜 로그인 -->
 	
 	<!-- 사용자 정보 조회 -->
-	<select id="selectUserProfile" resultType="com.mysite.restaurant.hj.domain.User">
+	<select id="selectUserProfile" resultType="com.mysite.restaurant.hj.dto.UserDTO">
 		SELECT email, NAME, phone, notification_agreed
 		FROM users
-		WHERE user_id = #{user_id};
+		WHERE email = #{email};
 	</select>
 	
 	<!-- 사용자 정보 수정 -->
@@ -37,7 +37,7 @@
 	<!-- 참조 데이터 삭제 -->
 	<delete id="deleteUserReference">
 		DELETE FROM review_replies
-		WHERE user_id = (SELECT user_id FROM users WHERE email = #{email});
+		WHERE email = (SELECT user_id FROM users WHERE email = #{email});
 	</delete>
 	<!-- 사용자 데이터 삭제 -->
 	<delete id="deleteUser">

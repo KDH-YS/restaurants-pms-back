@@ -1,4 +1,4 @@
-package com.mysite.restaurant.hj.dto;
+package com.mysite.restaurant.hj.jwt;
 
 import java.io.IOException;
 

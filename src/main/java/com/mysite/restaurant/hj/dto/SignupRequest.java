@@ -27,7 +27,9 @@ public class SignupRequest {
 	@Size(min = 2, max = 100)
 	private String name;
 	
+	@NotNull
 	private String phone;
+	
 	private Integer notification_agreed;
 	
 	public UserDTO toUserDTO(PasswordEncoder passwordEncoder) {

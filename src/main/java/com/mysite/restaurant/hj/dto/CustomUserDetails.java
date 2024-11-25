@@ -12,15 +12,17 @@ import lombok.Getter;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
+	private static final long serialVersionUID = 1L; // 클래스 버전에 대한 고유 ID
+	
 	private final UserDTO user;
 	private final Collection<? extends GrantedAuthority> authorities;
 	
 	public CustomUserDetails(UserDTO user) {
-		this.user = user;
-		this.authorities = user.getAuthorities().stream()
-				.map(auth -> new SimpleGrantedAuthority(auth.getAuth()))
-				.collect(Collectors.toList());
-	}
+        this.user = user;
+        this.authorities = user.getAuthorities().stream()
+                .map(auth -> new SimpleGrantedAuthority(auth.getAuth()))
+                .collect(Collectors.toList());
+    }
 	
 	@Override
 	public String getPassword() {
@@ -28,7 +30,7 @@ public class CustomUserDetails implements UserDetails {
 	}
 	
 	@Override
-	public String getEmail() {
+	public String getUsername() {
 		return user.getEmail();
 	}
 	
@@ -37,18 +39,18 @@ public class CustomUserDetails implements UserDetails {
 		return true;
 	}
 	
-	@Override
-	public boolean isAccountNonLocked() {
-		return !"SUSPENDED".equals(user.getStatus());
-	}
+//	@Override
+//	public boolean isAccountNonLocked() {
+//		return !"SUSPENDED".equals(user.getStatus());
+//	}
 	
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
 	
-	@Override
-	public boolean isEnabled() {
-		return "ACTIVE".equals(user.getStatus());
-	}
+//	@Override
+//	public boolean isEnabled() {
+//		return "ACTIVE".equals(user.getStatus());
+//	}
 }

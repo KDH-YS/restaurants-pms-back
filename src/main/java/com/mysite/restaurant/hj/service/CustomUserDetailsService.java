@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mysite.restaurant.hj.domain.User;
+import com.mysite.restaurant.hj.dto.UserDTO;
 import com.mysite.restaurant.hj.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -18,31 +18,31 @@ public class CustomUserDetailsService  {
 	private  UserMapper userMapper;
 	
 //	회원가입
-	public int save (User user) {
+	public int save (UserDTO user) {
 		return userMapper.save(user);
 	}
 	
 //	로그인
-	public User findByUserEmail(String email) {
-		return userMapper.findByUserEmail(email);
+	public UserDTO findByUserId(String email) {
+		return userMapper.selectByUserId(email);
 	}
 	
 //	로그아웃
 	
 //	사용자 정보 조회
-	public User selectUserProfile(Long userId) {
+	public UserDTO selectUserProfile(String email) {
         // 데이터베이스에서 유저 조회
-        User user = userMapper.selectUserProfile(userId);
+        UserDTO user = userMapper.selectUserProfile(email);
 
         if (user == null) {
-            throw new IllegalArgumentException("User not found with ID: " + userId);
+            throw new IllegalArgumentException("User not found with email: " + email);
         }
 
         return user;
     }
 	
 //	사용자 정보 수정
-	public int updateUserProfile(User user) {
+	public int updateUserProfile(UserDTO user) {
 		return userMapper.updateUserProfile(user);
 	}
 	
@@ -52,6 +52,8 @@ public class CustomUserDetailsService  {
 	}
 	
 //	소셜 로그인
+	
+//	이메일 인증
 	
 //	휴대폰 인증
 	

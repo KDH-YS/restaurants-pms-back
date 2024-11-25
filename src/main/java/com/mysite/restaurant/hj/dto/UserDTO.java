@@ -1,6 +1,7 @@
 package com.mysite.restaurant.hj.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserDTO {
 
-	private Long userId;
+	private Long user_id;
 	private String email;
 	private String password;
 	private String name;
@@ -25,6 +26,8 @@ public class UserDTO {
 	private UserType userType;			// 사용자 권한
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	
+	private List<UserAuthDTO> authorities;
 	
 	public enum UserType {
 		CUSTOMER,

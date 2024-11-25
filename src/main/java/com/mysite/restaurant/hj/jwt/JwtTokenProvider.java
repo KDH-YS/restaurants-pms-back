@@ -1,4 +1,4 @@
-package com.mysite.restaurant.hj.dto;
+package com.mysite.restaurant.hj.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -16,9 +16,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import com.mysite.restaurant.hj.dto.CustomUserDetails;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtTokenProvider {
 
-	@Value("${jwt.secret")
+	@Value("${jwt.secret}")
 	private String secretKey;
 	
 	@Value("${jwt.token-validity-in-seconds}")
@@ -52,12 +55,15 @@ public class JwtTokenProvider {
 		Date validity = new Date(now + this.tokenValidityInSeconds * 1000);
 		
 		return Jwts.builder()
-				.subject(userDetails.getUsername())
-				.claim("auth", authorities)
-				.claim("userName", userDetails.getUser().getUserName())
+//				Header
+				.signWith(key, SignatureAlgorithm.HS512)
+//				Payload
+//				-- Registered Claims
+				.subject(userDetails.getUsername())	// 로그인시 사용되는 식별자(보통 이메일이나 아이디)
 				.issuedAt(new Date(now))
 				.expiration(validity)
-				.signWith(key, SignatueAlgorithm.HS512)
+				.claim("userName", userDetails.getUser().getName())
+				.claim("auth", authorities)
 				.compact();
 	}
 	
@@ -73,7 +79,7 @@ public class JwtTokenProvider {
 					.map(SimpleGrantedAuthority::new)
 					.collect(Collectors.toList());
 		
-		User principal = new User(Claims.getSubject(), "", authorities);
+		User principal = new User();
 		
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
 	}
