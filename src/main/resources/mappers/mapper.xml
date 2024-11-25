@@ -124,6 +124,7 @@
     	WHERE schedule_id = #{scheduleId};  
 	</update>
     
+    <!--예약수정(업주) -->
     <update id="updateReservationManager" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
         UPDATE reservation
         SET 
@@ -131,6 +132,8 @@
         WHERE 
             reservation_id = #{reservationId};
     </update>
+    
+    <!-- 예약조회 업주 -->
     <select id="selectReservation" resultMap="reservationResultMap" parameterType="Long">
 	    SELECT  
     	    u.email, 
