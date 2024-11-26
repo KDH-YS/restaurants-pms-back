@@ -54,22 +54,22 @@ public class ReservationService {
         int rowsAffected = reservationMapper.deleteReservation(reservationId);
         return rowsAffected > 0; // 업데이트 성공 여부 반환
     }
+    //가게 스케쥴 조회
+    public List<ScheduleEntity> getScheduleByRestaurant(Long restaurantId){
+    	return reservationMapper.selectSchedule(restaurantId);
+    }
+    
     //가게 스케줄 입력
     public ScheduleEntity createSchedule(ScheduleEntity schedule) {
     		reservationMapper.insertSchedule(schedule);
     	return schedule;
     	
     }
-    //가게 스케줄 변경
-    public ScheduleEntity updateSchedule(ScheduleEntity schedule) {
-        int rowsAffected = reservationMapper.updateSchedule(schedule);        
-        // 수정이 성공하면 수정된 객체를 반환
-        if (rowsAffected > 0) {
-            return schedule;
-        } else {
-            return null;  // 수정이 실패한 경우
-        }
-    }
+    //가게 스케줄 삭제
+    public boolean deleteSchedule(Long ScheduleId) {
+        int rowsAffected = reservationMapper.deleteSchedule(ScheduleId);
+        return rowsAffected > 0; // 업데이트 성공 여부 반환
+   }
     //예약 상태변경(업주)
     public ReservationEntity updateReservationManager(ReservationEntity reservation) {
     		 reservationMapper.updateReservationManager(reservation);

@@ -102,27 +102,24 @@
    		DELETE FROM reservation
     	WHERE reservation_id = #{reservationId}
 	</delete>
-
+    <!-- 영업스케줄 조회 -->
+    <select id="selectSchedule" resultType="com.mysite.restaurant.kdh.Entity.ScheduleEntity" parameterType="Long">
+	    SELECT open_date, start_time,end_time, is_open, break_start, break_end, schedule_id
+	    from schedule where restaurant_id = #{restaurantId};
+	</select>
     <!-- 영업스케줄 입력 -->
     <insert id="insertSchedule" parameterType="com.mysite.restaurant.kdh.Entity.ScheduleEntity">
         INSERT INTO schedule
-        (restaurant_id, start_time, end_time, is_open, break_start, break_end, created_at, updated_at)
+        (restaurant_id, open_date, start_time, end_time, is_open, break_start, break_end, created_at, updated_at)
         VALUES 
-        (#{restaurantId}, #{startTime}, #{endTime}, #{isOpen}, #{breakStart}, #{breakEnd}, NOW(), NOW());
+        (#{restaurantId},#{openDate}, #{startTime}, #{endTime}, #{isOpen}, #{breakStart}, #{breakEnd}, NOW(), NOW());
     </insert>
     
-    <!-- 영업시간 수정 -->
-	<update id="updateSchedule" parameterType="com.mysite.restaurant.kdh.Entity.ScheduleEntity">
-    	UPDATE schedule
-    	SET 
-        	start_time = #{startTime},
-       		end_time = #{endTime},
-        	is_open = #{isOpen},
-        	break_start = #{breakStart},
-        	break_end = #{breakEnd},
-        	updated_at = NOW()  
-    	WHERE schedule_id = #{scheduleId};  
-	</update>
+    <!-- 영업시간 삭제 -->
+	<delete id="deleteSchedule" parameterType="Long">
+   		DELETE FROM schedule
+    	WHERE schedule_id = #{scheduleId}
+	</delete>
     
     <!--예약수정(업주) -->
     <update id="updateReservationManager" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">

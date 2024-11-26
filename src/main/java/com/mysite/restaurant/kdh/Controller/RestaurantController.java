@@ -1,14 +1,20 @@
 package com.mysite.restaurant.kdh.Controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mysite.restaurant.kdh.Entity.ReservationEntity;
 import com.mysite.restaurant.kdh.Entity.ScheduleEntity;
 import com.mysite.restaurant.kdh.Service.ReservationService;
 
@@ -28,20 +34,25 @@ public class RestaurantController {
     		ScheduleEntity insertedschedule = reservationService.createSchedule(schedule);
     	return ResponseEntity.ok(insertedschedule);
     }
-    
-    //스케줄 변경
-    @PutMapping("/schedule/{id}")
-    public ResponseEntity<ScheduleEntity> updateSchedule(@PathVariable("id")Long scheduleId, @RequestBody ScheduleEntity schedule){
-    	schedule.setScheduleId(scheduleId);  // URL에서 받은 id로 예약 ID 설정
 
-        // 예약 수정
-    	ScheduleEntity updatedSchedule = reservationService.updateSchedule(schedule);
+    @GetMapping("/schedule")
+    public ResponseEntity<List<ScheduleEntity>> getScheduleByRestaurant(@RequestParam("restaurantId") Long restaurantId) {
+        List<ScheduleEntity> scheduleList = reservationService.getScheduleByRestaurant(restaurantId);
 
-        if (updatedSchedule != null) {
-            return ResponseEntity.ok(updatedSchedule);  // 200 OK와 함께 수정된 예약 객체 반환
+        if (scheduleList.isEmpty()) {
+            return ResponseEntity.noContent().build();  // 상태 코드 204 (No Content)
+        }
+
+        return ResponseEntity.ok(scheduleList);  // 상태 코드 200 (OK)
+    }
+    @DeleteMapping("/schedule/{scheduleId}")
+    public ResponseEntity<String> DeleteReservation(@PathVariable("scheduleId") Long scheduleId){
+        boolean isCancelled = reservationService.deleteSchedule(scheduleId);
+        
+        if (isCancelled) {
+            return ResponseEntity.ok("일정이 삭제되었습니다.");
         } else {
-            // 예약 수정이 실패한 경우 404 Not Found 반환
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("일정 삭제가 실패했습니다.");
         }
     }
 

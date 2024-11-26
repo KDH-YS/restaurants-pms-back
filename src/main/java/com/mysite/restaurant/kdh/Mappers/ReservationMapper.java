@@ -19,7 +19,8 @@ public interface ReservationMapper {
     List<ReservationEntity> selectReservationsByRestaurant(Long restaurantId);
     int deleteReservation(Long reservationId);
     void insertSchedule(ScheduleEntity schedule);
-    int updateSchedule(ScheduleEntity schedule);
     void updateReservationManager(ReservationEntity reservation);
     ReservationEntity selectReservation(Long reservationId);
+    List<ScheduleEntity> selectSchedule(Long restaurantId);
+    int deleteSchedule(Long ScheduleId);
 }

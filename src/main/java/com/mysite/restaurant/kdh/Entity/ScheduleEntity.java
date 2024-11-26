@@ -1,6 +1,7 @@
 package com.mysite.restaurant.kdh.Entity;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -10,6 +11,7 @@ import lombok.Data;
 public class ScheduleEntity {
 	private Long scheduleId;
     private Long restaurantId;      // restaurant_id (BigInt) => Long
+    private LocalDate openDate;
     private LocalTime startTime; // start_time (Time) => LocalDateTime
     private LocalTime endTime;   // end_time (Time) => LocalDateTime
     private Boolean isOpen;          // is_open (TinyInt(1)) => Boolean
