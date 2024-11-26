@@ -1,11 +1,6 @@
 package com.mysite.restaurant.js.service;
 
-import com.mysite.restaurant.js.model.Helpful;
-import com.mysite.restaurant.js.model.Replies;
-import com.mysite.restaurant.js.model.Reports;
-import com.mysite.restaurant.js.model.Restaurants;
-import com.mysite.restaurant.js.model.ReviewImg;
-import com.mysite.restaurant.js.model.Reviews;
+import com.mysite.restaurant.js.model.*;
 import com.mysite.restaurant.js.mapper.ReviewMapper;
 
 import java.util.List;
@@ -60,7 +55,7 @@ public class ReviewService {
         return reviewMapper.selectMyReviews(userId);
     }
     
-    public Restaurants selectShop(Long restaurantId) {
-    	return reviewMapper.selectShop(restaurantId);
-    }
+    public Restaurants selectShop(Long restaurantId) { return reviewMapper.selectShop(restaurantId); }
+    public Reservation selectReservation(Long reservationId) { return reviewMapper.selectReservation(reservationId); }
+    public User selectUser(Long userId) { return reviewMapper.selectUser(userId); }
 }

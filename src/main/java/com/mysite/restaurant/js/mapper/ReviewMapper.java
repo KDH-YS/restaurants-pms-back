@@ -1,11 +1,6 @@
 package com.mysite.restaurant.js.mapper;
 
-import com.mysite.restaurant.js.model.Reviews;
-import com.mysite.restaurant.js.model.Replies;
-import com.mysite.restaurant.js.model.Reports;
-import com.mysite.restaurant.js.model.Restaurants;
-import com.mysite.restaurant.js.model.ReviewImg;
-import com.mysite.restaurant.js.model.Helpful;
+import com.mysite.restaurant.js.model.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -35,5 +30,7 @@ public interface ReviewMapper {
 
     List<Reviews> selectMyReviews(Long restaurantId);
     Restaurants selectShop(Long restaurantId);
+    Reservation selectReservation(Long reservationId);
+    User selectUser(Long userId);
 
 }

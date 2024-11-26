@@ -179,5 +179,14 @@
     <select id="selectShop" resultType="com.mysite.restaurant.js.model.Restaurants">
         SELECT * FROM restaurants WHERE restaurant_id = #{restaurantId};
     </select>
+    <!-- 예약정보 조회 -->
+    <select id="selectReservation" resultType="com.mysite.restaurant.js.model.Reservation">
+        SELECT * FROM reservation WHERE reservation_id = #{reservationId};
+    </select>
+    <!-- 유저정보 조회 -->
+    <select id="selectUser" resultType="com.mysite.restaurant.js.model.User">
+        SELECT * FROM users WHERE user_id = #{userId};
+    </select>
+
 
 </mapper>

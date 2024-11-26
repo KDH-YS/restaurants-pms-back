@@ -5,16 +5,11 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 
+import com.mysite.restaurant.js.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mysite.restaurant.js.model.Helpful;
-import com.mysite.restaurant.js.model.Replies;
-import com.mysite.restaurant.js.model.Reports;
-import com.mysite.restaurant.js.model.Restaurants;
-import com.mysite.restaurant.js.model.ReviewImg;
-import com.mysite.restaurant.js.model.Reviews;
 import com.mysite.restaurant.js.service.ReviewService;
 
 @RestController
@@ -132,5 +127,15 @@ public class ReviewController {
     @GetMapping("/restaurants/{restaurant_id}")
     public Restaurants getShop(@PathVariable("restaurant_id") Long restaurantId) {
         return reviewService.selectShop(restaurantId);
+    }
+    // 예약 조회
+    @GetMapping("/js/reservation/{reservation_id}")
+    public Reservation getReservation(@PathVariable("reservation_id") Long reservationId) {
+        return reviewService.selectReservation(reservationId);
+    }
+    // 유저 조회
+    @GetMapping("/js/user/{user_id}")
+    public User getUser(@PathVariable("user_id") Long userId) {
+        return reviewService.selectUser(userId);
     }
 }
