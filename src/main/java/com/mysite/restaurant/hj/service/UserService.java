@@ -44,8 +44,8 @@ public class UserService {
     }
 	
 	@Transactional
-	public void updateLacstLogin(String email) {
-		userMapper.selectLastLogin(email);
+	public UserDTO updateLastLogin(String email) {
+		return userMapper.selectLastLogin(email);
 	}
 	
 	public Optional<UserDTO> getUserByUsername(String userName) {

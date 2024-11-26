@@ -18,6 +18,6 @@ public interface UserMapper {
 	int deleteUser(String email);				//	회원 탈퇴
 	int updateUserProfile(UserDTO user);		//	사용자 정보 수정
 	
-	void selectLastLogin(String email);
+	UserDTO selectLastLogin(String email);
 	Optional<UserDTO> selectByUsername(String username);
 }

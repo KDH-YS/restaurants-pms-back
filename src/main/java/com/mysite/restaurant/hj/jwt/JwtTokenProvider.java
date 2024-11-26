@@ -61,7 +61,7 @@ public class JwtTokenProvider {
 		
 		return Jwts.builder()
 //				Header
-				.signWith(key) // , SignatureAlgorithm.HS512 제거
+				.signWith(key, SignatureAlgorithm.HS512) // , SignatureAlgorithm.HS512 제거
 //				Payload
 //				-- Registered Claims
 				.subject(userDetails.getUsername())	// 로그인시 사용되는 식별자(보통 이메일이나 아이디)

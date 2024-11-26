@@ -6,29 +6,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.mysite.restaurant.hj.dto.CustomUserDetails;
-import com.mysite.restaurant.hj.dto.JsonResponse;
-import com.mysite.restaurant.hj.dto.LoginRequest;
-import com.mysite.restaurant.hj.dto.SignupRequest;
-import com.mysite.restaurant.hj.dto.TokenResponse;
-import com.mysite.restaurant.hj.dto.UserDTO;
+import com.mysite.restaurant.hj.dto.*;
+import com.mysite.restaurant.hj.exception.BusinessException;
+import com.mysite.restaurant.hj.exception.CustomValidationException;
+import com.mysite.restaurant.hj.exception.ErrorCode;
 import com.mysite.restaurant.hj.jwt.JwtTokenProvider;
 import com.mysite.restaurant.hj.service.CustomUserDetailsService;
 import com.mysite.restaurant.hj.service.UserService;
@@ -97,30 +92,55 @@ public class AuthController {
 //    }
 	
 	@PostMapping("/login")
-    public ResponseEntity<JsonResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<JsonResponse> login(@Valid @RequestBody LoginRequest request, BindingResult bindingResult) {
+		
+		if (bindingResult.hasErrors()) {
+			throw new CustomValidationException(ErrorCode.VALIDATION_ERROR, bindingResult);
+		}
+		
     	UsernamePasswordAuthenticationToken authenticationToken = 
     			new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
     	
-    	Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-    	SecurityContextHolder.getContext().setAuthentication(authentication);
+//    	인증 과정 예외
+//    	- BadCredentialsException: 잘못된 비밀번호
+//    	- UsernameNotFoundException: 존재하지 않는 사용자
+//    	- LockedException: 계정 잠김
+//    	- DisabledException: 비활성화된 계정
+//    	- AcceountExpiredException: 만료된 계정
+    	try {
+    		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+    		SecurityContextHolder.getContext().setAuthentication(authentication);
+    		
+    		String jwt = tokenProvider.createToken(authentication);
+    		
+    		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    		UserDTO user = userDetails.getUser();
+    		
+    		userService.updateLastLogin(user.getEmail());
+    		
+    		TokenResponse tokenResponse = TokenResponse.builder()
+    				.token(jwt)
+    				.email(user.getEmail())
+    				.userName(user.getName())
+    				.build();
+    		
+    		return ResponseEntity.ok(JsonResponse.builder()
+    				.success(true)
+    				.message("로그인이 완료되었습니다.")
+    				.data(tokenResponse)
+    				.build());
+    	} catch (BadCredentialsException e) {
+    		throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
+    	} catch (UsernameNotFoundException e) {
+    		throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+    	} catch (LockedException e) {
+    		throw new BusinessException(ErrorCode.ACCESS_DENIED, "계정이 잠겼습니다.");
+    	} catch (DisabledException e) {
+    		throw new BusinessException(ErrorCode.ACCESS_DENIED, "비활성화된 계정입니다.");
+    	} catch (AccountExpiredException e) {
+    		throw new BusinessException(ErrorCode.ACCESS_DENIED, "만료된 계정입니다.");
+    	}
     	
-    	String jwt = tokenProvider.createToken(authentication);
-    	CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-    	UserDTO user = userDetails.getUser();
-    	
-    	userService.updateLacstLogin(user.getEmail());
-    	
-    	TokenResponse tokenResponse = TokenResponse.builder()
-    			.token(jwt)
-    			.email(user.getEmail())
-    			.userName(user.getName())
-    			.build();
-    	
-    	return ResponseEntity.ok(JsonResponse.builder()
-    			.success(true)
-    			.message("로그인이 완료되었습니다.")
-    			.data(tokenResponse)
-    			.build());
     }
     
 //  로그아웃
