@@ -38,12 +38,17 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.httpBasic(httpBasic -> httpBasic.disable())
+//			JWT는 세션을 필요하지 않음
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/login", "/api/auth/signup").permitAll()
 			.requestMatchers("/api/auth/me").authenticated()
 			.anyRequest().authenticated())
-			.exceptionHandling(exc -> exc.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-					.accessDeniedHandler(jwtAccessDeniedHandler))
+//			예외처리
+//			스프링 시큐리티 인증/인가 과정에서의 예외발생 처리
+			.exceptionHandling(exc -> exc
+					.authenticationEntryPoint(jwtAuthenticationEntryPoint) // 비인증 사용자가 권한이 요구되는 리소스 접근 - 401 Unauthorized
+					.accessDeniedHandler(jwtAccessDeniedHandler)) // 인증 사용자가 접근하는 리소스에 권한 없음 - 405 Forbidden
+//			UsernamePasswordAuthenticationFilter를 실행하기 전에 JwtFilter를 실행한다.
 			.addFilterBefore(new JwtFilter(tokenProvider),
 					UsernamePasswordAuthenticationFilter.class);
 		return http.build();
@@ -54,10 +59,12 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 	
+//	스프링 시큐리티에서 실제로 인증을 처리하는 인터페이스
+//	JWT 토큰 발급 전 사용자 인증에 사용
+//	username/password 검증에 사용
 	@Bean
 	public AuthenticationManager AuthenticationManager(
-			AuthenticationConfiguration authenticationConfiguration)
-	throws Exception {
+			AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 	
