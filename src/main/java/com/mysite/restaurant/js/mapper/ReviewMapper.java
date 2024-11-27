@@ -8,7 +8,8 @@ import java.util.List;
 @Mapper
 public interface ReviewMapper {
 	
-    List<Reviews> getReviewById(Long restaurantId);
+    List<Reviews> selectRestaurantReviews(Long restaurantId);
+    List<Reviews> selectMyReviews(Long restaurantId);
     int insertReview(Reviews review);
     int insertReviewImg(ReviewImg reviewImg);
     int updateReview(Reviews review);
@@ -28,7 +29,6 @@ public interface ReviewMapper {
     int insertHelpful(Helpful helpful);
     int deleteHelpful(Long voteId);
 
-    List<Reviews> selectMyReviews(Long restaurantId);
     Restaurants selectShop(Long restaurantId);
     Reservation selectReservation(Long reservationId);
     User selectUser(Long userId);

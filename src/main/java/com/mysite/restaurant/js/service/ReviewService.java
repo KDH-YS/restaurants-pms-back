@@ -15,8 +15,8 @@ public class ReviewService {
     private ReviewMapper reviewMapper;
 
     // 리뷰 목록 조회
-    public List<Reviews> getReviewById(Long restaurantId) {
-        return reviewMapper.getReviewById(restaurantId);
+    public List<Reviews> selectRestaurantReviews(Long restaurantId) {
+        return reviewMapper.selectRestaurantReviews(restaurantId);
     }
 
     public int insertReview(Reviews review) {
