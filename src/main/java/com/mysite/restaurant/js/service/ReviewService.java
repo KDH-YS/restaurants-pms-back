@@ -1,10 +1,6 @@
 package com.mysite.restaurant.js.service;
 
-import com.mysite.restaurant.js.model.Helpful;
-import com.mysite.restaurant.js.model.Replies;
-import com.mysite.restaurant.js.model.Reports;
-import com.mysite.restaurant.js.model.ReviewImg;
-import com.mysite.restaurant.js.model.Reviews;
+import com.mysite.restaurant.js.model.*;
 import com.mysite.restaurant.js.mapper.ReviewMapper;
 
 import java.util.List;
@@ -18,61 +14,48 @@ public class ReviewService {
     @Autowired
     private ReviewMapper reviewMapper;
 
-    public List<Reviews> getReviewById(Long reviewId) {
-        return reviewMapper.getReviewById(reviewId);
+    // 리뷰 목록 조회
+    public List<Reviews> selectRestaurantReviews(Long restaurantId) {
+        return reviewMapper.selectRestaurantReviews(restaurantId);
     }
+
     public int insertReview(Reviews review) {
         return reviewMapper.insertReview(review);
     }
+
     public int insertReviewImage(ReviewImg reviewImg) {
         return reviewMapper.insertReviewImg(reviewImg);
     }
+
     public int updateReview(Reviews review) {
         return reviewMapper.updateReview(review);
     }
-    public int updateReviewImage(ReviewImg reviewImg) {
-        return reviewMapper.updateReviewImage(reviewImg);
-    }
+
     public int deleteReview(Long reviewId) {
         return reviewMapper.deleteReview(reviewId);
     }
-    public int deleteReviewImg(Long reviewImgId) {
-        return reviewMapper.deleteReviewImg(reviewImgId);
+
+    public List<Replies> selectReplies(Long reviewId) {
+        return reviewMapper.selectReplies(reviewId);
     }
-    
-    public List<Replies> selectReplies(Long replyId) {
-        return reviewMapper.selectReplies(replyId);
-    }
+
     public int insertReplie(Replies replies) {
         return reviewMapper.insertReplie(replies);
-    }
-    public int updateReplies(Replies replies) {
-        return reviewMapper.updateReplies(replies);
-    }
-    public int deleteReply(Long replyId) {
-        return reviewMapper.deleteReply(replyId);
     }
 
     public int insertReport(Reports reports) {
         return reviewMapper.insertReport(reports);
     }
-    public List<Reports> selectReports(Long reportId) {
-        return reviewMapper.selectReports(reportId);
-    }
-    public int deleteReport(Long reportId) {
-        return reviewMapper.deleteReport(reportId);
-    }
 
-    
     public int insertHelpful(Helpful helpful) {
         return reviewMapper.insertHelpful(helpful);
     }
-    public int deleteHelpful(Long voteId) {
-        return reviewMapper.deleteHelpful(voteId);
-    }
 
-    
     public List<Reviews> selectMyReviews(Long userId) {
-    	return reviewMapper.selectMyReviews(userId);
+        return reviewMapper.selectMyReviews(userId);
     }
+    
+    public Restaurants selectShop(Long restaurantId) { return reviewMapper.selectShop(restaurantId); }
+    public Reservation selectReservation(Long reservationId) { return reviewMapper.selectReservation(reservationId); }
+    public User selectUser(Long userId) { return reviewMapper.selectUser(userId); }
 }

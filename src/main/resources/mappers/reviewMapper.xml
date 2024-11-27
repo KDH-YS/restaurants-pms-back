@@ -15,7 +15,7 @@
     </insert>
 
     <!-- 리뷰 이미지 등록 -->
-    <insert id="insertReviewImg" parameterType="com.mysite.restaurant.js.model.Reviews">
+    <insert id="insertReviewImg" parameterType="com.mysite.restaurant.js.model.ReviewImg">
         INSERT INTO review_images (
             review_id, image_url, image_order
         )
@@ -55,46 +55,17 @@
     </insert>
 
 	<!-- 리뷰 목록 조회 -->
-    <select id="getReviewById" resultType="com.mysite.restaurant.js.model.Reviews">
+    <select id="selectRestaurantReviews" resultType="com.mysite.restaurant.js.model.Reviews">
         SELECT * FROM reviews WHERE restaurant_id = #{restaurantId}
-    </select>
-    
-    <!-- 특정 리뷰 조회 -->
-    <select id="selectReview" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reviews">
-        SELECT
-            u.name AS reviewer_name,
-            ri.image_url,
-            rev.review_content,
-            rev.is_verified_visit,
-            rev.created_at,
-            rev.helpful_count,
-            u2.name AS reply_user_name,
-            rr.replies_content
-        FROM reviews rev
-        JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
-        JOIN users u ON rev.user_id = u.user_id
-        JOIN review_images ri ON rev.review_id = ri.review_id
-        LEFT JOIN review_replies rr ON rev.review_id = rr.review_id
-        JOIN users u2 ON rr.user_id = u2.user_id
-        WHERE rev.review_id = #{reviewId};
     </select>
 
     <!-- 내 리뷰 조회 -->
     <select id="selectMyReviews" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reviews">
-        SELECT
-            ri.image_url,
-            rev.review_content,
-            r.address,
-            rev.created_at,
-            u2.name,
-            rr.replies_content,
-            rr.created_at
+        SELECT rev.*, ri.*, r.*
         FROM reviews rev
         JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
-        JOIN users u ON rev.user_id = u.user_id
-        JOIN review_images ri ON rev.review_id = ri.review_id
-        LEFT JOIN review_replies rr ON rev.review_id = rr.review_id
-        JOIN users u2 ON rr.user_id = u2.user_id;
+        LEFT JOIN review_images ri ON rev.review_id = ri.review_id
+        WHERE user_id = #{userId};
     </select>
     
     <!-- 답글 조회 조회 -->
@@ -170,5 +141,19 @@
         SET replies_content = #{repliesContent}
         WHERE reply_id = #{replyId};
     </update>
+    
+    <!-- 가게 조회 -->
+    <select id="selectShop" resultType="com.mysite.restaurant.js.model.Restaurants">
+        SELECT * FROM restaurants WHERE restaurant_id = #{restaurantId};
+    </select>
+    <!-- 예약정보 조회 -->
+    <select id="selectReservation" resultType="com.mysite.restaurant.js.model.Reservation">
+        SELECT * FROM reservation WHERE reservation_id = #{reservationId};
+    </select>
+    <!-- 유저정보 조회 -->
+    <select id="selectUser" resultType="com.mysite.restaurant.js.model.User">
+        SELECT * FROM users WHERE user_id = #{userId};
+    </select>
+
 
 </mapper>
