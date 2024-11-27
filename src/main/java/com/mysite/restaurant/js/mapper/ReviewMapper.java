@@ -10,6 +10,7 @@ public interface ReviewMapper {
 	
     List<Reviews> selectRestaurantReviews(Long restaurantId);
     List<Reviews> selectMyReviews(Long restaurantId);
+    List<ReviewImg> selectReviewImg (Long reviewid);
     int insertReview(Reviews review);
     int insertReviewImg(ReviewImg reviewImg);
     int updateReview(Reviews review);
@@ -30,6 +31,7 @@ public interface ReviewMapper {
     int deleteHelpful(Long voteId);
 
     Restaurants selectShop(Long restaurantId);
+    List<RestaurantImg> selectShopImg(Long restaurantId);
     Reservation selectReservation(Long reservationId);
     User selectUser(Long userId);
 

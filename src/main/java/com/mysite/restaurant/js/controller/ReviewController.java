@@ -1,14 +1,16 @@
 package com.mysite.restaurant.js.controller;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.*;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import com.mysite.restaurant.js.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import com.mysite.restaurant.js.service.ReviewService;
 
@@ -19,63 +21,111 @@ public class ReviewController {
     @Autowired
     ReviewService reviewService;
 
-    // 가게 리뷰 조회
+    // 가게 리뷰와 리뷰 이미지 조회
     @GetMapping("/restaurants/{restaurant_id}/reviews")
-    public List<Reviews> getReview(@PathVariable("restaurant_id") Long restaurantId) {
-        return reviewService.selectRestaurantReviews(restaurantId);
+    public Map<String, Object> getReviewsWithImages(@PathVariable("restaurant_id") Long restaurantId) {
+        // 가게 리뷰 조회
+        List<Reviews> reviews = reviewService.selectRestaurantReviews(restaurantId);
+
+        // 각 리뷰에 해당하는 이미지 조회
+        Map<Long, List<ReviewImg>> reviewImagesMap = new HashMap<>();
+        for (Reviews review : reviews) {
+            // 리뷰에 해당하는 이미지 목록을 가져와서 Map에 저장
+            List<ReviewImg> imgs = reviewService.selectReviewImg(review.getReviewId());
+            reviewImagesMap.put(review.getReviewId(), imgs);
+        }
+
+        // 결과를 Map으로 묶어서 반환
+        Map<String, Object> result = new HashMap<>();
+        result.put("reviews", reviews);
+        result.put("reviewImages", reviewImagesMap);
+
+        return result;
     }
-    
+
+    // 내 리뷰와 리뷰 이미지 조회
+    @GetMapping("/mypage/{user_id}/reviews")
+    public Map<String, Object> getMyReviewsWithImages(@PathVariable("user_id") Long userId) {
+        // 사용자 리뷰 조회
+        List<Reviews> reviews = reviewService.selectMyReviews(userId);
+
+        // 리뷰 이미지 조회
+        List<ReviewImg> reviewImages = new ArrayList<>();
+        for (Reviews review : reviews) {
+            // 리뷰에 해당하는 이미지들을 조회하여 합침
+            List<ReviewImg> imgs = reviewService.selectReviewImg(review.getReviewId());
+            reviewImages.addAll(imgs);
+        }
+
+        // 결과를 Map으로 묶어서 반환
+        Map<String, Object> result = new HashMap<>();
+        result.put("reviews", reviews);
+        result.put("reviewImages", reviewImages);
+
+        return result;
+    }
+
+    //리뷰 작성
     @PostMapping("/reviews")
-    public int createReviewAndImage(
-            @RequestParam("review_content") String reviewContent,  // 리뷰 내용
-            @RequestParam(value = "restaurant_id") Long restaurantId, // 리뷰를 작성한 음식점 ID
-            @RequestParam(value = "user_id", required = true) Long userId, // 사용자 ID
-            @RequestParam(value = "taste_rating", required = true) Double tasteRating,  // 맛 평점
-            @RequestParam(value = "service_rating", required = true) Double serviceRating,  // 서비스 평점
-            @RequestParam(value = "atmosphere_rating", required = true) Double atmosphereRating,  // 분위기 평점
-            @RequestParam(value = "value_rating", required = true) Double valueRating,  // 가성비 평점
+    public ResponseEntity<String> createReview(
+            @RequestParam("review_content") String reviewContent,
+            @RequestParam("restaurant_id") Long restaurantId,
+            @RequestParam("user_id") Long userId,
+            @RequestParam("taste_rating") Double tasteRating,
+            @RequestParam("service_rating") Double serviceRating,
+            @RequestParam("atmosphere_rating") Double atmosphereRating,
+            @RequestParam("value_rating") Double valueRating,
             @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+
+        // 예약 정보 가져오기
+        Reservation reservation = reviewService.selectReservation(restaurantId);
+
+        if (reservation == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reservation not found.");
+        }
+
+        // 예약 시간과 현재 시간 비교
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime reviewPossibleTime = reservation.getReservationTime().plusMinutes(30);
+
+        if (now.isBefore(reviewPossibleTime)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can write a review only 30 minutes after the reservation.");
+        }
 
         // 1. 리뷰 내용과 평점 처리 (Review 객체 생성 후 저장)
         Reviews review = new Reviews();
-        review.setReviewContent(reviewContent);  // 리뷰 내용 설정
-        review.setRestaurantId(restaurantId);  // 음식점 ID 설정
-        review.setUserId(userId);  // userId 설정
-        review.setTasteRating(tasteRating);  // 맛 평점 설정
-        review.setServiceRating(serviceRating);  // 서비스 평점 설정
-        review.setAtmosphereRating(atmosphereRating);  // 분위기 평점 설정
-        review.setValueRating(valueRating);  // 가성비 평점 설정
-        
-        int reviewId = reviewService.insertReview(review);  // 리뷰 등록
+        review.setReviewContent(reviewContent);
+        review.setRestaurantId(restaurantId);
+        review.setUserId(userId);
+        review.setTasteRating(tasteRating);
+        review.setServiceRating(serviceRating);
+        review.setAtmosphereRating(atmosphereRating);
+        review.setValueRating(valueRating);
+
+        int reviewId = reviewService.insertReview(review);
 
         // 2. 이미지가 있으면 이미지 처리 (ReviewImg 객체 생성 후 저장)
         if (image != null && !image.isEmpty()) {
-            // 서버의 디렉토리 경로 설정
-            String uploadDir = "uploads/reviews";  // 업로드 디렉토리
+            String uploadDir = "uploads/reviews";
             File dir = new File(uploadDir);
             if (!dir.exists()) {
-                dir.mkdirs();  // 디렉토리가 없으면 생성
+                dir.mkdirs();
             }
 
-            // 파일 이름 생성 (중복을 피하기 위해 UUID 사용 가능)
             String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-
-            // 파일 경로 설정
             Path filePath = Paths.get(uploadDir, fileName);
-            Files.copy(image.getInputStream(), filePath);  // 파일 저장
+            Files.copy(image.getInputStream(), filePath);
 
-            // ReviewImg 객체 생성
             ReviewImg reviewImg = new ReviewImg();
-            reviewImg.setReviewId(Long.valueOf(reviewId));  // 리뷰와 연결
-            reviewImg.setImageUrl(filePath.toString());  // 이미지 경로 저장
-            reviewImg.setImageOrder(1);  // 이미지 순서 (필요한 경우 설정)
+            reviewImg.setReviewId(Long.valueOf(reviewId));
+            reviewImg.setImageUrl(filePath.toString());
+            reviewImg.setImageOrder(1);
 
-            reviewService.insertReviewImage(reviewImg);  // 이미지 등록
+            reviewService.insertReviewImage(reviewImg);
         }
-
-        return reviewId;  // 리뷰 등록 후 리뷰 ID 반환
+        // 리뷰 작성 성공 시 생성된 리뷰 ID와 함께 HTTP 상태 코드 201 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body("Review created successfully with ID: " + reviewId);
     }
-
 
     // 리뷰 수정
     @PutMapping("/reviews/{review_id}")
@@ -88,12 +138,6 @@ public class ReviewController {
     @DeleteMapping("/reviews/{review_id}")
     public int deleteReview(@PathVariable("review_id") Long reviewId) {
         return reviewService.deleteReview(reviewId);
-    }
-    
-    // 내 리뷰 조회
-    @GetMapping("/mypage/{user_id}/reviews")
-    public List<Reviews> getMyReview(@PathVariable("user_id") Long userId) {
-        return reviewService.selectMyReviews(userId);
     }
 
     // 답글 조회
@@ -122,11 +166,20 @@ public class ReviewController {
         helpful.setReviewId(reviewId);
         return reviewService.insertHelpful(helpful);
     }
-    
-    // 특정 가게 조회
+
+    // 가게 정보
     @GetMapping("/restaurants/{restaurant_id}")
-    public Restaurants getShop(@PathVariable("restaurant_id") Long restaurantId) {
-        return reviewService.selectShop(restaurantId);
+    public ResponseEntity<Map<String, Object>> getShopDetails(@PathVariable("restaurant_id") Long restaurantId) {
+
+        // 가게 정보*이미지 조회
+        Restaurants restaurant = reviewService.selectShop(restaurantId);
+        List<RestaurantImg> restaurantImg = reviewService.selectShopImg(restaurantId);
+        // 결과를 Map에 담기
+        Map<String, Object> response = new HashMap<>();
+        response.put("restaurant", restaurant);
+        response.put("restaurantImg", restaurantImg);
+
+        return ResponseEntity.ok(response);
     }
     // 예약 조회
     @GetMapping("/js/reservation/{reservation_id}")

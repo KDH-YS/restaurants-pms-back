@@ -18,6 +18,14 @@ public class ReviewService {
     public List<Reviews> selectRestaurantReviews(Long restaurantId) {
         return reviewMapper.selectRestaurantReviews(restaurantId);
     }
+    // 내 리뷰 조회
+    public List<Reviews> selectMyReviews(Long userId) {
+        return reviewMapper.selectMyReviews(userId);
+    }
+    // 리뷰 이미지 조회
+    public List<ReviewImg> selectReviewImg(Long reviewId) {
+        return reviewMapper.selectReviewImg(reviewId);
+    }
 
     public int insertReview(Reviews review) {
         return reviewMapper.insertReview(review);
@@ -50,12 +58,9 @@ public class ReviewService {
     public int insertHelpful(Helpful helpful) {
         return reviewMapper.insertHelpful(helpful);
     }
-
-    public List<Reviews> selectMyReviews(Long userId) {
-        return reviewMapper.selectMyReviews(userId);
-    }
     
     public Restaurants selectShop(Long restaurantId) { return reviewMapper.selectShop(restaurantId); }
+    public List<RestaurantImg> selectShopImg(Long restaurantId) { return reviewMapper.selectShopImg(restaurantId); }
     public Reservation selectReservation(Long reservationId) { return reviewMapper.selectReservation(reservationId); }
     public User selectUser(Long userId) { return reviewMapper.selectUser(userId); }
 }
