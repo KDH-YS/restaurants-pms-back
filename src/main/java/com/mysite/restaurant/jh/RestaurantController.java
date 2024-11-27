@@ -12,8 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,47 +67,47 @@ public class RestaurantController {
 //        return "restaurant/search";
 //    }
     
-    //레스토랑디테일
-    @GetMapping("/restaurant/{restaurantId}")
-    @ResponseBody
-   public RestaurantDTO restaurantDetail(@PathVariable("restaurantId")int restaurantId) {
-	   return restaurantService.getRestaurantById(restaurantId);
-   }
-
-    //레스토랑 등록
-	@GetMapping("/create")
-	public String create() {
-		return "restaurant/create";
-	}   
-	@PostMapping("/create")
-	@ResponseBody
-	public ResponseEntity<Map<String, String>> insertRestaurant(@RequestBody RestaurantDTO restaurant) {
-	    try {
-	        restaurantService.insertRestaurant(restaurant);
-	        Map<String, String> response = new HashMap<>();
-	        response.put("message", "레스토랑 등록 성공");
-	        return ResponseEntity.ok(response);  // 200 OK 응답
-	    } catch (Exception e) {
-	        Map<String, String> errorResponse = new HashMap<>();
-	        errorResponse.put("error", "레스토랑 등록에 실패했습니다.");
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // 500 오류 응답
-	    }
-	}
-	
-	 // 레스토랑 정보 수정
-    @GetMapping("/updateRestaurant/{restaurantId}")
-    public String showUpdateForm(@PathVariable("restaurantId") int restaurantId, Model model) {
-        RestaurantDTO restaurant = restaurantService.getRestaurantById(restaurantId);
-        model.addAttribute("restaurant", restaurant);
-        return "restaurant/updateRestaurant"; // Thymeleaf 템플릿을 사용하는 경우
-    }
-
-    // 레스토랑 정보 수정 처리
-    @PostMapping("/updateRestaurant")
-    public String updateRestaurant(@ModelAttribute RestaurantDTO restaurant) {
-        restaurantService.updateRestaurant(restaurant);  // 서비스에서 수정 처리
-        return "redirect:/restaurant/" + restaurant.getRestaurantId(); // 수정 후 레스토랑 상세 페이지로 리디렉션
-    }
+//    //레스토랑디테일
+//    @GetMapping("/restaurant/{restaurantId}")
+//    @ResponseBody
+//   public RestaurantDTO restaurantDetail(@PathVariable("restaurantId")int restaurantId) {
+//	   return restaurantService.getRestaurantById(restaurantId);
+//   }
+//
+//    //레스토랑 등록
+//	@GetMapping("/create")
+//	public String create() {
+//		return "restaurant/create";
+//	}   
+//	@PostMapping("/create")
+//	@ResponseBody
+//	public ResponseEntity<Map<String, String>> insertRestaurant(@RequestBody RestaurantDTO restaurant) {
+//	    try {
+//	        restaurantService.insertRestaurant(restaurant);
+//	        Map<String, String> response = new HashMap<>();
+//	        response.put("message", "레스토랑 등록 성공");
+//	        return ResponseEntity.ok(response);  // 200 OK 응답
+//	    } catch (Exception e) {
+//	        Map<String, String> errorResponse = new HashMap<>();
+//	        errorResponse.put("error", "레스토랑 등록에 실패했습니다.");
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // 500 오류 응답
+//	    }
+//	}
+//	
+//	 // 레스토랑 정보 수정
+//    @GetMapping("/updateRestaurant/{restaurantId}")
+//    public String showUpdateForm(@PathVariable("restaurantId") int restaurantId, Model model) {
+//        RestaurantDTO restaurant = restaurantService.getRestaurantById(restaurantId);
+//        model.addAttribute("restaurant", restaurant);
+//        return "restaurant/updateRestaurant"; // Thymeleaf 템플릿을 사용하는 경우
+//    }
+//
+//    // 레스토랑 정보 수정 처리
+//    @PostMapping("/updateRestaurant")
+//    public String updateRestaurant(@ModelAttribute RestaurantDTO restaurant) {
+//        restaurantService.updateRestaurant(restaurant);  // 서비스에서 수정 처리
+//        return "redirect:/restaurant/" + restaurant.getRestaurantId(); // 수정 후 레스토랑 상세 페이지로 리디렉션
+//    }
     
  // 레스토랑 목록과 페이지네이션 정보 반환
     @GetMapping("/api/restaurant")
@@ -159,4 +161,50 @@ public class RestaurantController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    	// 레스토랑 상세 정보를 가져오는 API 엔드포인트
+    	@GetMapping("/api/restaurant/{restaurantId}")
+    	public ResponseEntity<RestaurantDTO> restaurantDetail(@PathVariable("restaurantId") int restaurantId) {
+        // 서비스에서 restaurantId에 해당하는 레스토랑 정보를 가져옴
+        RestaurantDTO restaurantDTO = restaurantService.getRestaurantById(restaurantId);
+        
+        // 레스토랑 정보가 존재하면 반환, 존재하지 않으면 404 Not Found 반환
+        if (restaurantDTO != null) {
+            return ResponseEntity.ok(restaurantDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    	
+    	 // 레스토랑 등록 API (POST)
+        @PostMapping("api/restaurant/create")
+        public ResponseEntity<Map<String, String>> insertRestaurant(@RequestBody RestaurantDTO restaurant) {
+            try {
+                restaurantService.insertRestaurant(restaurant);
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "레스토랑 등록 성공");
+                return ResponseEntity.ok(response);  // 200 OK 응답
+            } catch (Exception e) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "레스토랑 등록에 실패했습니다.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // 500 오류 응답
+            }
+        }
+
+        // 레스토랑 정보 수정 API (PUT)
+        @PutMapping("/api/restaurant/update/{restaurantId}")
+        public ResponseEntity<Map<String, String>> updateRestaurant(@PathVariable("restaurantId") int restaurantId, 
+                                                                    @RequestBody RestaurantDTO restaurant) {
+            try {
+                restaurant.setRestaurantId(restaurantId);  // URL에서 전달된 restaurantId를 객체에 설정
+                restaurantService.updateRestaurant(restaurant);
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "레스토랑 정보 수정 성공");
+                return ResponseEntity.ok(response);  // 200 OK 응답
+            } catch (Exception e) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "레스토랑 정보 수정에 실패했습니다.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // 500 오류 응답
+            }
+        }
 }
