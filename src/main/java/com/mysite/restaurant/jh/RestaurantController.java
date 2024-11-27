@@ -16,53 +16,54 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
     
-    //레스토랑 페이지네이션
-    @GetMapping("/restaurant")
-    public String listRestaurants(
-        @RequestParam(name ="page", defaultValue = "1") int page,  // 페이지 파라미터
-        @RequestParam(name= "size", defaultValue = "16") int size,  // 페이지 파라미터
-        Model model) {
-
-        // 서비스 호출
-        List<RestaurantDTO> restaurants = restaurantService.getRestaurants(page,size);
-        
-        int totalCount = restaurantService.countTotal();
-        int totalPages = (int)Math.ceil((double) totalCount/size);
-        int startPageGroup =(int)((page-1)/10)*10 +1;
-        int endPageGroup = Math.min(startPageGroup+9,totalPages);
-        
-        model.addAttribute("restaurants", restaurants);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("pageSize",size);
-        model.addAttribute("startPageGroup",startPageGroup);
-        model.addAttribute("endPageGroup",endPageGroup);
-        return "restaurant";  // 검색 결과를 보여줄 JSP 또는 Thymeleaf 템플릿
-    }
+//    //레스토랑 페이지네이션
+//    @GetMapping("/restaurant")
+//    public String listRestaurants(
+//        @RequestParam(name ="page", defaultValue = "1") int page,  // 페이지 파라미터
+//        @RequestParam(name= "size", defaultValue = "16") int size,  // 페이지 파라미터
+//        Model model) {
+//
+//        // 서비스 호출
+//        List<RestaurantDTO> restaurants = restaurantService.getRestaurants(page,size);
+//        
+//        int totalCount = restaurantService.countTotal();
+//        int totalPages = (int)Math.ceil((double) totalCount/size);
+//        int startPageGroup =(int)((page-1)/10)*10 +1;
+//        int endPageGroup = Math.min(startPageGroup+9,totalPages);
+//        
+//        model.addAttribute("restaurants", restaurants);
+//        model.addAttribute("currentPage", page);
+//        model.addAttribute("totalPages", totalPages);
+//        model.addAttribute("pageSize",size);
+//        model.addAttribute("startPageGroup",startPageGroup);
+//        model.addAttribute("endPageGroup",endPageGroup);
+//        return "restaurant";  // 검색 결과를 보여줄 JSP 또는 Thymeleaf 템플릿
+//    }
     
     //레스토랑 검색
-    @GetMapping("/restaurant/search")
-    public String searchRestaurants(RestaurantDTO restaurant,
-         Model model) {
-
-        // 서비스 호출
-        List<RestaurantDTO> restaurants = restaurantService.searchRestaurants(restaurant);
-
-        model.addAttribute("restaurants", restaurants);
-        return "restaurant/search";
-    }
+//    @GetMapping("/restaurant/search")
+//    public String searchRestaurants(RestaurantDTO restaurant,
+//         Model model) {
+//
+//        // 서비스 호출
+//        List<RestaurantDTO> restaurants = restaurantService.searchRestaurants(restaurant);
+//
+//        model.addAttribute("restaurants", restaurants);
+//        return "restaurant/search";
+//    }
     
     //레스토랑디테일
     @GetMapping("/restaurant/{restaurantId}")
@@ -106,11 +107,14 @@ public class RestaurantController {
         return "redirect:/restaurant/" + restaurant.getRestaurantId(); // 수정 후 레스토랑 상세 페이지로 리디렉션
     }
     
-    //레스토랑 조회api 역순, 페이지네이션없
+ // 레스토랑 목록과 페이지네이션 정보 반환
     @GetMapping("/api/restaurant")
-    public ResponseEntity<List<RestaurantDTO>> restaurantListApi(RestaurantDTO restaurant){
-    	List<RestaurantDTO> restaurants = restaurantService.getRestaurantsAll();
-    	return ResponseEntity.ok(restaurants);
+    public RestaurantPageResponse getRestaurantList(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "24") int size) {
+
+        // 레스토랑 목록과 페이지네이션 응답 반환
+        return restaurantService.getRestaurants(page, size);
     }
     
     //레스토랑삭제
@@ -120,27 +124,39 @@ public class RestaurantController {
     	restaurantService.deleteRestaurant(restaurantId);
     }
     
-    //레스토랑 검색
-    @GetMapping("api/restaurant/search")
-    public ResponseEntity<List<RestaurantDTO>> searchRestaurantsApi(@ModelAttribute RestaurantDTO restaurant) {
+    @GetMapping("/api/restaurant/search")
+    public ResponseEntity<RestaurantPageResponse> searchRestaurantsApi(
+        @RequestParam(value = "city", required = false) String city,
+        @RequestParam(value = "district", required = false) String district,
+        @RequestParam(value = "foodType", required = false) String foodType,
+        @RequestParam(value = "parkingAvailable", required = false) Boolean parkingAvailable,
+        @RequestParam(value = "reservationAvailable", required = false) Boolean reservationAvailable,
+        @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "size", defaultValue = "24") int size
+    ) {
+        RestaurantDTO restaurantDTO = new RestaurantDTO();
+        restaurantDTO.setCity(city);
+        restaurantDTO.setDistrict(district);
+        restaurantDTO.setFoodType(foodType);
+        restaurantDTO.setParkingAvailable(parkingAvailable);
+        restaurantDTO.setReservationAvailable(reservationAvailable);
+
         try {
             // 서비스 호출로 레스토랑 검색
-            List<RestaurantDTO> restaurants = restaurantService.searchRestaurants(restaurant);
-            
+            RestaurantPageResponse response = restaurantService.searchRestaurants(restaurantDTO, page, size);
+
             // 검색 결과가 없으면 204 No Content 반환
-            if (restaurants.isEmpty()) {
+            if (response.getContent().isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
 
             // 검색 결과가 있으면 200 OK와 함께 데이터 반환
-            return ResponseEntity.ok(restaurants);
-            
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             // 예외 처리: 서버 에러 500 반환
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-
 }

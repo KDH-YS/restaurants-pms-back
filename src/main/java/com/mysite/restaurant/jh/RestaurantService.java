@@ -11,23 +11,65 @@ public class RestaurantService {
 
     private final RestaurantMapper restaurantMapper;
 
-    public List<RestaurantDTO> getRestaurants(int page, int size) {
-    	//page 값이 1보다 작으면 1로 설정(1페이지부터 시작)
-    	if(page <= 0) {
-    		page=1;
-    	}
-    	int offset = (page-1) * size; //페이지네이션 오프셋 계
-            return restaurantMapper.getRestaurants(offset,size);
+    public RestaurantPageResponse getRestaurants(int page, int size) {
+        // 페이지가 1보다 작으면 1로 설정
+        if (page <= 0) {
+            page = 1;
+        }
+
+        // 오프셋 계산 (현재 페이지에서 가져올 데이터의 시작 위치)
+        int offset = (page - 1) * size;
+
+        // 레스토랑 목록 조회
+        List<RestaurantDTO> restaurants = restaurantMapper.getRestaurants(offset, size);
+
+        // 총 레스토랑 개수 조회
+        int totalRestaurants = restaurantMapper.countTotal();
+
+        // 전체 페이지 수 계산 (총 레스토랑 개수 / 페이지 크기)
+        int totalPages = (int) Math.ceil((double) totalRestaurants / size);
+
+        // 현재 페이지 번호, 페이지 크기 포함하여 RestaurantPageResponse 반환
+        return new RestaurantPageResponse(
+            restaurants,        // 레스토랑 목록
+            totalPages,        // 전체 페이지 수
+            totalRestaurants,  // 총 레스토랑 개수
+            page,              // 현재 페이지 번호
+            size               // 페이지 크기
+        );
     }
-    public 	List<RestaurantDTO> getRestaurantsAll(){
-    	return restaurantMapper.getRestaurantsAll();
-    };
 
     
-    public List<RestaurantDTO> searchRestaurants(RestaurantDTO restaurant) {
-
-        return restaurantMapper.getSearch(restaurant);
+    List<RestaurantDTO> getRestaurantsAll(RestaurantDTO restaurant){
+    	return restaurantMapper.getRestaurantsAll(restaurant);
     }
+    
+    public 	List<RestaurantDTO> getRestaurants(String foodType, String city, String district, String neighborhood){
+    	return restaurantMapper.getRestaurantsAll(foodType, city, district, neighborhood);
+    };
+
+ // 레스토랑 검색 결과를 페이지네이션 처리하여 반환하는 메서드
+    public RestaurantPageResponse searchRestaurants(RestaurantDTO restaurant, int page, int size) {
+        // 페이지 번호를 0부터 시작하게 하여 LIMIT에 맞게 조정
+        int offset = (page - 1) * size;
+
+        // 검색된 레스토랑 목록
+        List<RestaurantDTO> content = restaurantMapper.getSearch(restaurant, offset, size);
+        
+        // 검색된 레스토랑 개수
+        int totalElements = restaurantMapper.countSearch(restaurant);
+        
+        // 전체 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        // 페이지 정보 포함하여 반환
+        return new RestaurantPageResponse(content, totalPages, totalElements, page, size);
+    }
+    // 검색 조건을 기반으로 레스토랑의 총 개수를 반환하는 메서드
+    public int countSearch(RestaurantDTO restaurant) {
+        return restaurantMapper.countSearch(restaurant);
+    }
+
     public int countTotal() {
     	return restaurantMapper.countTotal();
     }

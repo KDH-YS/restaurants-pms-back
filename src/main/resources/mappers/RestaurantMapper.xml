@@ -20,29 +20,56 @@
 </resultMap>
     
     <!-- 검색 쿼리 -->
-    <select id="getSearch" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+<select id="getSearch" resultType="com.mysite.restaurant.jh.RestaurantDTO">
     SELECT * FROM restaurants
     <where>
-        <if test="city != null">
-            AND city = #{city}
+        <if test="restaurant.city != null">
+            AND city = #{restaurant.city}
         </if>
-        <if test="district != null">
-            AND district = #{district}
+        <if test="restaurant.district != null">
+            AND district = #{restaurant.district}
         </if>
-        <if test="neighborhood != null">
-            AND neighborhood = #{neighborhood}
+        <if test="restaurant.neighborhood != null">
+            AND neighborhood = #{restaurant.neighborhood}
         </if>
-        <if test="foodType != null">
-            AND food_type = #{foodType}
+        <if test="restaurant.foodType != null">
+            AND food_type = #{restaurant.foodType}
         </if>
-        <if test="parkingAvailable != null">
-            AND parking_available = #{parkingAvailable}
+        <if test="restaurant.parkingAvailable != null">
+            AND parking_available = #{restaurant.parkingAvailable}
         </if>
-        <if test="reservationAvailable != null">
-            AND reservation_available = #{reservationAvailable}
+        <if test="restaurant.reservationAvailable != null">
+            AND reservation_available = #{restaurant.reservationAvailable}
         </if>
     </where>
-	</select>
+    LIMIT #{size} OFFSET #{offset}
+</select>
+
+<!-- countSearch 쿼리 수정 -->
+<select id="countSearch" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM restaurants
+    <where>
+        <if test="restaurant.city != null">
+            AND city = #{restaurant.city}
+        </if>
+        <if test="restaurant.district != null">
+            AND district = #{restaurant.district}
+        </if>
+        <if test="restaurant.neighborhood != null">
+            AND neighborhood = #{restaurant.neighborhood}
+        </if>
+        <if test="restaurant.foodType != null">
+            AND food_type = #{restaurant.foodType}
+        </if>
+        <if test="restaurant.parkingAvailable != null">
+            AND parking_available = #{restaurant.parkingAvailable}
+        </if>
+        <if test="restaurant.reservationAvailable != null">
+            AND reservation_available = #{restaurant.reservationAvailable}
+        </if>
+    </where>
+</select>
+
 
 	<select id="getRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
     SELECT * FROM restaurants
