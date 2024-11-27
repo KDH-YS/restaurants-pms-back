@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class TokenResponse {
 
 	private String token;
-	private String email;
+	private String user_name;
 	private String name;
 }

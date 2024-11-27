@@ -10,16 +10,25 @@ import com.mysite.restaurant.hj.dto.UserDTO;
 @Mapper
 public interface UserMapper {
 
-	int save(UserDTO user);						//	회원가입
+//	회원가입
+	int save(UserDTO user);
 	void create(UserDTO user);
 	void createAuth(UserAuthDTO userAuth);
-	UserDTO selectUserByUserId(String email);	//	로그인
-	UserDTO selectUserProfile(String email);		//	사용자 정보 조회
-	int deleteUser(String email);				//	회원 탈퇴
-	int updateUserProfile(UserDTO user);		//	사용자 정보 수정
 	
+//	로그인
+	UserDTO selectUserByUserId(String user_name);
 	void updateLastLogin(Long user_id);
 	Optional<UserDTO> selectUserByUsername(String name);
+	Optional<UserDTO> selectMemberByUserId(String user_name);
+//	Optional<UserDTO> findByUserId(String user_name);
 	
-	Optional<UserDTO> selectMemberByUserId(String email);
+//	사용자 정보 조회
+	UserDTO selectUserProfile(String user_name);
+	
+//	사용자 정보 수정
+	int updateUserProfile(UserDTO user);
+	
+//	회원 탈퇴
+	int deleteUser(String user_name);
+	
 }

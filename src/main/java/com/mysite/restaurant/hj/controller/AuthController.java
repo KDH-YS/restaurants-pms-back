@@ -72,14 +72,14 @@ public class AuthController {
 		}
 		
     	UsernamePasswordAuthenticationToken authenticationToken = 
-    			new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+    			new UsernamePasswordAuthenticationToken(request.getUser_name(), request.getPassword());
     	
 //    	인증 과정 예외
 //    	- BadCredentialsException: 잘못된 비밀번호
 //    	- UsernameNotFoundException: 존재하지 않는 사용자
 //    	- LockedException: 계정 잠김
 //    	- DisabledException: 비활성화된 계정
-//    	- AcceountExpiredException: 만료된 계정
+//    	- AccountExpiredException: 만료된 계정
     	try {
     		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -93,7 +93,7 @@ public class AuthController {
     		
     		TokenResponse tokenResponse = TokenResponse.builder()
     				.token(jwt)
-    				.email(user.getEmail())
+    				.user_name(user.getUser_name())
     				.name(user.getName())
     				.build();
     		
@@ -120,8 +120,8 @@ public class AuthController {
     
 //	사용자 정보 조회
     @GetMapping("/me/{user_id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("email") String email) {
-        UserDTO user = customUserDetailsService.selectUserProfile(email);
+    public ResponseEntity<UserDTO> getUser(@PathVariable("user_name") String user_name) {
+        UserDTO user = customUserDetailsService.selectUserProfile(user_name);
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -138,8 +138,8 @@ public class AuthController {
     
 //  회원 탈퇴
     @DeleteMapping("/deleteUser")
-    public int deleteUser(@RequestParam("email") String email) {
-    	return customUserDetailsService.deleteUser(email);
+    public int deleteUser(@RequestParam("user_name") String user_name) {
+    	return customUserDetailsService.deleteUser(user_name);
     }
     
 }

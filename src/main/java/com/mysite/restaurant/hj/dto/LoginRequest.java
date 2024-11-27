@@ -15,7 +15,7 @@ public class LoginRequest {
 
 	@NotNull
 	@Size(min = 3, max = 50)
-	private String email;
+	private String user_name;
 	
 	@NotNull
 	@Size(min = 3, max = 100)

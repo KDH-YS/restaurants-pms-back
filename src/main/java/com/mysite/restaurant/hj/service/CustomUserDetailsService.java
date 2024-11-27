@@ -32,19 +32,19 @@ public class CustomUserDetailsService implements UserDetailsService {
 //	}
 	
 	@Override
-    public UserDetails loadUserByUsername(String email) {
-        return new CustomUserDetails(userMapper.selectMemberByUserId(email).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND)));
+    public UserDetails loadUserByUsername(String user_name) {
+        return new CustomUserDetails(userMapper.selectMemberByUserId(user_name).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND)));
     }
 	
 //	로그아웃
 	
 //	사용자 정보 조회
-	public UserDTO selectUserProfile(String email) {
+	public UserDTO selectUserProfile(String user_name) {
         // 데이터베이스에서 유저 조회
-        UserDTO user = userMapper.selectUserProfile(email);
+        UserDTO user = userMapper.selectUserProfile(user_name);
 
         if (user == null) {
-            throw new IllegalArgumentException("User not found with email: " + email);
+            throw new IllegalArgumentException("User not found with user_name: " + user_name);
         }
 
         return user;
@@ -56,8 +56,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 	}
 	
 //	회원 탈퇴
-	public int deleteUser(String email) {
-		return userMapper.deleteUser(email);
+	public int deleteUser(String user_name) {
+		return userMapper.deleteUser(user_name);
 	}
 	
 //	소셜 로그인

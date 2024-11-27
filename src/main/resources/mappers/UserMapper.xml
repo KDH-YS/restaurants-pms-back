@@ -4,9 +4,10 @@
 
 	<resultMap id="memberMap" type="com.mysite.restaurant.hj.dto.UserDTO">
         <id property="userId" column="user_id"/>
-        <result property="email" column="email"/>
+        <result property="userName" column="user_name"/>
         <result property="password" column="password"/>
         <result property="name" column="name"/>
+        <result property="email" column="email"/>
         <result property="phone" column="phone"/>
         <result property="profileImageUrl" column="profile_image_url"/>
         <result property="notificationAgreed" column="notification_agreed"/>
@@ -21,23 +22,23 @@
 
 	<!-- 회원가입 -->
 	<insert id="save" parameterType="com.mysite.restaurant.hj.dto.UserDTO" useGeneratedKeys="true" keyProperty="user_id" keyColumn="user_id">
-		INSERT INTO users (email, PASSWORD, NAME, phone, notification_agreed)
-		VALUES (#{email}, #{password}, #{name}, #{phone}, #{notification_agreed});
+		INSERT INTO users (user_name, PASSWORD, NAME, email, phone, notification_agreed)
+		VALUES (#{user_name}, #{password}, #{name}, #{email}, #{phone}, #{notification_agreed});
 	</insert>
 	
 	<!-- 이메일 중복 여부 -->
 	
 	<!-- 로그인 -->
-	<select id="findByUserEmail" resultType="com.mysite.restaurant.hj.dto.UserDTO">
-		SELECT email, PASSWORD
+	<select id="selectUserByUserId" resultMap="memberMap">
+		SELECT user_name, PASSWORD
 		FROM users
-		WHERE email = #{email};
+		WHERE user_name = #{user_name};
 	</select>
 	
-	<select id="selectLastLogin" resultType="com.mysite.restaurant.hj.dto.UserDTO">
-		SELECT email, PASSWORD
+	<select id="selectLastLogin" resultMap="memberMap">
+		SELECT user_name, PASSWORD
 		FROM users
-		WHERE email = #{email};
+		WHERE user_name = #{user_name};
 	</select>
 	
 	<select id="selectMemberByUserId" resultMap="memberMap">
@@ -46,34 +47,43 @@
         LEFT JOIN user_auth ua ON u.user_id = ua.user_id
         WHERE u.user_id = #{user_id}
     </select>
+    
+	<select id="loadUserByUsername" resultMap="memberMap">
+        SELECT u.*, ua.auth_no, ua.auth
+        FROM users u
+        LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+        WHERE u.user_name = #{user_name}
+    </select>
 	
 	<!-- 소셜 로그인 -->
 	
 	<!-- 사용자 정보 조회 -->
 	<select id="selectUserProfile" resultType="com.mysite.restaurant.hj.dto.UserDTO">
-		SELECT email, NAME, phone, notification_agreed
+		SELECT NAME, email, phone, notification_agreed
 		FROM users
-		WHERE email = #{email};
+		WHERE user_name = #{user_name};
 	</select>
 	
 	<!-- 사용자 정보 수정 -->
 	<update id="updateUserProfile">
 		UPDATE users
 		SET NAME = #{name}, phone = #{phone}, notification_agreed = #{notification_agreed}
-		WHERE email = #{email};
+		WHERE user_name = #{user_name};
 	</update>
 	
 	<!-- 회원 탈퇴 -->	
 	<!-- 참조 데이터 삭제 -->
 	<delete id="deleteUserReference">
 		DELETE FROM review_replies
-		WHERE email = (SELECT user_id FROM users WHERE email = #{email});
+		WHERE user_name = (SELECT user_id FROM users WHERE user_name = #{user_name});
 	</delete>
 	<!-- 사용자 데이터 삭제 -->
 	<delete id="deleteUser">
 		DELETE FROM users
-		WHERE email = #{email};
+		WHERE user_name = #{user_name};
 	</delete>
+	
+	<!-- 이메일 인증 -->
 	
 	<!-- 휴대폰 인증 -->
 	<!-- 인증 코드 저장 -->
