@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
+//	TODO 사용자 예외처리
 	@Override
 	public void handle(HttpServletRequest request, 
 					   HttpServletResponse response, 

@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+//	TODO 사용자 예외처리
 	@Override
 	public void commence(HttpServletRequest request,
 						 HttpServletResponse response,

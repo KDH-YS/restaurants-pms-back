@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mysite.restaurant.hj.mapper.UserMapper">
 
+	<resultMap id="memberMap" type="com.mysite.restaurant.hj.dto.UserDTO">
+        <id property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="profileImageUrl" column="profile_image_url"/>
+        <result property="notificationAgreed" column="notification_agreed"/>
+        <result property="userType" column="user_type"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <collection property="authorities" ofType="com.mysite.restaurant.hj.dto.UserAuthDTO">
+            <id property="authNo" column="auth_no"/>
+            <result property="auth" column="auth"/>
+        </collection>
+    </resultMap>
+
 	<!-- 회원가입 -->
 	<insert id="save" parameterType="com.mysite.restaurant.hj.dto.UserDTO" useGeneratedKeys="true" keyProperty="user_id" keyColumn="user_id">
 		INSERT INTO users (email, PASSWORD, NAME, phone, notification_agreed)
@@ -22,6 +39,13 @@
 		FROM users
 		WHERE email = #{email};
 	</select>
+	
+	<select id="selectMemberByUserId" resultMap="memberMap">
+        SELECT u.*, ua.auth_no, ua.auth
+        FROM users u
+        LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+        WHERE u.user_id = #{user_id}
+    </select>
 	
 	<!-- 소셜 로그인 -->
 	

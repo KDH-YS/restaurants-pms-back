@@ -9,9 +9,9 @@ import lombok.Getter;
 @Builder
 public class UserResponse {
 
-	private String userId;
-	private String name;
+	private Long userId;
 	private String email;
+	private String name;
 	private String phone;
 	private UserType userType;
 	
@@ -19,7 +19,6 @@ public class UserResponse {
 		return UserResponse.builder()
 				.email(userDTO.getEmail())
 				.name(userDTO.getName())
-				.email(userDTO.getEmail())
 				.phone(userDTO.getPhone())
 				.userType(userDTO.getUserType())
 				.build();

@@ -28,8 +28,11 @@ public class JwtFilter extends OncePerRequestFilter {
 		String jwt = resolveToken(request);
 		
 		try {
+//			토큰이 존재 && 유효한 토큰인가?
 			if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+//				토큰에서 클레임 추출 후 추출한 클레임에서 권한 정보를 추출하여 Authentication 객체를 생성
 				Authentication authentication = tokenProvider.getAuthentication(jwt);
+//				SecurityContext에 Authentication 객체를 저장 -> 이제 이 요청은 인증된 요청이 됨.
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 				log.debug("Security Context에 '{}' 인증 정보를 저장했습니다.", authentication.getName());
 			}

@@ -13,13 +13,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = false)
+@Transactional(readOnly = true)
 public class UserService {
 
 	private final UserMapper userMapper;
 	
-	public boolean existsByUserId(String email) {
-		return userMapper.selectByUserId(email) != null;
+	public boolean existsUserByUserId(String email) {
+		return userMapper.selectUserByUserId(email) != null;
 	}
 	
 //	@Transactional
@@ -44,11 +44,11 @@ public class UserService {
     }
 	
 	@Transactional
-	public UserDTO updateLastLogin(String email) {
-		return userMapper.selectLastLogin(email);
+	public void updateLastLogin(Long user_id) {
+		userMapper.updateLastLogin(user_id);
 	}
 	
-	public Optional<UserDTO> getUserByUsername(String userName) {
-		return userMapper.selectByUsername(userName);
+	public Optional<UserDTO> getUserByUsername(String name) {
+		return userMapper.selectUserByUsername(name);
 	}
 }

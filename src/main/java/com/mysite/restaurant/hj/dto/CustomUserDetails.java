@@ -11,8 +11,6 @@ import lombok.Getter;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
-
-	private static final long serialVersionUID = 1L; // 클래스 버전에 대한 고유 ID
 	
 	private final UserDTO user;
 	private final Collection<? extends GrantedAuthority> authorities;

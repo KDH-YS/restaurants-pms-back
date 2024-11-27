@@ -3,19 +3,23 @@ package com.mysite.restaurant.hj.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import com.mysite.restaurant.hj.dto.CustomUserDetails;
 import com.mysite.restaurant.hj.dto.UserDTO;
+import com.mysite.restaurant.hj.exception.BusinessException;
+import com.mysite.restaurant.hj.exception.ErrorCode;
 import com.mysite.restaurant.hj.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService  {
+public class CustomUserDetailsService implements UserDetailsService {
 
-	@Autowired
-	private  UserMapper userMapper;
+	private final UserMapper userMapper;
 	
 //	회원가입
 	public int save (UserDTO user) {
@@ -23,9 +27,14 @@ public class CustomUserDetailsService  {
 	}
 	
 //	로그인
-	public UserDTO findByUserId(String email) {
-		return userMapper.selectByUserId(email);
-	}
+//	public UserDTO findByUserId(String email) {
+//		return userMapper.selectByUserId(email);
+//	}
+	
+	@Override
+    public UserDetails loadUserByUsername(String email) {
+        return new CustomUserDetails(userMapper.selectMemberByUserId(email).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND)));
+    }
 	
 //	로그아웃
 	

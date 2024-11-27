@@ -47,28 +47,6 @@ public class AuthController {
 //	private CustomUserDetailsService customUserDetailsService;
 	
 //	회원가입 처리
-//	@PostMapping("/signup")
-//	public int signup (@RequestBody User user) {
-//		return customUserDetailsService.save(user);
-//	}
-	
-//	@PostMapping("/signup")
-//	public ResponseEntity<JsonResponse> signup(@Valid @RequestBody SignupRequest request) {
-//		if (userService.existsByUserId(request.getUserId())) {
-//			throw new DuplicateKeyException("이미 사용중인 아이디입니다.");
-//		}
-//		
-//		UserDTO member = request.toUserDTO(passwordEncoder);
-//		userService.signup(member);
-//		
-//		return ResponseEntity
-//				.status(HttpStatus.CREATED)
-//				.body(JsonResponse.builder()
-//						.success(true)
-//						.message("회원가입이 완료되었습니다.")
-//						.build());
-//	}
-	
 	@PostMapping("/signup")
 	public ResponseEntity<JsonResponse> signup(@Valid @RequestBody SignupRequest request) {
 	    // 비밀번호 암호화 및 DTO 변환
@@ -86,11 +64,6 @@ public class AuthController {
 	}
 
 //  로그인
-//    @PostMapping("/login")
-//    public UserDTO login(@RequestBody String userId) {
-//    	return customUserDetailsService.findByUserId(userId);
-//    }
-	
 	@PostMapping("/login")
     public ResponseEntity<JsonResponse> login(@Valid @RequestBody LoginRequest request, BindingResult bindingResult) {
 		
@@ -116,12 +89,12 @@ public class AuthController {
     		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
     		UserDTO user = userDetails.getUser();
     		
-    		userService.updateLastLogin(user.getEmail());
+    		userService.updateLastLogin(user.getUser_id());
     		
     		TokenResponse tokenResponse = TokenResponse.builder()
     				.token(jwt)
     				.email(user.getEmail())
-    				.userName(user.getName())
+    				.name(user.getName())
     				.build();
     		
     		return ResponseEntity.ok(JsonResponse.builder()
