@@ -10,7 +10,7 @@ import lombok.Getter;
 public class UserResponse {
 
 	private Long userId;
-	private String user_name;
+	private String userName;
 	private String name;
 	private String email;
 	private String phone;
@@ -18,7 +18,7 @@ public class UserResponse {
 	
 	public static UserResponse from (UserDTO userDTO) {
 		return UserResponse.builder()
-				.user_name(userDTO.getUser_name())
+				.userName(userDTO.getUserName())
 				.name(userDTO.getName())
 				.email(userDTO.getEmail())
 				.phone(userDTO.getPhone())

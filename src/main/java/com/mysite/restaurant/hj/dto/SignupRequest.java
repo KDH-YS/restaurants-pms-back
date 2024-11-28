@@ -17,7 +17,7 @@ public class SignupRequest {
 
 	@NotNull
 	@Size(min = 3, max = 50)
-	private String user_name;
+	private String userName;
 	
 	@NotNull
 	@Size(min = 3, max = 100)
@@ -43,16 +43,16 @@ public class SignupRequest {
 	@NotNull
 	private String phone;
 	
-	private Integer notification_agreed;
+	private Integer notificationAgreed;
 	
 	public UserDTO toUserDTO(PasswordEncoder passwordEncoder) {
 		return UserDTO.builder()
-				.user_name(this.user_name)
+				.userName(this.userName)
 				.password(passwordEncoder.encode(this.password))
 				.name(this.name)
 				.email(this.email)
 				.phone(this.phone)
-				.notification_agreed(this.notification_agreed)
+				.notificationAgreed(this.notificationAgreed)
 				.build();
 	}
 }

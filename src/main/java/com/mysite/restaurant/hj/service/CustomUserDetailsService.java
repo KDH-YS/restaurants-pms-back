@@ -1,6 +1,7 @@
 package com.mysite.restaurant.hj.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,19 +33,21 @@ public class CustomUserDetailsService implements UserDetailsService {
 //	}
 	
 	@Override
-    public UserDetails loadUserByUsername(String user_name) {
-        return new CustomUserDetails(userMapper.selectMemberByUserId(user_name).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND)));
+    public UserDetails loadUserByUsername(String userName) {
+		UserDTO userDto = userMapper.selectMemberByUserId2(userName);
+	
+        return new CustomUserDetails(userMapper.selectMemberByUserId(userName).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND)));
     }
 	
 //	로그아웃
 	
 //	사용자 정보 조회
-	public UserDTO selectUserProfile(String user_name) {
+	public UserDTO selectUserProfile(String userName) {
         // 데이터베이스에서 유저 조회
-        UserDTO user = userMapper.selectUserProfile(user_name);
+        UserDTO user = userMapper.selectUserProfile(userName);
 
         if (user == null) {
-            throw new IllegalArgumentException("User not found with user_name: " + user_name);
+            throw new IllegalArgumentException("User not found with user_name: " + userName);
         }
 
         return user;
@@ -56,8 +59,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 	}
 	
 //	회원 탈퇴
-	public int deleteUser(String user_name) {
-		return userMapper.deleteUser(user_name);
+	public int deleteUser(String userName) {
+		return userMapper.deleteUser(userName);
 	}
 	
 //	소셜 로그인

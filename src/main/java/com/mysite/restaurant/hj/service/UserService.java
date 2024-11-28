@@ -18,8 +18,8 @@ public class UserService {
 
 	private final UserMapper userMapper;
 	
-	public boolean existsUserByUserId(String user_name) {
-		return userMapper.selectUserByUserId(user_name) != null;
+	public boolean existsUserByUserId(String userName) {
+		return userMapper.selectUserByUserId(userName) != null;
 	}
 	
 //	@Transactional
@@ -35,7 +35,7 @@ public class UserService {
 	
     public void signup(UserDTO userDTO) {
         UserDTO user = new UserDTO();
-        user.setUser_name(userDTO.getUser_name());
+        user.setUserName(userDTO.getUserName());
         user.setPassword(userDTO.getPassword());
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
@@ -45,8 +45,8 @@ public class UserService {
     }
 	
 	@Transactional
-	public void updateLastLogin(Long user_id) {
-		userMapper.updateLastLogin(user_id);
+	public void updateLastLogin(Long userId) {
+		userMapper.updateLastLogin(userId);
 	}
 	
 	public Optional<UserDTO> getUserByUsername(String name) {

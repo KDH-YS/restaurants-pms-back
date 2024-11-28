@@ -16,19 +16,20 @@ public interface UserMapper {
 	void createAuth(UserAuthDTO userAuth);
 	
 //	로그인
-	UserDTO selectUserByUserId(String user_name);
-	void updateLastLogin(Long user_id);
+	UserDTO selectUserByUserId(String userName);
+	void updateLastLogin(Long userId);
 	Optional<UserDTO> selectUserByUsername(String name);
-	Optional<UserDTO> selectMemberByUserId(String user_name);
+	Optional<UserDTO> selectMemberByUserId(String userName);
+	UserDTO selectMemberByUserId2(String userName);
 //	Optional<UserDTO> findByUserId(String user_name);
 	
 //	사용자 정보 조회
-	UserDTO selectUserProfile(String user_name);
+	UserDTO selectUserProfile(String userName);
 	
 //	사용자 정보 수정
 	int updateUserProfile(UserDTO user);
 	
 //	회원 탈퇴
-	int deleteUser(String user_name);
+	int deleteUser(String userName);
 	
 }

@@ -72,7 +72,7 @@ public class AuthController {
 		}
 		
     	UsernamePasswordAuthenticationToken authenticationToken = 
-    			new UsernamePasswordAuthenticationToken(request.getUser_name(), request.getPassword());
+    			new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword());
     	
 //    	인증 과정 예외
 //    	- BadCredentialsException: 잘못된 비밀번호
@@ -89,11 +89,11 @@ public class AuthController {
     		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
     		UserDTO user = userDetails.getUser();
     		
-    		userService.updateLastLogin(user.getUser_id());
+    		userService.updateLastLogin(user.getUserId());
     		
     		TokenResponse tokenResponse = TokenResponse.builder()
     				.token(jwt)
-    				.user_name(user.getUser_name())
+    				.userName(user.getUserName())
     				.name(user.getName())
     				.build();
     		
@@ -120,8 +120,8 @@ public class AuthController {
     
 //	사용자 정보 조회
     @GetMapping("/me/{user_id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("user_name") String user_name) {
-        UserDTO user = customUserDetailsService.selectUserProfile(user_name);
+    public ResponseEntity<UserDTO> getUser(@PathVariable("user_name") String userName) {
+        UserDTO user = customUserDetailsService.selectUserProfile(userName);
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -138,8 +138,8 @@ public class AuthController {
     
 //  회원 탈퇴
     @DeleteMapping("/deleteUser")
-    public int deleteUser(@RequestParam("user_name") String user_name) {
-    	return customUserDetailsService.deleteUser(user_name);
+    public int deleteUser(@RequestParam("userName") String userName) {
+    	return customUserDetailsService.deleteUser(userName);
     }
     
 }
