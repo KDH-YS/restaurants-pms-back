@@ -30,6 +30,7 @@ public class ReservationController {
         // 생성된 예약 정보를 JSON 형식으로 반환
         return ResponseEntity.ok().body(createdReservation);
     }
+    
     // 내 예약 조회
     @GetMapping
     public List<ReservationEntity> getReservationsByEmail(@RequestParam("userId") Long userId) {
