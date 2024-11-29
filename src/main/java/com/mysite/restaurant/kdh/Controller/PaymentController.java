@@ -15,7 +15,7 @@ public class PaymentController {
 
     @Value("${portone.api.secret}")
     private String portoneApiSecret;
-
+    
     private final RestTemplate restTemplate;
     private final PaymentService paymentService;
 
@@ -37,33 +37,32 @@ public class PaymentController {
             ResponseEntity<String> paymentResponse = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
             if (!paymentResponse.getStatusCode().is2xxSuccessful()) {
-                throw new RuntimeException("Payment verification failed: " + paymentResponse.getBody());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment verification failed: " + paymentResponse.getBody());
             }
 
             String paymentData = paymentResponse.getBody();
             double amountPaid = parseAmountFromPaymentData(paymentData);
             String paymentStatusFromApi = parseStatusFromPaymentData(paymentData);
 
-            System.out.print(paymentData);
             // 금액 비교
             if (payment.getAmount() != amountPaid) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment amount mismatch.");
             }
-            payment.setPaymentStatus(paymentStatusFromApi);
-            paymentService.savePayment(payment);
-            // 상태 비교
+
+            // 결제 상태 비교
 //            if (!payment.getPaymentStatus().equals(paymentStatusFromApi)) {
 //                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment status mismatch.");
 //            }
 
-            // 결제 완료 처리
-
+            payment.setPaymentStatus(paymentStatusFromApi);
+            paymentService.savePayment(payment);
 
             return ResponseEntity.ok("Payment completed.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during payment verification: " + e.getMessage());
         }
     }
+
 
     private double parseAmountFromPaymentData(String paymentData) {
         try {
