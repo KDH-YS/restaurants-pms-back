@@ -3,23 +3,18 @@
 
 <mapper namespace="com.mysite.restaurant.kdh.Mappers.PaymentMapper">
 
-    <!-- 결제 ID로 결제 정보 조회 -->
-    <select id="findByPaymentId" resultType="com.mysite.restaurant.kdh.Entity.Payment">
-        SELECT * FROM payment
-        WHERE payment_id = #{paymentId}
-    </select>
-
-    <!-- 결제 상태 업데이트 -->
-    <update id="updatePaymentStatus">
-        UPDATE payment
-        SET payment_status = #{paymentStatus}, updated_at = NOW()
-        WHERE payment_id = #{paymentId}
-    </update>
-
     <!-- 결제 정보 저장 -->
     <insert id="savePayment" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO payment (reservation_id, payment_id, amount, payment_status, created_at, updated_at)
         VALUES (#{reservationId}, #{paymentId}, #{amount}, #{paymentStatus}, NOW(), NOW())
     </insert>
+	
+	<update id="paymentSuccess" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+        UPDATE reservation
+        SET 
+			status = 'RESERVING''
+        WHERE 
+            reservation_id = #{reservationId};
+    </update>
 
 </mapper>
