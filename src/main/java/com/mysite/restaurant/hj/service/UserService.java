@@ -22,17 +22,8 @@ public class UserService {
 		return userMapper.selectUserByUserId(userName) != null;
 	}
 	
-//	@Transactional
-//	public void signup(UserDTO user) {
-//		userMapper.create(user);
-//		
-//		UserAuthDTO userAuth = UserAuthDTO.builder()
-//				.userId(user.getUserId())
-//				.auth("USER")
-//				.build();
-//		userMapper.createAuth(userAuth);
-//	}
-	
+//	회원가입
+	@Transactional
     public void signup(UserDTO userDTO) {
         UserDTO user = new UserDTO();
         user.setUserName(userDTO.getUserName());
@@ -40,16 +31,24 @@ public class UserService {
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
+        user.setNotificationAgreed(userDTO.getNotificationAgreed());
         // userId는 자동 생성되므로 설정하지 않음
         userMapper.save(user);
+        
+        // 권한도 같이 생성
+        UserAuthDTO userAuth = UserAuthDTO.builder()
+        		.userId(user.getUserId())
+        		.auth("ROLE_USER")
+        		.build();
+        userMapper.createAuth(userAuth);
     }
 	
 	@Transactional
-	public void updateLastLogin(Long userId) {
-		userMapper.updateLastLogin(userId);
+	public void updateLastLogin(String userName) {
+		userMapper.updateLastLogin(userName);
 	}
 	
-	public Optional<UserDTO> getUserByUsername(String name) {
-		return userMapper.selectUserByUsername(name);
+	public Optional<UserDTO> getUserByUsername(String userName) {
+		return userMapper.selectUserByUsername(userName);
 	}
 }

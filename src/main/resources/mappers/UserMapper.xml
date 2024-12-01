@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mysite.restaurant.hj.mapper.UserMapper">
 
-	<resultMap id="memberMap" type="com.mysite.restaurant.hj.dto.UserDTO">
+	<resultMap id="userMap" type="com.mysite.restaurant.hj.dto.UserDTO">
         <id property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
         <result property="password" column="password"/>
@@ -14,6 +14,8 @@
         <result property="userType" column="user_type"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="status" column="status"/>
         <collection property="authorities" ofType="com.mysite.restaurant.hj.dto.UserAuthDTO">
             <id property="authNo" column="auth_no"/>
             <result property="auth" column="auth"/>
@@ -21,65 +23,63 @@
     </resultMap>
 
 	<!-- 회원가입 -->
-	<insert id="save" parameterType="com.mysite.restaurant.hj.dto.UserDTO" useGeneratedKeys="true" keyProperty="user_id" keyColumn="user_id">
+	<insert id="save" parameterType="com.mysite.restaurant.hj.dto.UserDTO" useGeneratedKeys="true" keyProperty="userId" keyColumn="user_id">
 		INSERT INTO users (user_name, PASSWORD, NAME, email, phone, notification_agreed)
-		VALUES (#{user_name}, #{password}, #{name}, #{email}, #{phone}, #{notification_agreed});
+		VALUES (#{userName}, #{password}, #{name}, #{email}, #{phone}, #{notificationAgreed});
 	</insert>
 	
-	<!-- 이메일 중복 여부 -->
+	<insert id="createAuth" parameterType="com.mysite.restaurant.hj.dto.UserAuthDTO">
+		INSERT INTO user_auth (user_id, auth)
+		VALUES (#{userId}, #{auth})
+	</insert>
 	
 	<!-- 로그인 -->
-	<select id="selectUserByUserId" resultMap="memberMap">
-		SELECT user_name, PASSWORD
-		FROM users
-		WHERE user_name = #{user_name};
+	<select id="selectUserByUsername" resultMap="userMap">
+		SELECT u.*, ua.auth_no, ua.auth
+		FROM users u
+		LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+		AND ua.is_deleted = FALSE
+		WHERE u.user_name = #{userName}
+		AND u.is_deleted = FALSE
+		AND u.status = 'ACTIVE'
 	</select>
 	
-	<select id="selectLastLogin" resultMap="memberMap">
+	<select id="selectUserByUserId" resultMap="userMap">
 		SELECT user_name, PASSWORD
 		FROM users
-		WHERE user_name = #{user_name};
+		WHERE user_name = #{userName};
 	</select>
 	
-	<select id="selectMemberByUserId" resultMap="memberMap">
-        SELECT u.*, ua.auth_no, ua.auth
-        FROM users u
-        LEFT JOIN user_auth ua ON u.user_id = ua.user_id
-        WHERE u.user_id = #{user_id}
-    </select>
-    	<select id="selectMemberByUserId2" resultMap="memberMap">
-        SELECT u.*, ua.auth_no, ua.auth
-        FROM users u
-        LEFT JOIN user_auth ua ON u.user_id = ua.user_id
-        WHERE u.user_id = #{user_id}
-    </select>
-	
-	<!-- 소셜 로그인 -->
+	<update id="updateLastLogin">
+		UPDATE users
+		SET last_login_at = NOW()
+		WHERE user_name = #{userName};
+	</update>
 	
 	<!-- 사용자 정보 조회 -->
 	<select id="selectUserProfile" resultType="com.mysite.restaurant.hj.dto.UserDTO">
 		SELECT NAME, email, phone, notification_agreed
 		FROM users
-		WHERE user_name = #{user_name};
+		WHERE user_name = #{userName};
 	</select>
 	
 	<!-- 사용자 정보 수정 -->
 	<update id="updateUserProfile">
 		UPDATE users
-		SET NAME = #{name}, phone = #{phone}, notification_agreed = #{notification_agreed}
-		WHERE user_name = #{user_name};
+		SET NAME = #{name}, phone = #{phone}, notification_agreed = #{notificationAgreed}
+		WHERE user_name = #{userName};
 	</update>
 	
 	<!-- 회원 탈퇴 -->	
 	<!-- 참조 데이터 삭제 -->
 	<delete id="deleteUserReference">
 		DELETE FROM review_replies
-		WHERE user_name = (SELECT user_id FROM users WHERE user_name = #{user_name});
+		WHERE user_name = (SELECT user_id FROM users WHERE user_name = #{userName});
 	</delete>
 	<!-- 사용자 데이터 삭제 -->
 	<delete id="deleteUser">
 		DELETE FROM users
-		WHERE user_name = #{user_name};
+		WHERE user_name = #{userName};
 	</delete>
 	
 	<!-- 이메일 인증 -->

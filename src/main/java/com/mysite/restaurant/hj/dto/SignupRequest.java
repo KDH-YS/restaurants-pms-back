@@ -38,6 +38,7 @@ public class SignupRequest {
 	private String name;
 	
 	@NotNull
+	@Size(min = 3, max = 50)
 	private String email;
 	
 	@NotNull

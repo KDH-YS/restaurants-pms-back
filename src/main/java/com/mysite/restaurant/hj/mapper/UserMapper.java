@@ -16,12 +16,9 @@ public interface UserMapper {
 	void createAuth(UserAuthDTO userAuth);
 	
 //	로그인
+	Optional<UserDTO> selectUserByUsername(String userName);
 	UserDTO selectUserByUserId(String userName);
-	void updateLastLogin(Long userId);
-	Optional<UserDTO> selectUserByUsername(String name);
-	Optional<UserDTO> selectMemberByUserId(String userName);
-	UserDTO selectMemberByUserId2(String userName);
-//	Optional<UserDTO> findByUserId(String user_name);
+	void updateLastLogin(String userName);
 	
 //	사용자 정보 조회
 	UserDTO selectUserProfile(String userName);

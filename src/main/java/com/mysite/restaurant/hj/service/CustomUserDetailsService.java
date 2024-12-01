@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.mysite.restaurant.hj.dto.CustomUserDetails;
@@ -28,15 +29,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 	}
 	
 //	로그인
-//	public UserDTO findByUserId(String email) {
-//		return userMapper.selectByUserId(email);
-//	}
-	
+//	UserDetailsService를 implements한 클래스는 무조건 loadUserByUsername가 들어가야한다.
 	@Override
-    public UserDetails loadUserByUsername(String userName) {
-		UserDTO userDto = userMapper.selectMemberByUserId2(userName);
-	
-        return new CustomUserDetails(userMapper.selectMemberByUserId(userName).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND)));
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        Optional<UserDTO> user = userMapper.selectUserByUsername(userName);
+        if (user.isEmpty()) {
+        	throw new UsernameNotFoundException("User not found with userName: " + userName);
+        }
+        return new CustomUserDetails(user.orElse(null));
     }
 	
 //	로그아웃

@@ -43,6 +43,7 @@ public class JwtTokenProvider {
 //	생성자(Construct)가 호출된 후(Post)에 실행 또는
 //	의존성 주입이 모두 완료된 후 실행 또는
 //	해당 클래스가 스프링 빈으로 등록될 때 한 번만 실행 <== 이 코드에서는 여기에 해당
+//	init(): 객체의 초기화를 위한 인스턴스 초기화 메서드
 	@PostConstruct
 	public void init() {
 		byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);

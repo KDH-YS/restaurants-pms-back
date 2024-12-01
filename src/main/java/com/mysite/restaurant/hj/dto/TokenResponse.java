@@ -13,5 +13,5 @@ public class TokenResponse {
 
 	private String token;
 	private String userName;
-	private String name;
+	private String email;
 }

@@ -1,29 +1,16 @@
 package com.mysite.restaurant.hj.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.mysite.restaurant.hj.dto.*;
-import com.mysite.restaurant.hj.exception.BusinessException;
-import com.mysite.restaurant.hj.exception.CustomValidationException;
-import com.mysite.restaurant.hj.exception.ErrorCode;
 import com.mysite.restaurant.hj.jwt.JwtTokenProvider;
 import com.mysite.restaurant.hj.service.CustomUserDetailsService;
 import com.mysite.restaurant.hj.service.UserService;
@@ -43,16 +30,13 @@ public class AuthController {
 	private final CustomUserDetailsService customUserDetailsService;
 	private final PasswordEncoder passwordEncoder;
 
-//	@Autowired
-//	private CustomUserDetailsService customUserDetailsService;
-	
-//	회원가입 처리
+//	회원가입
 	@PostMapping("/signup")
 	public ResponseEntity<JsonResponse> signup(@Valid @RequestBody SignupRequest request) {
 	    // 비밀번호 암호화 및 DTO 변환
 	    UserDTO member = request.toUserDTO(passwordEncoder);
 
-	    // 회원 가입 처리
+	    // 회원가입 처리
 	    userService.signup(member);
 
 	    return ResponseEntity
@@ -65,62 +49,47 @@ public class AuthController {
 
 //  로그인
 	@PostMapping("/login")
-    public ResponseEntity<JsonResponse> login(@Valid @RequestBody LoginRequest request, BindingResult bindingResult) {
+    public ResponseEntity<JsonResponse> login(@Valid @RequestBody LoginRequest request) {
 		
-		if (bindingResult.hasErrors()) {
-			throw new CustomValidationException(ErrorCode.VALIDATION_ERROR, bindingResult);
-		}
-		
+//		유저의 아이디와 비밀번호를 가지고 UsernamePasswordAuthenticationToken를 만든다.
     	UsernamePasswordAuthenticationToken authenticationToken = 
     			new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword());
     	
-//    	인증 과정 예외
-//    	- BadCredentialsException: 잘못된 비밀번호
-//    	- UsernameNotFoundException: 존재하지 않는 사용자
-//    	- LockedException: 계정 잠김
-//    	- DisabledException: 비활성화된 계정
-//    	- AccountExpiredException: 만료된 계정
-    	try {
-    		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-    		SecurityContextHolder.getContext().setAuthentication(authentication);
-    		
-    		String jwt = tokenProvider.createToken(authentication);
-    		
-    		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-    		UserDTO user = userDetails.getUser();
-    		
-    		userService.updateLastLogin(user.getUserId());
-    		
-    		TokenResponse tokenResponse = TokenResponse.builder()
-    				.token(jwt)
-    				.userName(user.getUserName())
-    				.name(user.getName())
-    				.build();
-    		
-    		return ResponseEntity.ok(JsonResponse.builder()
-    				.success(true)
-    				.message("로그인이 완료되었습니다.")
-    				.data(tokenResponse)
-    				.build());
-    	} catch (BadCredentialsException e) {
-    		throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
-    	} catch (UsernameNotFoundException e) {
-    		throw new BusinessException(ErrorCode.USER_NOT_FOUND);
-    	} catch (LockedException e) {
-    		throw new BusinessException(ErrorCode.ACCESS_DENIED, "계정이 잠겼습니다.");
-    	} catch (DisabledException e) {
-    		throw new BusinessException(ErrorCode.ACCESS_DENIED, "비활성화된 계정입니다.");
-    	} catch (AccountExpiredException e) {
-    		throw new BusinessException(ErrorCode.ACCESS_DENIED, "만료된 계정입니다.");
-    	}
+//    	authenticationManagerBuilder: 아이디와 비밀번호를 확인하고 '권한'을 확인한다.
+//    	authenticate: 아이디와 비밀번호를 가져와서 권한이 있는지 비교
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+//    	SecurityContextHolder: SecurityContext를 저장하는 클래스이다.
+//    	SecurityContext: 애플리케이션의 현재 사용자와 관련된 Authentication 객체를 보관하는 컨테이너이다.
+//    	authentication: 현재 이 안에 유저의 정보가 다 들어가 있음.
+//    	 - 사용자의 인증 정보를 포함하는 객체이다.(예: 사용자 이름, 권한, 인증 여부 등)
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+//    	토큰을 만들자
+		String jwt = tokenProvider.createToken(authentication);
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+		UserDTO user = userDetails.getUser();
+		
+		userService.updateLastLogin(user.getUserName());
+		
+		TokenResponse tokenResponse = TokenResponse.builder()
+				.token(jwt)
+				.userName(user.getUserName())
+				.email(user.getEmail())
+				.build();
+		
+		return ResponseEntity.ok(JsonResponse.builder()
+				.success(true)
+				.message("로그인이 완료되었습니다.")
+				.data(tokenResponse)
+				.build());
     	
     }
     
 //  로그아웃
     
 //	사용자 정보 조회
-    @GetMapping("/me/{user_id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("user_name") String userName) {
+    @GetMapping("/me/{userName}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable("userName") String userName) {
         UserDTO user = customUserDetailsService.selectUserProfile(userName);
 
         if (user == null) {
