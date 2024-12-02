@@ -26,31 +26,35 @@ public class ReviewService {
     public List<ReviewImg> selectReviewImg(Long reviewId) {
         return reviewMapper.selectReviewImg(reviewId);
     }
-
+    // 리뷰 작성
     public int insertReview(Reviews review) {
         return reviewMapper.insertReview(review);
     }
-
+    // 리뷰 이미지 작성
     public int insertReviewImage(ReviewImg reviewImg) {
         return reviewMapper.insertReviewImg(reviewImg);
     }
-
+    // 리뷰 수정
     public int updateReview(Reviews review) {
         return reviewMapper.updateReview(review);
     }
-
+    // 리뷰 삭제
     public int deleteReview(Long reviewId) {
         return reviewMapper.deleteReview(reviewId);
     }
-
+    // 답글 조회
     public List<Replies> selectReplies(Long reviewId) {
         return reviewMapper.selectReplies(reviewId);
     }
-
+    // 답글 작성
     public int insertReplie(Replies replies) {
         return reviewMapper.insertReplie(replies);
     }
-
+    // 신고 조회
+    public List<Reports> selectReports(Long userId) {
+        return reviewMapper.selectReports(userId);
+    }
+    // 신고 작성
     public int insertReport(Reports reports) {
         return reviewMapper.insertReport(reports);
     }

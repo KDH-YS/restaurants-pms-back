@@ -138,19 +138,6 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Review created successfully with ID: " + reviewId);
     }
 
-    // 리뷰 수정
-    @PutMapping("/reviews/{review_id}")
-    public int updateReview(@PathVariable("review_id") Long reviewId, @RequestBody Reviews review) {
-        review.setReviewId(reviewId);
-        return reviewService.updateReview(review);
-    }
-
-    // 리뷰 삭제
-    @DeleteMapping("/reviews/{review_id}")
-    public int deleteReview(@PathVariable("review_id") Long reviewId) {
-        return reviewService.deleteReview(reviewId);
-    }
-
     // 답글 조회
     @GetMapping("/reviews/{review_id}/replies")
     public List<Replies> getReplies(@PathVariable("review_id") Long reviewId) {
@@ -164,12 +151,38 @@ public class ReviewController {
         return reviewService.insertReplie(replies);
     }
 
+    // 리뷰 수정
+    @PutMapping("/reviews/{review_id}")
+    public int updateReview(@PathVariable("review_id") Long reviewId, @RequestBody Reviews review) {
+        review.setReviewId(reviewId);
+        return reviewService.updateReview(review);
+    }
+
+    // 리뷰 삭제
+    @DeleteMapping("/reviews/{review_id}")
+    public int deleteReview(@PathVariable("review_id") Long reviewId) {
+        return reviewService.deleteReview(reviewId);
+    }
+
+    // 신고 조회
+    @GetMapping("/admin/reports")
+    public List<Reports> getReports(@RequestParam("userId") Long userId) {
+        return reviewService.selectReports(userId);
+    }
+
+    // 신고 상세 조회
+    @GetMapping("/admin/reports/{report_id}")
+    public List<Reports> getReportsDetail(@PathVariable("report_id") Long reportId) {
+        return reviewService.selectReports(reportId);
+    }
+
     // 리뷰 신고 작성
     @PostMapping("/reviews/{review_id}/report")
     public int createReport(@PathVariable("review_id") Long reviewId, @RequestBody Reports reports) {
         reports.setReviewId(reviewId);
         return reviewService.insertReport(reports);
     }
+    // 신고 삭제
 
     // 도움 됐어요
     @PostMapping("/reviews/{review_id}/helpful")
