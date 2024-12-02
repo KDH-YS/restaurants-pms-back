@@ -67,7 +67,7 @@ public class ReviewController {
 
     //리뷰 작성
     @PostMapping("/reviews")
-    public ResponseEntity<String> createReview(
+    public ResponseEntity<?> createReview(
             @RequestParam("review_content") String reviewContent,
             @RequestParam("restaurant_id") Long restaurantId,
             @RequestParam("user_id") Long userId,
@@ -90,7 +90,12 @@ public class ReviewController {
         LocalDateTime reviewPossibleTime = reservation.getReservationTime().plusMinutes(30);
 
         if (now.isBefore(reviewPossibleTime)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can write a review only 30 minutes after the reservation.");
+            // 에러 메시지를 담을 Map 객체 생성
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "예약 시간 30분 후 부터 작성하실 수 있습니다.");
+
+            // JSON 형태로 반환
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
         }
 
         // 1. 리뷰 내용과 평점 처리
@@ -128,10 +133,6 @@ public class ReviewController {
                 reviewService.insertReviewImage(reviewImg);
             }
         }
-
-        System.out.println("현재 시간: " + now);
-        System.out.println("예약 시간: " + reservation.getReservationTime());
-        System.out.println("리뷰 가능 시간: " + reviewPossibleTime);
 
         // 리뷰 작성 성공 시 생성된 리뷰 ID와 함께 HTTP 상태 코드 201 반환
         return ResponseEntity.status(HttpStatus.CREATED).body("Review created successfully with ID: " + reviewId);
