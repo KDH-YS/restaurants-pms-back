@@ -126,8 +126,10 @@ public class RestaurantController {
     	restaurantService.deleteRestaurant(restaurantId);
     }
     
+    //레스토랑 검색
     @GetMapping("/api/restaurant/search")
     public ResponseEntity<RestaurantPageResponse> searchRestaurantsApi(
+    		@RequestParam(value = "name", required = false) String name,
         @RequestParam(value = "city", required = false) String city,
         @RequestParam(value = "district", required = false) String district,
         @RequestParam(value = "foodType", required = false) String foodType,
@@ -137,6 +139,7 @@ public class RestaurantController {
         @RequestParam(value = "size", defaultValue = "24") int size
     ) {
         RestaurantDTO restaurantDTO = new RestaurantDTO();
+        restaurantDTO.setName(name);
         restaurantDTO.setCity(city);
         restaurantDTO.setDistrict(district);
         restaurantDTO.setFoodType(foodType);
@@ -181,8 +184,10 @@ public class RestaurantController {
         public ResponseEntity<Map<String, String>> insertRestaurant(@RequestBody RestaurantDTO restaurant) {
             try {
                 restaurantService.insertRestaurant(restaurant);
+                // 분
                 Map<String, String> response = new HashMap<>();
                 response.put("message", "레스토랑 등록 성공");
+                
                 return ResponseEntity.ok(response);  // 200 OK 응답
             } catch (Exception e) {
                 Map<String, String> errorResponse = new HashMap<>();
@@ -207,4 +212,16 @@ public class RestaurantController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // 500 오류 응답
             }
         }
+        
+       	// 레스토랑 상세 정보를 가져오는 API 엔드포인트
+    	@GetMapping("/api/schedule/{restaurantId}")
+    	public ResponseEntity<List<Schedule>> getSchedule(@PathVariable("restaurantId") int restaurantId) {
+        // 서비스에서 restaurantId에 해당하는 레스토랑 정보를 가져옴
+        try {
+        	List<Schedule> schedule = restaurantService.getScheduleById(restaurantId);
+        	return ResponseEntity.ok(schedule);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // 예외 발생 시 500 반환
+        }
+    }
 }

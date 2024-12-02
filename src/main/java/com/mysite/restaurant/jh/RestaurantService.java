@@ -111,4 +111,8 @@ public class RestaurantService {
 		restaurantMapper.deleteImage(restaurantId, imageId);
 	}
 
+	public List<Schedule> getScheduleById(int restaurantId){
+    	return restaurantMapper.getScheduleById(restaurantId);
+	}
+
 }

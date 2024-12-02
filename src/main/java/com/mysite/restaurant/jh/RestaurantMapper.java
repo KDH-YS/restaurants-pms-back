@@ -35,4 +35,6 @@ public interface RestaurantMapper {
 	void insertImage(ImageDTO image);
 	void deleteImage(@Param("restaurantId")int restaurantId,@Param("imageId")int imageId);
 
-   }
+	public List<Schedule> getScheduleById(int restaurantId);
+	}
+   

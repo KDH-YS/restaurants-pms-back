@@ -23,17 +23,20 @@
 <select id="getSearch" resultType="com.mysite.restaurant.jh.RestaurantDTO">
     SELECT * FROM restaurants
     <where>
+        <if test="restaurant.name != null">
+            AND name LIKE CONCAT('%', #{restaurant.name}, '%')
+        </if>
         <if test="restaurant.city != null">
-            AND city = #{restaurant.city}
+            AND city LIKE CONCAT('%', #{restaurant.city}, '%')
         </if>
         <if test="restaurant.district != null">
-            AND district = #{restaurant.district}
+            AND district LIKE CONCAT('%', #{restaurant.district}, '%')
         </if>
         <if test="restaurant.neighborhood != null">
-            AND neighborhood = #{restaurant.neighborhood}
+            AND neighborhood LIKE CONCAT('%', #{restaurant.neighborhood}, '%')
         </if>
         <if test="restaurant.foodType != null">
-            AND food_type = #{restaurant.foodType}
+            AND food_type LIKE CONCAT('%', #{restaurant.foodType}, '%')
         </if>
         <if test="restaurant.parkingAvailable != null">
             AND parking_available = #{restaurant.parkingAvailable}
@@ -49,17 +52,20 @@
 <select id="countSearch" resultType="java.lang.Integer">
     SELECT COUNT(*) FROM restaurants
     <where>
+        <if test="restaurant.name != null">
+            AND name LIKE CONCAT('%', #{restaurant.name}, '%')
+        </if>
         <if test="restaurant.city != null">
-            AND city = #{restaurant.city}
+            AND city LIKE CONCAT('%', #{restaurant.city}, '%')
         </if>
         <if test="restaurant.district != null">
-            AND district = #{restaurant.district}
+            AND district LIKE CONCAT('%', #{restaurant.district}, '%')
         </if>
         <if test="restaurant.neighborhood != null">
-            AND neighborhood = #{restaurant.neighborhood}
+            AND neighborhood LIKE CONCAT('%', #{restaurant.neighborhood}, '%')
         </if>
         <if test="restaurant.foodType != null">
-            AND food_type = #{restaurant.foodType}
+            AND food_type LIKE CONCAT('%', #{restaurant.foodType}, '%')
         </if>
         <if test="restaurant.parkingAvailable != null">
             AND parking_available = #{restaurant.parkingAvailable}
@@ -179,4 +185,8 @@
 	    WHERE image_id = #{imageId} AND restaurant_id = #{restaurantId}
 	</delete>
 	
+	<select id="getScheduleById" resultType="com.mysite.restaurant.jh.Schedule">
+    SELECT * FROM schedule
+    WHERE restaurant_id = #{restaurantId}
+	</select>
 </mapper>
