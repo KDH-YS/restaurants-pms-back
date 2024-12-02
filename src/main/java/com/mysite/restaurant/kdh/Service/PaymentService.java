@@ -12,16 +12,10 @@ public class PaymentService {
     public PaymentService(PaymentMapper paymentMapper) {
         this.paymentMapper = paymentMapper;
     }
-
-    public Payment getPaymentByPaymentId(String paymentId) {
-        return paymentMapper.findByPaymentId(paymentId);
-    }
-
-    public void updatePaymentStatus(String paymentId, String paymentStatus) {
-        paymentMapper.updatePaymentStatus(paymentId, paymentStatus);
-    }
-
     public void savePayment(Payment payment) {
         paymentMapper.savePayment(payment);
+    }
+    public void updateStatus(Long reservationId) {
+    	paymentMapper.paymentSuccess(reservationId);
     }
 }

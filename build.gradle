@@ -34,7 +34,7 @@ dependencies {
   	// 테스트에서도 lombok 사용
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
+	implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:2.1.0'
 }
 
 tasks.named('test') {

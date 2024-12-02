@@ -9,10 +9,10 @@
         VALUES (#{reservationId}, #{paymentId}, #{amount}, #{paymentStatus}, NOW(), NOW())
     </insert>
 	
-	<update id="paymentSuccess" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+	<update id="paymentSuccess" parameterType="Long">
         UPDATE reservation
         SET 
-			status = 'RESERVING''
+			status = 'RESERVING'
         WHERE 
             reservation_id = #{reservationId};
     </update>

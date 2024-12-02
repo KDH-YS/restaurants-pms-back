@@ -1,5 +1,7 @@
 package com.mysite.restaurant.kdh.Controller;
 
+
+import com.github.pagehelper.PageInfo;
 import com.mysite.restaurant.kdh.Entity.ReservationEntity;
 import com.mysite.restaurant.kdh.Service.ReservationService;
 
@@ -33,8 +35,13 @@ public class ReservationController {
     
     // 내 예약 조회
     @GetMapping
-    public List<ReservationEntity> getReservationsByEmail(@RequestParam("userId") Long userId) {
-        return reservationService.getReservationsByEmail(userId);
+    public PageInfo<ReservationEntity> getReservationsByUserId(
+        @RequestParam("userId") Long userId,
+        @RequestParam("page") int page,
+        @RequestParam("size") int size) {
+        
+        // 서비스 호출을 통해 결과 반환
+        return reservationService.getReservationsByEmail(userId, page, size);
     }
  // 예약 수정
     @PutMapping("/{id}")

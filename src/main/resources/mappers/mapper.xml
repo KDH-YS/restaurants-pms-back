@@ -34,7 +34,7 @@
         WHERE 
             u.user_id = #{userId}
         ORDER BY 
-    		r.reservation_id DESC; 
+    		r.reservation_id DESC 
     </select>
 
     <!-- 예약 수정 -->

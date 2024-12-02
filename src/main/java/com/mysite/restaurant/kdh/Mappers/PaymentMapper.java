@@ -15,4 +15,6 @@ public interface PaymentMapper {
 
     // 결제 정보 저장
     void savePayment(Payment payment);
+    //
+    void paymentSuccess(Long reservationId);
 }

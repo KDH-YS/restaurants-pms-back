@@ -1,5 +1,7 @@
 package com.mysite.restaurant.kdh.Service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.mysite.restaurant.kdh.Entity.ReservationEntity;
 import com.mysite.restaurant.kdh.Entity.ScheduleEntity;
 import com.mysite.restaurant.kdh.Mappers.ReservationMapper;
@@ -23,9 +25,12 @@ public class ReservationService {
         reservationMapper.insertReservation(reservation);  // 예약 저장
         return reservation;  // 생성된 예약 객체 반환
     }
+    
     // 내 예약 조회
-    public List<ReservationEntity> getReservationsByEmail(Long userId) {
-        return reservationMapper.selectReservationsByEmail(userId);
+    public PageInfo<ReservationEntity> getReservationsByEmail(Long userId, int page, int size) {
+    	PageHelper.startPage(page, size);
+        List<ReservationEntity> reservations = reservationMapper.selectReservationsByEmail(userId);
+        return new PageInfo<>(reservations);
     }
     
     //내 예약 수정
