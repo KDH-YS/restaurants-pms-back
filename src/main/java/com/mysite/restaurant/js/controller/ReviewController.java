@@ -75,10 +75,11 @@ public class ReviewController {
             @RequestParam("service_rating") Double serviceRating,
             @RequestParam("atmosphere_rating") Double atmosphereRating,
             @RequestParam("value_rating") Double valueRating,
-            @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+            @RequestParam("reservation_id") Long reservationId,
+            @RequestParam(value = "images", required = false) MultipartFile[] images) throws IOException {
 
         // 예약 정보 가져오기
-        Reservation reservation = reviewService.selectReservation(restaurantId);
+        Reservation reservation = reviewService.selectReservation(reservationId);
 
         if (reservation == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reservation not found.");
@@ -92,7 +93,7 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can write a review only 30 minutes after the reservation.");
         }
 
-        // 1. 리뷰 내용과 평점 처리 (Review 객체 생성 후 저장)
+        // 1. 리뷰 내용과 평점 처리
         Reviews review = new Reviews();
         review.setReviewContent(reviewContent);
         review.setRestaurantId(restaurantId);
@@ -101,28 +102,37 @@ public class ReviewController {
         review.setServiceRating(serviceRating);
         review.setAtmosphereRating(atmosphereRating);
         review.setValueRating(valueRating);
+        review.setReservationId(reservationId);
 
         int reviewId = reviewService.insertReview(review);
 
-        // 2. 이미지가 있으면 이미지 처리 (ReviewImg 객체 생성 후 저장)
-        if (image != null && !image.isEmpty()) {
+        // 2. 이미지가 있으면 이미지 처리
+        if (images != null && images.length > 0) {
             String uploadDir = "uploads/reviews";
             File dir = new File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, fileName);
-            Files.copy(image.getInputStream(), filePath);
+            for (int i = 0; i < images.length; i++) {
+                MultipartFile image = images[i];
+                String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+                Path filePath = Paths.get(uploadDir, fileName);
+                Files.copy(image.getInputStream(), filePath);
 
-            ReviewImg reviewImg = new ReviewImg();
-            reviewImg.setReviewId(Long.valueOf(reviewId));
-            reviewImg.setImageUrl(filePath.toString());
-            reviewImg.setImageOrder(1);
+                ReviewImg reviewImg = new ReviewImg();
+                reviewImg.setReviewId(Long.valueOf(reviewId));
+                reviewImg.setImageUrl(filePath.toString());
+                reviewImg.setImageOrder(i + 1);
 
-            reviewService.insertReviewImage(reviewImg);
+                reviewService.insertReviewImage(reviewImg);
+            }
         }
+
+        System.out.println("현재 시간: " + now);
+        System.out.println("예약 시간: " + reservation.getReservationTime());
+        System.out.println("리뷰 가능 시간: " + reviewPossibleTime);
+
         // 리뷰 작성 성공 시 생성된 리뷰 ID와 함께 HTTP 상태 코드 201 반환
         return ResponseEntity.status(HttpStatus.CREATED).body("Review created successfully with ID: " + reviewId);
     }
