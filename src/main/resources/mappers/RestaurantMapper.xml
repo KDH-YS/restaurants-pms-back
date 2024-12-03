@@ -19,64 +19,87 @@
     <result property="detailAddr" column="detail_addr"/>
 </resultMap>
     
-    <!-- 검색 쿼리 -->
-<select id="getSearch" resultType="com.mysite.restaurant.jh.RestaurantDTO">
-    SELECT * FROM restaurants
-    <where>
-        <if test="restaurant.name != null">
-            AND name LIKE CONCAT('%', #{restaurant.name}, '%')
-        </if>
-        <if test="restaurant.city != null">
-            AND city LIKE CONCAT('%', #{restaurant.city}, '%')
-        </if>
-        <if test="restaurant.district != null">
-            AND district LIKE CONCAT('%', #{restaurant.district}, '%')
-        </if>
-        <if test="restaurant.neighborhood != null">
-            AND neighborhood LIKE CONCAT('%', #{restaurant.neighborhood}, '%')
-        </if>
-        <if test="restaurant.foodType != null">
-            AND food_type LIKE CONCAT('%', #{restaurant.foodType}, '%')
-        </if>
-        <if test="restaurant.parkingAvailable != null">
-            AND parking_available = #{restaurant.parkingAvailable}
-        </if>
-        <if test="restaurant.reservationAvailable != null">
-            AND reservation_available = #{restaurant.reservationAvailable}
-        </if>
-    </where>
-    LIMIT #{size} OFFSET #{offset}
+    <select id="searchRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+  SELECT * FROM restaurants
+  <where>
+    <!-- query가 있을 때, 모든 조건을 포함하여 검색 -->
+    <if test="query != null">
+      AND (
+        name LIKE CONCAT('%', #{query}, '%')
+        OR city LIKE CONCAT('%', #{query}, '%')
+        OR district LIKE CONCAT('%', #{query}, '%')
+        OR food_type LIKE CONCAT('%', #{query}, '%')
+        OR neighborhood LIKE CONCAT('%', #{query}, '%')
+      )
+    </if>
+
+    <!-- 부분 조건 필터링 -->
+    <if test="restaurant.name != null">
+      AND name LIKE CONCAT('%', #{restaurant.name}, '%')
+    </if>
+    <if test="restaurant.city != null">
+      AND city LIKE CONCAT('%', #{restaurant.city}, '%')
+    </if>
+    <if test="restaurant.district != null">
+      AND district LIKE CONCAT('%', #{restaurant.district}, '%')
+    </if>
+    <if test="restaurant.neighborhood != null">
+      AND neighborhood LIKE CONCAT('%', #{restaurant.neighborhood}, '%')
+    </if>
+    <if test="restaurant.foodType != null">
+      AND food_type LIKE CONCAT('%', #{restaurant.foodType}, '%')
+    </if>
+    <if test="restaurant.parkingAvailable != null">
+      AND parking_available = #{restaurant.parkingAvailable}
+    </if>
+    <if test="restaurant.reservationAvailable != null">
+      AND reservation_available = #{restaurant.reservationAvailable}
+    </if>
+  </where>
+  LIMIT #{size} OFFSET #{offset}
 </select>
 
 <!-- countSearch 쿼리 수정 -->
 <select id="countSearch" resultType="java.lang.Integer">
-    SELECT COUNT(*) FROM restaurants
-    <where>
-        <if test="restaurant.name != null">
-            AND name LIKE CONCAT('%', #{restaurant.name}, '%')
-        </if>
-        <if test="restaurant.city != null">
-            AND city LIKE CONCAT('%', #{restaurant.city}, '%')
-        </if>
-        <if test="restaurant.district != null">
-            AND district LIKE CONCAT('%', #{restaurant.district}, '%')
-        </if>
-        <if test="restaurant.neighborhood != null">
-            AND neighborhood LIKE CONCAT('%', #{restaurant.neighborhood}, '%')
-        </if>
-        <if test="restaurant.foodType != null">
-            AND food_type LIKE CONCAT('%', #{restaurant.foodType}, '%')
-        </if>
-        <if test="restaurant.parkingAvailable != null">
-            AND parking_available = #{restaurant.parkingAvailable}
-        </if>
-        <if test="restaurant.reservationAvailable != null">
-            AND reservation_available = #{restaurant.reservationAvailable}
-        </if>
-    </where>
+  SELECT COUNT(*) FROM restaurants
+  <where>
+    <!-- query가 있을 때, 모든 조건을 포함하여 검색 -->
+    <if test="query != null">
+      AND (
+        name LIKE CONCAT('%', #{query}, '%')
+        OR city LIKE CONCAT('%', #{query}, '%')
+        OR district LIKE CONCAT('%', #{query}, '%')
+        OR food_type LIKE CONCAT('%', #{query}, '%')
+        OR neighborhood LIKE CONCAT('%', #{query}, '%')
+      )
+    </if>
+
+    <!-- 부분 조건 필터링 -->
+    <if test="restaurant.name != null">
+      AND name LIKE CONCAT('%', #{restaurant.name}, '%')
+    </if>
+    <if test="restaurant.city != null">
+      AND city LIKE CONCAT('%', #{restaurant.city}, '%')
+    </if>
+    <if test="restaurant.district != null">
+      AND district LIKE CONCAT('%', #{restaurant.district}, '%')
+    </if>
+    <if test="restaurant.neighborhood != null">
+      AND neighborhood LIKE CONCAT('%', #{restaurant.neighborhood}, '%')
+    </if>
+    <if test="restaurant.foodType != null">
+      AND food_type LIKE CONCAT('%', #{restaurant.foodType}, '%')
+    </if>
+    <if test="restaurant.parkingAvailable != null">
+      AND parking_available = #{restaurant.parkingAvailable}
+    </if>
+    <if test="restaurant.reservationAvailable != null">
+      AND reservation_available = #{restaurant.reservationAvailable}
+    </if>
+  </where>
 </select>
 
-
+	
 	<select id="getRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
     SELECT * FROM restaurants
     ORDER BY restaurant_id DESC
@@ -189,4 +212,6 @@
     SELECT * FROM schedule
     WHERE restaurant_id = #{restaurantId}
 	</select>
+	
+	
 </mapper>

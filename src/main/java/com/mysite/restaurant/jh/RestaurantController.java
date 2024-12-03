@@ -126,29 +126,31 @@ public class RestaurantController {
     	restaurantService.deleteRestaurant(restaurantId);
     }
     
-    //레스토랑 검색
     @GetMapping("/api/restaurant/search")
     public ResponseEntity<RestaurantPageResponse> searchRestaurantsApi(
-    		@RequestParam(value = "name", required = false) String name,
-        @RequestParam(value = "city", required = false) String city,
-        @RequestParam(value = "district", required = false) String district,
-        @RequestParam(value = "foodType", required = false) String foodType,
-        @RequestParam(value = "parkingAvailable", required = false) Boolean parkingAvailable,
-        @RequestParam(value = "reservationAvailable", required = false) Boolean reservationAvailable,
-        @RequestParam(value = "page", defaultValue = "1") int page,
-        @RequestParam(value = "size", defaultValue = "24") int size
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "district", required = false) String district,
+            @RequestParam(value = "neighborhood", required = false) String neighborhood,            
+            @RequestParam(value = "foodType", required = false) String foodType,
+            @RequestParam(value = "parkingAvailable", required = false) Boolean parkingAvailable,
+            @RequestParam(value = "reservationAvailable", required = false) Boolean reservationAvailable,
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "24") int size
     ) {
         RestaurantDTO restaurantDTO = new RestaurantDTO();
         restaurantDTO.setName(name);
         restaurantDTO.setCity(city);
         restaurantDTO.setDistrict(district);
+        restaurantDTO.setNeighborhood(neighborhood);
         restaurantDTO.setFoodType(foodType);
         restaurantDTO.setParkingAvailable(parkingAvailable);
         restaurantDTO.setReservationAvailable(reservationAvailable);
 
         try {
             // 서비스 호출로 레스토랑 검색
-            RestaurantPageResponse response = restaurantService.searchRestaurants(restaurantDTO, page, size);
+            RestaurantPageResponse response = restaurantService.searchRestaurants(restaurantDTO, query, page, size);
 
             // 검색 결과가 없으면 204 No Content 반환
             if (response.getContent().isEmpty()) {

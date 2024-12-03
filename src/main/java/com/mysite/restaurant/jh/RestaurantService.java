@@ -48,28 +48,24 @@ public class RestaurantService {
     	return restaurantMapper.getRestaurantsAll(foodType, city, district, neighborhood);
     };
 
- // 레스토랑 검색 결과를 페이지네이션 처리하여 반환하는 메서드
-    public RestaurantPageResponse searchRestaurants(RestaurantDTO restaurant, int page, int size) {
+ // 레스토랑 검색 및 페이지네이션 처리
+    public RestaurantPageResponse searchRestaurants(RestaurantDTO restaurant, String query, int page, int size) {
         // 페이지 번호를 0부터 시작하게 하여 LIMIT에 맞게 조정
         int offset = (page - 1) * size;
 
-        // 검색된 레스토랑 목록
-        List<RestaurantDTO> content = restaurantMapper.getSearch(restaurant, offset, size);
-        
+        // 레스토랑 목록 검색
+        List<RestaurantDTO> content = restaurantMapper.searchRestaurants(query, restaurant, size, offset);
+
         // 검색된 레스토랑 개수
-        int totalElements = restaurantMapper.countSearch(restaurant);
-        
+        int totalElements = restaurantMapper.countSearch(query, restaurant);
+
         // 전체 페이지 수 계산
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
         // 페이지 정보 포함하여 반환
         return new RestaurantPageResponse(content, totalPages, totalElements, page, size);
     }
-    // 검색 조건을 기반으로 레스토랑의 총 개수를 반환하는 메서드
-    public int countSearch(RestaurantDTO restaurant) {
-        return restaurantMapper.countSearch(restaurant);
-    }
-
+    
     public int countTotal() {
     	return restaurantMapper.countTotal();
     }

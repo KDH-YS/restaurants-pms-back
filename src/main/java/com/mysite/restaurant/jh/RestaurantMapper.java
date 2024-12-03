@@ -8,15 +8,20 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface RestaurantMapper {
 	
-	   // 여러 레스토랑 데이터를 반환해야 하므로 selectList 사용
-    List<RestaurantDTO> getSearch(
+	// 레스토랑 검색
+    List<RestaurantDTO> searchRestaurants(
+        @Param("query") String query,
         @Param("restaurant") RestaurantDTO restaurant,
-        @Param("offset") int offset,
-        @Param("size") int size
+        @Param("size") int size,
+        @Param("offset") int offset
     );
 
-    int countSearch(@Param("restaurant") RestaurantDTO restaurant);
-
+    // 레스토랑 검색 결과 개수 반환
+    int countSearch(
+        @Param("query") String query,
+        @Param("restaurant") RestaurantDTO restaurant
+    );
+    
 	List<RestaurantDTO> getRestaurantsAll(RestaurantDTO restaurant);
 	List<RestaurantDTO> getRestaurantsAll(String foodType, String city, String district, String neighborhood);
 	 List<RestaurantDTO> getRestaurants(@Param("offset") int offset, @Param("size") int size);
@@ -25,6 +30,7 @@ public interface RestaurantMapper {
 	void insertRestaurant(RestaurantDTO restaurant);
 	void updateAddress();
 	void updateRestaurant(RestaurantDTO restaurant);
+   
 	
 	public List<MenuDTO> getMenusByRestaurantId(int restaurantId);
 	void  deleteRestaurant(int restaurantId);
