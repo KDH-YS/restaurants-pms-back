@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class LoginRequest {
 
 	@NotNull
-	@Size(max = 50)
+	@Size(max = 15)
 	private String userName;
 	
 	@NotNull

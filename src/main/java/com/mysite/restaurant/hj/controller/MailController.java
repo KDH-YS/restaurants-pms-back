@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mysite.restaurant.hj.dto.EmailCheckDTO;
 import com.mysite.restaurant.hj.dto.EmailRequestDTO;
-import com.mysite.restaurant.hj.service.MailSendService;
+import com.mysite.restaurant.hj.service.MailService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,23 +15,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MailController {
 
-	private final MailSendService mailService;
+	private final MailService mailService;
 	
-	@PostMapping("/mailSend")
-	public String mailSend(@Valid @RequestBody EmailRequestDTO emailDTO) {
-		System.out.println("이메일 인증 이메일: " + emailDTO.getEmail());
-		return mailService.joinEmail(emailDTO.getEmail());
-	}
+	@PostMapping ("/mailSend")
+    public String mailSend(@RequestBody @Valid EmailRequestDTO emailDto) {
+        System.out.println("이메일 인증 이메일 :" + emailDto.getEmail());
+        return mailService.joinEmail(emailDto.getEmail());
+    }
 	
-	@PostMapping("/mailauthCheck")
-	public String AuthCheck(@Valid @RequestBody EmailCheckDTO emailCheckDTO) {
-		Boolean Checked = mailService.CheckAuthNum(
-				emailCheckDTO.getEmail(),
-				emailCheckDTO.getAuthNum());
-		if (Checked) {
-			return "인증번호가 확인되었습니다.";
-		} else {
-			throw new NullPointerException("인증번호 에러");
-		}
-	}
+	@PostMapping("/mailCheck")
+    public String AuthCheck(@RequestBody @Valid EmailCheckDTO emailCheckDTO) {
+        Boolean Checked=mailService.CheckAuthNum(emailCheckDTO.getEmail(), emailCheckDTO.getAuthNum());
+        if (Checked) {
+            return "이메일 인증 성공";
+        }
+        else {
+            throw new NullPointerException("이메일 인증 실패");
+        }
+    }
 }

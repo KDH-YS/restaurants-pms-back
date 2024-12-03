@@ -12,28 +12,35 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RedisUtil {
 
-	private final StringRedisTemplate redisTemplate; // Redis에 접근하기 위한 Spring의 Redis 템플릿 클래스
+//	Redis에 접근하기 위한 Spring의 Redis 템플릿 클래스
 	
-//	지정된 key에 해당하는 데이터를 Redis에서 가져옴
+	private final StringRedisTemplate redisTemplate;
+	
+//	지정된 키(key)에 해당하는 데이터를 Redis에서 가져오는 메서드
 	public String getData(String key) {
-		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-		return valueOperations.get(key);
+		ValueOperations<String, String> valueOperations=redisTemplate.opsForValue();
+        return valueOperations.get(key);
 	}
 	
-//	지정된 key에 값을 저장
+//	지정된 키(key)에 값을 저장하는 메서드
 	public void setData(String key, String value) {
 		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-		valueOperations.set(key, value);
+        valueOperations.set(key,value);
 	}
 	
-//	지정된 key에 값을 저장하고, 지정된 시간(duration) 후에 데이터가 만료되도록 설정
+//	지정된 키(key)에 값을 저장하고, 지정된 시간(duration) 후에 데이터가 만료되도록 설정하는 메서드
 	public void setDataExpire(String key, String value, long duration) {
-		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-		Duration expireDuration = Duration.ofSeconds(duration);
-		valueOperations.set(key, value, expireDuration);
+		try {
+			ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+			Duration expireDuration = Duration.ofSeconds(duration);
+			valueOperations.set(key, value, expireDuration);
+			System.out.println("Redis에 데이터 저장 성공: " + key + " -> " + value);
+		} catch (Exception e) {
+			System.err.println("Redis에 데이터 저장 실패: " + e.getMessage());
+		}
 	}
 	
-//	key에 해당하는 데이터를 Redis에서 삭제
+//	지정된 키(key)에 해당하는 데이터를 Redis에서 삭제하는 메서드
 	public void deleteData(String key) {
 		redisTemplate.delete(key);
 	}

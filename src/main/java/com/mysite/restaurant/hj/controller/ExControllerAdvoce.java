@@ -12,14 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
-public class ExControllerAdbice {
+public class ExControllerAdvoce {
 
-//	NullPointer 예외가 발생했을때 응답
-	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(NullPointerException.class)
-	public ResponseEntity<ErrorResult> testing(NullPointerException e) {
-		ErrorResult errorResult = new ErrorResult("EMAIL", e.getMessage());
-		return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
-	}
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ErrorResult> testing(NullPointerException e) {
+        ErrorResult errorResult = new ErrorResult("EMAIL", e.getMessage());
+        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+    }
 }
