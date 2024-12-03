@@ -73,9 +73,11 @@ public class ReservationController {
     
     //예약 목록 조회(업주)
     @GetMapping("/manager/{restaurantId}")
-    public List<ReservationEntity> getReservationsByRestaurant(@PathVariable("restaurantId") Long restaurantId) {
-    	log.info("Fetching reservations for restaurantId: {}", restaurantId);
-        return reservationService.getReservationsByRestaurant(restaurantId);
+    public PageInfo<ReservationEntity> getReservationsByRestaurant(
+    		@PathVariable("restaurantId") Long restaurantId,
+    		@RequestParam("page") int page,
+    		@RequestParam("size") int size) {
+        return reservationService.getReservationsByRestaurant(restaurantId,page,size);
     }      
 
     @DeleteMapping("/manager/{reservationId}")

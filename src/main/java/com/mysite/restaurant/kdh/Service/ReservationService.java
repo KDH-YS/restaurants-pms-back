@@ -51,8 +51,10 @@ public class ReservationService {
     }
     
     //내 가게 예약 조회
-    public List<ReservationEntity> getReservationsByRestaurant(Long restaurantId) {
-        return reservationMapper.selectReservationsByRestaurant(restaurantId);
+    public PageInfo<ReservationEntity> getReservationsByRestaurant(Long restaurantId, int page, int size) {
+    	PageHelper.startPage(page, size);
+    	List<ReservationEntity> reservations = reservationMapper.selectReservationsByRestaurant(restaurantId);
+        return new PageInfo<>(reservations);
     }
     //예약 삭제(업주)
     public boolean DeleteReservation(Long reservationId) {

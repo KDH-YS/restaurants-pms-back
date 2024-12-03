@@ -75,7 +75,7 @@
     	JOIN users u ON r.user_id = u.user_id
         JOIN 
         restaurants res ON r.restaurant_id = res.restaurant_id    	
-    	WHERE r.restaurant_id = #{restaurantId};
+    	WHERE r.restaurant_id = #{restaurantId}
 	</select>
 
 
