@@ -42,7 +42,7 @@ public class SecurityConfig {
 			.formLogin(formLogin -> formLogin.disable()) // 시큐리티 제공 기본 로그인 페이지와 처리를 비활성화
 //			JWT는 세션을 필요하지 않음
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/login", "/api/auth/signup").permitAll()
+			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/login", "/api/auth/signup", "/mailSend", "/mailauthCheck").permitAll()
 			.requestMatchers("/api/auth/me").authenticated()
 			.anyRequest().authenticated())
 //			예외처리

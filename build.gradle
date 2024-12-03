@@ -28,6 +28,10 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
   	annotationProcessor 'org.projectlombok:lombok'
   	
+  	// 테스트에서도 lombok 사용
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+  	
   	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
   	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
   	
@@ -35,10 +39,6 @@ dependencies {
   	
   	implementation 'org.springframework.boot:spring-boot-starter-security'
   	testImplementation 'org.springframework.security:spring-security-test'
-  	
-  	// 테스트에서도 lombok 사용
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
     
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
@@ -46,6 +46,15 @@ dependencies {
     
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.1'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // 이메일 인증 설정
+	implementation 'javax.mail:mail:1.4.7'
+	// Spring Context Support
+	implementation 'org.springframework:spring-context-support:5.3.9'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail'
+
+	//redis 추가
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
