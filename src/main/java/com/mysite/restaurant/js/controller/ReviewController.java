@@ -184,11 +184,15 @@ public class ReviewController {
     }
     // 신고 삭제
 
-    // 도움 됐어요
-    @PostMapping("/reviews/{review_id}/helpful")
-    public int createHelpful(@PathVariable("review_id") Long reviewId, @RequestBody Helpful helpful) {
-        helpful.setReviewId(reviewId);
-        return reviewService.insertHelpful(helpful);
+    // 도움 등록/삭제 API
+    @PostMapping("/{review_id}/helpful")
+    public ResponseEntity<String> toggleHelpful(@PathVariable("review_id") Long reviewId, @RequestBody Helpful helpful) {
+        try {
+            boolean isHelpful = reviewService.toggleHelpful(reviewId, helpful);
+            return ResponseEntity.status(HttpStatus.OK).body(isHelpful ? "도움이 되었습니다." : "도움이 취소되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("도움 등록/취소 중 오류가 발생했습니다.");
+        }
     }
 
     // 가게 정보
@@ -205,6 +209,7 @@ public class ReviewController {
 
         return ResponseEntity.ok(response);
     }
+
     // 예약 조회
     @GetMapping("/js/reservation/{reservation_id}")
     public Reservation getReservation(@PathVariable("reservation_id") Long reservationId) {

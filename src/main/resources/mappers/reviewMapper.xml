@@ -101,6 +101,11 @@
         JOIN restaurants r ON r.restaurant_id = rev.restaurant_id;
     </select>
 
+    <!-- 도움 카운트 조회 -->
+    <select id="selectReports" resultType="com.mysite.restaurant.js.model.Reports">
+        SELECT COUNT(*) > 0 FROM helpful_votes WHERE review_id = #{reviewId} AND user_id = #{userId};
+    </select>
+
     <!-- 리뷰 삭제 -->
     <delete id="deleteReview" parameterType="Long">
         DELETE FROM reviews WHERE review_id = #{reviewId};

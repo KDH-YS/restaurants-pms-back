@@ -59,8 +59,15 @@ public class ReviewService {
         return reviewMapper.insertReport(reports);
     }
 
-    public int insertHelpful(Helpful helpful) {
-        return reviewMapper.insertHelpful(helpful);
+    public boolean toggleHelpful(Long reviewId, Helpful helpful) {
+        if (reviewMapper.isHelpfulExist(helpful.getVoteId())) {
+            reviewMapper.deleteHelpful(helpful.getVoteId());
+            return false;
+        } else {
+            helpful.setReviewId(reviewId);
+            reviewMapper.insertHelpful(helpful);
+            return true;
+        }
     }
     
     public Restaurants selectShop(Long restaurantId) { return reviewMapper.selectShop(restaurantId); }
