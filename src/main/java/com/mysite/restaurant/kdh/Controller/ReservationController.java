@@ -38,8 +38,7 @@ public class ReservationController {
     public PageInfo<ReservationEntity> getReservationsByUserId(
         @RequestParam("userId") Long userId,
         @RequestParam("page") int page,
-        @RequestParam("size") int size) {
-        
+        @RequestParam("size") int size) {        
         // 서비스 호출을 통해 결과 반환
         return reservationService.getReservationsByEmail(userId, page, size);
     }
