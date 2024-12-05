@@ -59,17 +59,31 @@ public class ReviewService {
         return reviewMapper.insertReport(reports);
     }
 
-    public boolean toggleHelpful(Long reviewId, Helpful helpful) {
-        if (reviewMapper.isHelpfulExist(helpful.getVoteId())) {
-            reviewMapper.deleteHelpful(helpful.getVoteId());
-            return false;
+    public void addHelpful(Helpful helpful) {
+        // 이미 투표한 내역이 있는지 확인
+        Boolean isHelpful = reviewMapper.isHelpfulExist(helpful.getReviewId(), helpful.getUserId());
+
+        if (Boolean.TRUE.equals(isHelpful)) {
+            throw new IllegalStateException("이미 도움이 등록된 리뷰입니다.");
         } else {
-            helpful.setReviewId(reviewId);
             reviewMapper.insertHelpful(helpful);
-            return true;
         }
     }
-    
+    public void removeHelpful(Long reviewId, Long userId) {
+        // 투표한 내역이 있는지 확인 후 삭제
+        Boolean isHelpful = reviewMapper.isHelpfulExist(reviewId, userId);
+
+        if (Boolean.TRUE.equals(isHelpful)) {
+            reviewMapper.deleteHelpful(reviewId, userId);
+        } else {
+            throw new IllegalStateException("도움이 등록되지 않은 리뷰입니다.");
+        }
+    }
+    public boolean isHelpfulExist(Long reviewId, Long userId) {
+        // 기본값을 false로 설정하여 null 반환을 방지
+        Boolean isHelpful = reviewMapper.isHelpfulExist(reviewId, userId);
+        return isHelpful != null && isHelpful;
+    }
     public Restaurants selectShop(Long restaurantId) { return reviewMapper.selectShop(restaurantId); }
     public List<RestaurantImg> selectShopImg(Long restaurantId) { return reviewMapper.selectShopImg(restaurantId); }
     public Reservation selectReservation(Long reservationId) { return reviewMapper.selectReservation(reservationId); }

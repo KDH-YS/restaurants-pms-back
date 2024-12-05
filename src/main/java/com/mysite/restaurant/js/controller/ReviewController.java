@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.mysite.restaurant.js.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -21,23 +23,38 @@ public class ReviewController {
     @Autowired
     ReviewService reviewService;
 
-    // 가게 리뷰와 리뷰 이미지 조회
+    private static final Logger logger = LoggerFactory.getLogger(ReviewController.class);
+
+
+    // 가게 리뷰와 리뷰 이미지 및 좋아요 상태 조회
     @GetMapping("/restaurants/{restaurant_id}/reviews")
-    public Map<String, Object> getReviewsWithImages(@PathVariable("restaurant_id") Long restaurantId) {
+    public Map<String, Object> getReviewsWithImages(@PathVariable("restaurant_id") Long restaurantId, @RequestParam("userId") Long userId) {
         // 가게 리뷰 조회
         List<Reviews> reviews = reviewService.selectRestaurantReviews(restaurantId);
 
         // 각 리뷰에 해당하는 이미지 조회
         Map<Long, List<ReviewImg>> reviewImagesMap = new HashMap<>();
+        List<Map<String, Object>> reviewWithStatusList = new ArrayList<>();
+
         for (Reviews review : reviews) {
-            // 리뷰에 해당하는 이미지 목록을 가져와서 Map에 저장
+            // 리뷰에 해당하는 이미지 목록을 가져와서 Map 저장
             List<ReviewImg> imgs = reviewService.selectReviewImg(review.getReviewId());
             reviewImagesMap.put(review.getReviewId(), imgs);
+
+            // 각 리뷰의 좋아요 상태 확인
+            Boolean isHelpful = reviewService.isHelpfulExist(review.getReviewId(), userId);
+
+            // 리뷰와 좋아요 상태를 함께 담기
+            Map<String, Object> reviewWithStatus = new HashMap<>();
+            reviewWithStatus.put("review", review);
+            reviewWithStatus.put("isHelpful", isHelpful); // 좋아요 여부 추가
+
+            reviewWithStatusList.add(reviewWithStatus);
         }
 
-        // 결과를 Map으로 묶어서 반환
+        // 결과를 Map에 묶어서 반환
         Map<String, Object> result = new HashMap<>();
-        result.put("reviews", reviews);
+        result.put("reviews", reviewWithStatusList);
         result.put("reviewImages", reviewImagesMap);
 
         return result;
@@ -185,15 +202,29 @@ public class ReviewController {
     // 신고 삭제
 
     // 도움 등록/삭제 API
-    @PostMapping("/{review_id}/helpful")
-    public ResponseEntity<String> toggleHelpful(@PathVariable("review_id") Long reviewId, @RequestBody Helpful helpful) {
+    @PostMapping("/reviews/{review_id}/helpful")
+    public ResponseEntity<String> addHelpful(@PathVariable("review_id") Long reviewId, @RequestBody Helpful helpful) {
         try {
-            boolean isHelpful = reviewService.toggleHelpful(reviewId, helpful);
-            return ResponseEntity.status(HttpStatus.OK).body(isHelpful ? "도움이 되었습니다." : "도움이 취소되었습니다.");
+            helpful.setReviewId(reviewId);
+            reviewService.addHelpful(helpful);
+            return ResponseEntity.status(HttpStatus.OK).body("도움이 되었습니다.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("도움 등록/취소 중 오류가 발생했습니다.");
+            logger.error("도움 등록 중 오류가 발생했습니다. 리뷰 ID: " + reviewId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("도움 등록 중 오류가 발생했습니다.");
         }
     }
+
+    @DeleteMapping("/reviews/{review_id}/helpful")
+    public ResponseEntity<String> removeHelpful(@PathVariable("review_id") Long reviewId, @RequestParam Long userId) {
+        try {
+            reviewService.removeHelpful(reviewId, userId);
+            return ResponseEntity.status(HttpStatus.OK).body("도움이 취소되었습니다.");
+        } catch (Exception e) {
+            logger.error("도움 취소 중 오류가 발생했습니다. 리뷰 ID: " + reviewId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("도움 취소 중 오류가 발생했습니다.");
+        }
+    }
+
 
     // 가게 정보
     @GetMapping("/restaurants/{restaurant_id}")

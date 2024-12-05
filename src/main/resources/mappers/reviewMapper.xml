@@ -102,8 +102,10 @@
     </select>
 
     <!-- 도움 카운트 조회 -->
-    <select id="selectReports" resultType="com.mysite.restaurant.js.model.Reports">
-        SELECT COUNT(*) > 0 FROM helpful_votes WHERE review_id = #{reviewId} AND user_id = #{userId};
+    <select id="isHelpfulExist" parameterType="map" resultType="boolean">
+        SELECT COUNT(1) > 0
+        FROM helpful_votes
+        WHERE review_id = #{reviewId} AND user_id = #{userId} AND state = 1;
     </select>
 
     <!-- 리뷰 삭제 -->
@@ -127,8 +129,9 @@
     </delete>
     
     <!-- 도움 삭제 -->
-    <delete id="deleteHelpful" parameterType="Long">
-        DELETE FROM helpful_votes WHERE vote_id = #{voteId};
+    <delete id="deleteHelpful" parameterType="com.mysite.restaurant.js.model.Helpful">
+        DELETE FROM helpful_votes
+        WHERE review_id = #{reviewId} AND user_id = #{userId} AND state = 1;
     </delete>
 
     <!-- 리뷰 수정 -->

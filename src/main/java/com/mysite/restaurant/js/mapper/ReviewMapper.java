@@ -2,6 +2,7 @@ package com.mysite.restaurant.js.mapper;
 
 import com.mysite.restaurant.js.model.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,8 +31,8 @@ public interface ReviewMapper {
     int deleteReport(Long reportId);
 
     int insertHelpful(Helpful helpful);
-    void deleteHelpful(Long voteId);
-    boolean isHelpfulExist(Long voteId);
+    void deleteHelpful(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+    Boolean isHelpfulExist(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
 
     Restaurants selectShop(Long restaurantId);
     List<RestaurantImg> selectShopImg(Long restaurantId);
