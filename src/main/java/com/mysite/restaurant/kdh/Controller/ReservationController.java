@@ -1,7 +1,8 @@
 package com.mysite.restaurant.kdh.Controller;
 
+
+import com.github.pagehelper.PageInfo;
 import com.mysite.restaurant.kdh.Entity.ReservationEntity;
-import com.mysite.restaurant.kdh.Entity.ScheduleEntity;
 import com.mysite.restaurant.kdh.Service.ReservationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +32,15 @@ public class ReservationController {
         // 생성된 예약 정보를 JSON 형식으로 반환
         return ResponseEntity.ok().body(createdReservation);
     }
-    //예약 목록 조회
+    
+    // 내 예약 조회
     @GetMapping
-    public List<ReservationEntity> getReservationsByEmail(@RequestParam("email") String email) {
-        return reservationService.getReservationsByEmail(email);
+    public PageInfo<ReservationEntity> getReservationsByUserId(
+        @RequestParam("userId") Long userId,
+        @RequestParam("page") int page,
+        @RequestParam("size") int size) {        
+        // 서비스 호출을 통해 결과 반환
+        return reservationService.getReservationsByEmail(userId, page, size);
     }
     
  // 예약 수정
@@ -67,14 +73,16 @@ public class ReservationController {
     
     //예약 목록 조회(업주)
     @GetMapping("/manager/{restaurantId}")
-    public List<ReservationEntity> getReservationsByRestaurant(@PathVariable("restaurantId") Long restaurantId) {
-    	log.info("Fetching reservations for restaurantId: {}", restaurantId);
-        return reservationService.getReservationsByRestaurant(restaurantId);
+    public PageInfo<ReservationEntity> getReservationsByRestaurant(
+    		@PathVariable("restaurantId") Long restaurantId,
+    		@RequestParam("page") int page,
+    		@RequestParam("size") int size) {
+        return reservationService.getReservationsByRestaurant(restaurantId,page,size);
     }      
     
     //예약 삭제
     @DeleteMapping("/manager/{reservationId}")
-    public ResponseEntity<String> DeleteReservation(@PathVariable("reservationId") long reservationId){
+    public ResponseEntity<String> DeleteReservation(@PathVariable("reservationId") Long reservationId){
         boolean isCancelled = reservationService.DeleteReservation(reservationId);
         
         if (isCancelled) {
@@ -82,6 +90,12 @@ public class ReservationController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약 취소 요청에 실패했습니다.");
         }
+    }
+    @PutMapping("/manager/{reservationId}")
+    public ResponseEntity<ReservationEntity> putReservationManager(@PathVariable("reservationId") Long reservationId, @RequestBody ReservationEntity reservation){
+    	reservation.setReservationId(reservationId);
+    		ReservationEntity update= reservationService.updateReservationManager(reservation);
+    	return ResponseEntity.ok().body(update);
     }
 
     

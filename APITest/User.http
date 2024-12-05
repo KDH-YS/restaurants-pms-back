@@ -36,5 +36,5 @@ Content-Type: application/json
 }
 
 ### 회원 탈퇴
-DELETE http://localhost:8080/api/auth/deleteUser?email=user02@example.com
+DELETE http://localhost:8080/api/auth/deleteUser?email=user03@example.com
 Content-Type: application/json

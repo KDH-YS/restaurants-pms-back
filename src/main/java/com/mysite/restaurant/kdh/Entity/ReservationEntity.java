@@ -20,7 +20,6 @@ public class ReservationEntity {
     private UsersEntity user;
     
     public enum ReservationStatus {
-        RESERVING, COMPLETED, CANCELED, NOSHOW, PENDING,CANCELREQUEST
+        RESERVING, COMPLETED, NOSHOW, PENDING,CANCELREQUEST
     }
 }
-
