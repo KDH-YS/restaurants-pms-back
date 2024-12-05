@@ -8,7 +8,9 @@ public class RestaurantDTO {
 	  private int restaurantId;
 	    private String name;
 	    private String description;
-	    private String address;
+	    private String postelCode;
+	    private String roadAddr;
+	    private String jibunAddr;
 	    private String phone;
 	    private String foodType;
 	    private Boolean parkingAvailable;  // Boolean으로 변경

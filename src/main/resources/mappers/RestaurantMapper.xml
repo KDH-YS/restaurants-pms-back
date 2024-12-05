@@ -19,31 +19,87 @@
     <result property="detailAddr" column="detail_addr"/>
 </resultMap>
     
-    <!-- 검색 쿼리 -->
-    <select id="getSearch" resultType="com.mysite.restaurant.jh.RestaurantDTO">
-    SELECT * FROM restaurants
-    <where>
-        <if test="city != null">
-            AND city = #{city}
-        </if>
-        <if test="district != null">
-            AND district = #{district}
-        </if>
-        <if test="neighborhood != null">
-            AND neighborhood = #{neighborhood}
-        </if>
-        <if test="foodType != null">
-            AND food_type = #{foodType}
-        </if>
-        <if test="parkingAvailable != null">
-            AND parking_available = #{parkingAvailable}
-        </if>
-        <if test="reservationAvailable != null">
-            AND reservation_available = #{reservationAvailable}
-        </if>
-    </where>
-	</select>
+    <select id="searchRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+  SELECT * FROM restaurants
+  <where>
+    <!-- query가 있을 때, 모든 조건을 포함하여 검색 -->
+    <if test="query != null">
+      AND (
+        name LIKE CONCAT('%', #{query}, '%')
+        OR city LIKE CONCAT('%', #{query}, '%')
+        OR district LIKE CONCAT('%', #{query}, '%')
+        OR food_type LIKE CONCAT('%', #{query}, '%')
+        OR neighborhood LIKE CONCAT('%', #{query}, '%')
+      )
+    </if>
 
+    <!-- 부분 조건 필터링 -->
+    <if test="restaurant.name != null">
+      AND name LIKE CONCAT('%', #{restaurant.name}, '%')
+    </if>
+    <if test="restaurant.city != null">
+      AND city LIKE CONCAT('%', #{restaurant.city}, '%')
+    </if>
+    <if test="restaurant.district != null">
+      AND district LIKE CONCAT('%', #{restaurant.district}, '%')
+    </if>
+    <if test="restaurant.neighborhood != null">
+      AND neighborhood LIKE CONCAT('%', #{restaurant.neighborhood}, '%')
+    </if>
+    <if test="restaurant.foodType != null">
+      AND food_type LIKE CONCAT('%', #{restaurant.foodType}, '%')
+    </if>
+    <if test="restaurant.parkingAvailable != null">
+      AND parking_available = #{restaurant.parkingAvailable}
+    </if>
+    <if test="restaurant.reservationAvailable != null">
+      AND reservation_available = #{restaurant.reservationAvailable}
+    </if>
+  </where>
+  LIMIT #{size} OFFSET #{offset}
+</select>
+
+<!-- countSearch 쿼리 수정 -->
+<select id="countSearch" resultType="java.lang.Integer">
+  SELECT COUNT(*) FROM restaurants
+  <where>
+    <!-- query가 있을 때, 모든 조건을 포함하여 검색 -->
+    <if test="query != null">
+      AND (
+        name LIKE CONCAT('%', #{query}, '%')
+        OR city LIKE CONCAT('%', #{query}, '%')
+        OR district LIKE CONCAT('%', #{query}, '%')
+        OR food_type LIKE CONCAT('%', #{query}, '%')
+        OR neighborhood LIKE CONCAT('%', #{query}, '%')
+      )
+    </if>
+
+    <!-- 부분 조건 필터링 -->
+    <if test="restaurant.name != null">
+      AND name LIKE CONCAT('%', #{restaurant.name}, '%')
+    </if>
+    <if test="restaurant.city != null">
+      AND city LIKE CONCAT('%', #{restaurant.city}, '%')
+    </if>
+    <if test="restaurant.district != null">
+      AND district LIKE CONCAT('%', #{restaurant.district}, '%')
+    </if>
+    <if test="restaurant.neighborhood != null">
+      AND neighborhood LIKE CONCAT('%', #{restaurant.neighborhood}, '%')
+    </if>
+    <if test="restaurant.foodType != null">
+      AND food_type LIKE CONCAT('%', #{restaurant.foodType}, '%')
+    </if>
+    <if test="restaurant.parkingAvailable != null">
+      AND parking_available = #{restaurant.parkingAvailable}
+    </if>
+    <if test="restaurant.reservationAvailable != null">
+      AND reservation_available = #{restaurant.reservationAvailable}
+    </if>
+  </where>
+</select>
+
+	
 	<select id="getRestaurants" resultType="com.mysite.restaurant.jh.RestaurantDTO">
     SELECT * FROM restaurants
     ORDER BY restaurant_id DESC
@@ -66,9 +122,9 @@
     
     <insert id="insertRestaurant" >
     INSERT INTO restaurants (
-        name, description, address, phone, food_type, parking_available, total_seats
+        name, description, postel_code, road_addr, jibun_addr, detail_addr, phone, food_type, parking_available, total_seats
     ) VALUES (
-        #{name}, #{description}, #{address}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+        #{name}, #{description}, #{postelCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
     )
 	</insert>
     
@@ -76,39 +132,23 @@
     SELECT * FROM menus
     WHERE restaurant_id = #{restaurantId}
 </select>
-
+<!-- 
 	<update id="updateAddress">
 	    UPDATE restaurants 
 	    SET 
-	        city = SUBSTRING_INDEX(address, ' ', 1),
-	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 2), ' ', -1),
-	        neighborhood = SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 3), ' ', -1),
-	        detail_addr = TRIM(REGEXP_REPLACE(address, '^[^ ]+ [^ ]+ [^ ]+ ', '')),
-	        -- 세종특별자치시에 대해 특별한 처리를 위한 조건
-	        city = CASE 
-	                  WHEN address LIKE '%세종특별자치시%' THEN SUBSTRING_INDEX(address, ' ', 1) 
-	                  ELSE city 
-	               END,
-	        district = CASE 
-              		WHEN address LIKE '%세종특별자치시%' THEN NULL
-            		ELSE district
-           		END,
-	        neighborhood = CASE 
-	                         WHEN address LIKE '%세종특별자치시%' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 2), ' ', -1)
-	                         ELSE neighborhood
-	                       END,
-	        detail_addr = CASE 
-	                         WHEN address LIKE '%세종특별자치시%' THEN TRIM(REGEXP_REPLACE(address, '^[^ ]+ [^ ]+ ', ''))
-	                         ELSE detail_addr
-	                       END
-	</update>
+	        city = SUBSTRING_INDEX(road_addr, ' ', 1),
+	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(road_addr, ' ', 2), ' ', -1)
+	</update> -->
 	
 	<update id="updateRestaurant">
 	    UPDATE restaurants
 	    SET 
 	        name = #{name},
 	        description = #{description},
-	        address = #{address},
+	        postel_code = #{postelCode},
+	        road_addr = #{roadAddr},
+	        jibun_addr = #{jibunAddr},
+	        detail_addr = #{detailAddr},
 	        phone = #{phone},
 	        food_type = #{foodType},
 	        parking_available = #{parkingAvailable},
@@ -151,5 +191,11 @@
 	    DELETE FROM restaurant_images
 	    WHERE image_id = #{imageId} AND restaurant_id = #{restaurantId}
 	</delete>
+	
+	<select id="getScheduleById" resultType="com.mysite.restaurant.jh.Schedule">
+    SELECT * FROM schedule
+    WHERE restaurant_id = #{restaurantId}
+	</select>
+	
 	
 </mapper>

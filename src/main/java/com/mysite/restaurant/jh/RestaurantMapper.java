@@ -8,14 +8,29 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface RestaurantMapper {
 	
-	public List<RestaurantDTO> getSearch(RestaurantDTO restaurant);
-	List<RestaurantDTO> getRestaurantsAll();
+	// 레스토랑 검색
+    List<RestaurantDTO> searchRestaurants(
+        @Param("query") String query,
+        @Param("restaurant") RestaurantDTO restaurant,
+        @Param("size") int size,
+        @Param("offset") int offset
+    );
+
+    // 레스토랑 검색 결과 개수 반환
+    int countSearch(
+        @Param("query") String query,
+        @Param("restaurant") RestaurantDTO restaurant
+    );
+    
+	List<RestaurantDTO> getRestaurantsAll(RestaurantDTO restaurant);
+	List<RestaurantDTO> getRestaurantsAll(String foodType, String city, String district, String neighborhood);
 	 List<RestaurantDTO> getRestaurants(@Param("offset") int offset, @Param("size") int size);
 	public int countTotal(); 
 	public RestaurantDTO getRestaurantById(int restaurantId);
 	void insertRestaurant(RestaurantDTO restaurant);
 	void updateAddress();
 	void updateRestaurant(RestaurantDTO restaurant);
+   
 	
 	public List<MenuDTO> getMenusByRestaurantId(int restaurantId);
 	void  deleteRestaurant(int restaurantId);
@@ -26,4 +41,6 @@ public interface RestaurantMapper {
 	void insertImage(ImageDTO image);
 	void deleteImage(@Param("restaurantId")int restaurantId,@Param("imageId")int imageId);
 
-   }
+	public List<Schedule> getScheduleById(int restaurantId);
+	}
+   
