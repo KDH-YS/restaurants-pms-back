@@ -23,4 +23,3 @@ public class ReservationEntity {
         RESERVING, COMPLETED, NOSHOW, PENDING,CANCELREQUEST
     }
 }
-
