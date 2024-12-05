@@ -1,5 +1,5 @@
 // src/main/java/com/mysite/config/CorsConfig.java
-package com.mysite.restaurant;
+	package com.mysite.restaurant;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

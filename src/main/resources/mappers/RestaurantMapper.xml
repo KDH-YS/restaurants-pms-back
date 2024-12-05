@@ -122,9 +122,9 @@
     
     <insert id="insertRestaurant" >
     INSERT INTO restaurants (
-        name, description, address, phone, food_type, parking_available, total_seats
+        name, description, postel_code, road_addr, jibun_addr, detail_addr, phone, food_type, parking_available, total_seats
     ) VALUES (
-        #{name}, #{description}, #{address}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+        #{name}, #{description}, #{postelCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
     )
 	</insert>
     
@@ -132,39 +132,23 @@
     SELECT * FROM menus
     WHERE restaurant_id = #{restaurantId}
 </select>
-
+<!-- 
 	<update id="updateAddress">
 	    UPDATE restaurants 
 	    SET 
-	        city = SUBSTRING_INDEX(address, ' ', 1),
-	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 2), ' ', -1),
-	        neighborhood = SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 3), ' ', -1),
-	        detail_addr = TRIM(REGEXP_REPLACE(address, '^[^ ]+ [^ ]+ [^ ]+ ', '')),
-	        -- 세종특별자치시에 대해 특별한 처리를 위한 조건
-	        city = CASE 
-	                  WHEN address LIKE '%세종특별자치시%' THEN SUBSTRING_INDEX(address, ' ', 1) 
-	                  ELSE city 
-	               END,
-	        district = CASE 
-              		WHEN address LIKE '%세종특별자치시%' THEN NULL
-            		ELSE district
-           		END,
-	        neighborhood = CASE 
-	                         WHEN address LIKE '%세종특별자치시%' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(address, ' ', 2), ' ', -1)
-	                         ELSE neighborhood
-	                       END,
-	        detail_addr = CASE 
-	                         WHEN address LIKE '%세종특별자치시%' THEN TRIM(REGEXP_REPLACE(address, '^[^ ]+ [^ ]+ ', ''))
-	                         ELSE detail_addr
-	                       END
-	</update>
+	        city = SUBSTRING_INDEX(road_addr, ' ', 1),
+	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(road_addr, ' ', 2), ' ', -1)
+	</update> -->
 	
 	<update id="updateRestaurant">
 	    UPDATE restaurants
 	    SET 
 	        name = #{name},
 	        description = #{description},
-	        address = #{address},
+	        postel_code = #{postelCode},
+	        road_addr = #{roadAddr},
+	        jibun_addr = #{jibunAddr},
+	        detail_addr = #{detailAddr},
 	        phone = #{phone},
 	        food_type = #{foodType},
 	        parking_available = #{parkingAvailable},
