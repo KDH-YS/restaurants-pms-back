@@ -83,6 +83,8 @@ public class RestaurantService {
 	public void updateRestaurant(RestaurantDTO restaurant) {
         // restaurantId를 기준으로 전체 레코드를 수정
         restaurantMapper.updateRestaurant(restaurant);
+		restaurantMapper.updateAddress();
+
     };
     public void deleteRestaurant(int restaurantId) {
     	restaurantMapper.deleteRestaurant(restaurantId);

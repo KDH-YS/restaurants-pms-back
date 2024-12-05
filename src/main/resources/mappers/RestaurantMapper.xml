@@ -122,9 +122,9 @@
     
     <insert id="insertRestaurant" >
     INSERT INTO restaurants (
-        name, description, postel_code, road_addr, jibun_addr, detail_addr, phone, food_type, parking_available, total_seats
+        name, description, postal_code, road_addr, jibun_addr, detail_addr, phone, food_type, parking_available, total_seats
     ) VALUES (
-        #{name}, #{description}, #{postelCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+        #{name}, #{description}, #{postalCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
     )
 	</insert>
     
@@ -132,20 +132,20 @@
     SELECT * FROM menus
     WHERE restaurant_id = #{restaurantId}
 </select>
-<!-- 
+
 	<update id="updateAddress">
 	    UPDATE restaurants 
 	    SET 
 	        city = SUBSTRING_INDEX(road_addr, ' ', 1),
 	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(road_addr, ' ', 2), ' ', -1)
-	</update> -->
+	</update>
 	
 	<update id="updateRestaurant">
 	    UPDATE restaurants
 	    SET 
 	        name = #{name},
 	        description = #{description},
-	        postel_code = #{postelCode},
+	        postal_code = #{postalCode},
 	        road_addr = #{roadAddr},
 	        jibun_addr = #{jibunAddr},
 	        detail_addr = #{detailAddr},
