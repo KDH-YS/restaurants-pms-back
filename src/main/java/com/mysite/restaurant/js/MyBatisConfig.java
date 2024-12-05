@@ -1,4 +1,4 @@
-package com.mysite.restaurant;
+package com.mysite.restaurant.js;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
