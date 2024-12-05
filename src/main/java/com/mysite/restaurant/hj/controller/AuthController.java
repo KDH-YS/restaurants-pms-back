@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Validated
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
