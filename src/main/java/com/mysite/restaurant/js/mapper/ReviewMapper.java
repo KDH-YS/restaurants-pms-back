@@ -1,37 +1,42 @@
 package com.mysite.restaurant.js.mapper;
 
-import com.mysite.restaurant.js.model.Reviews;
-import com.mysite.restaurant.js.model.Replies;
-import com.mysite.restaurant.js.model.Reports;
-import com.mysite.restaurant.js.model.Helpful;
+import com.mysite.restaurant.js.model.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Mapper
+@Repository
 public interface ReviewMapper {
 	
-    List<Reviews> getReviewById(Long reviewId);
-
+    List<Reviews> selectRestaurantReviews(Long restaurantId);
+    List<Reviews> selectMyReviews(Long restaurantId);
+    List<ReviewImg> selectReviewImg (Long reviewid);
     int insertReview(Reviews review);
+    int insertReviewImg(ReviewImg reviewImg);
+    int updateReview(Reviews review);
+    int updateReviewImage(ReviewImg reviewImg);
+    int deleteReview(Long reviewId);
+    int deleteReviewImg(Long reviewImgId);
 
-    int insertReviewImg(Reviews review);
-
+    List<Replies> selectReplies(Long replyId);
     int insertReplie(Replies replies);
+    int updateReplies(Replies replies);
+    int deleteReply(Long replyId);
 
     int insertReport(Reports reports);
-
-    int insertHelpful(Helpful helpful);
-
-    int updateReview(Reviews review);
-
-    int updateReviewImage(Reviews review);
-
-    int deleteReview(Long reviewId);
-
+    List<Reports> selectReports(Long reportId);
     int deleteReport(Long reportId);
 
-    List<Reviews> selectMyReviews(Long userId);
+    int insertHelpful(Helpful helpful);
+    void deleteHelpful(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+    Boolean isHelpfulExist(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
 
-    List<Reports> selectReport(Long reviewId);
+    Restaurants selectShop(Long restaurantId);
+    List<RestaurantImg> selectShopImg(Long restaurantId);
+    Reservation selectReservation(Long reservationId);
+    User selectUser(Long userId);
+
 }
