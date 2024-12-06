@@ -20,5 +20,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
                 .allowCredentials(false);  // 인증된 요청을 허용
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")  // 허용할 도메인
+                .allowedMethods("GET", "POST", "PUT", "DELETE")  // 허용할 HTTP 메서드
+                .allowedHeaders("*");  // 허용할 헤더
+
     }
 }
