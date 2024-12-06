@@ -122,9 +122,9 @@
     
     <insert id="insertRestaurant" >
     INSERT INTO restaurants (
-        name, description, postal_code, road_addr, jibun_addr, detail_addr, phone, food_type, parking_available, total_seats
+        name, description, postal_code, road_addr, jibun_addr, detail_addr, city, district, neighborhood, phone, food_type, parking_available, total_seats
     ) VALUES (
-        #{name}, #{description}, #{postalCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+        #{name}, #{description}, #{postalCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{city}, #{district}, #{neighborhood}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
     )
 	</insert>
     
@@ -134,10 +134,16 @@
 </select>
 
 	<update id="updateAddress">
-	    UPDATE restaurants 
-	    SET 
-	        city = SUBSTRING_INDEX(road_addr, ' ', 1),
-	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(road_addr, ' ', 2), ' ', -1)
+	UPDATE restaurants
+SET 
+    neighborhood = 
+        CASE
+            WHEN CHAR_LENGTH(district) - CHAR_LENGTH(REPLACE(district, ' ', '')) >= 1 THEN 
+                SUBSTRING_INDEX(district, ' ', -1)
+            ELSE
+                NULL
+        END
+
 	</update>
 	
 	<update id="updateRestaurant">
@@ -149,6 +155,9 @@
 	        road_addr = #{roadAddr},
 	        jibun_addr = #{jibunAddr},
 	        detail_addr = #{detailAddr},
+	       	city = #{city},
+	       	district = #{district},
+	       	neighborhood = #{neighborhood},
 	        phone = #{phone},
 	        food_type = #{foodType},
 	        parking_available = #{parkingAvailable},
