@@ -2,112 +2,83 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mysite.restaurant.hj.mapper.UserMapper">
 
+	<resultMap id="userMap" type="com.mysite.restaurant.hj.dto.UserDTO">
+        <id property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="profileImageUrl" column="profile_image_url"/>
+        <result property="notificationAgreed" column="notification_agreed"/>
+        <result property="userType" column="user_type"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="status" column="status"/>
+        <collection property="authorities" ofType="com.mysite.restaurant.hj.dto.UserAuthDTO">
+            <id property="authNo" column="auth_no"/>
+            <result property="auth" column="auth"/>
+        </collection>
+    </resultMap>
+
 	<!-- 회원가입 -->
-	<insert id="save" parameterType="com.mysite.restaurant.hj.domain.User">
-		INSERT INTO users (email, PASSWORD, NAME, phone, notification_agreed)
-		VALUES (#{email}, #{password}, #{name}, #{phone}, #{notification_agreed});
+	<insert id="save" parameterType="com.mysite.restaurant.hj.dto.UserDTO" useGeneratedKeys="true" keyProperty="userId" keyColumn="user_id">
+		INSERT INTO users (user_name, PASSWORD, NAME, email, phone, notification_agreed)
+		VALUES (#{userName}, #{password}, #{name}, #{email}, #{phone}, #{notificationAgreed});
 	</insert>
 	
-	<!-- 이메일 중복 여부 -->
+	<insert id="createAuth" parameterType="com.mysite.restaurant.hj.dto.UserAuthDTO">
+		INSERT INTO user_auth (user_id, auth)
+		VALUES (#{userId}, #{auth})
+	</insert>
 	
 	<!-- 로그인 -->
-	<select id="findByUserEmail" resultType="com.mysite.restaurant.hj.domain.User">
-		SELECT email, PASSWORD
-		FROM users
-		WHERE email = #{email};
+	<select id="selectUserByUsername" resultMap="userMap">
+		SELECT u.*, ua.auth_no, ua.auth
+		FROM users u
+		LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+		AND ua.is_deleted = FALSE
+		WHERE u.user_name = #{userName}
+		AND u.is_deleted = FALSE
+		AND u.status = 'ACTIVE'
 	</select>
 	
-	<!-- 소셜 로그인 -->
+	<select id="selectUserByUserId" resultMap="userMap">
+		SELECT user_name, PASSWORD
+		FROM users
+		WHERE user_name = #{userName};
+	</select>
+	
+	<update id="updateLastLogin">
+		UPDATE users
+		SET last_login_at = NOW()
+		WHERE user_name = #{userName};
+	</update>
 	
 	<!-- 사용자 정보 조회 -->
-	<select id="selectUserProfile" resultType="com.mysite.restaurant.hj.domain.User">
-		SELECT email, NAME, phone, notification_agreed
+	<select id="selectUserProfile" resultType="com.mysite.restaurant.hj.dto.UserDTO">
+		SELECT NAME, email, phone, notification_agreed
 		FROM users
-		WHERE user_id = #{user_id};
+		WHERE user_id = #{userId};
 	</select>
 	
 	<!-- 사용자 정보 수정 -->
 	<update id="updateUserProfile">
 		UPDATE users
-		SET NAME = #{name}, phone = #{phone}, notification_agreed = #{notification_agreed}
-		WHERE email = #{email};
+		SET NAME = #{name}, phone = #{phone}, notification_agreed = #{notificationAgreed}
+		WHERE user_name = #{userName};
 	</update>
 	
 	<!-- 회원 탈퇴 -->	
 	<!-- 참조 데이터 삭제 -->
 	<delete id="deleteUserReference">
 		DELETE FROM review_replies
-		WHERE user_id = (SELECT user_id FROM users WHERE email = #{email});
+		WHERE user_name = (SELECT user_id FROM users WHERE user_name = #{userName});
 	</delete>
 	<!-- 사용자 데이터 삭제 -->
 	<delete id="deleteUser">
 		DELETE FROM users
-		WHERE email = #{email};
+		WHERE user_name = #{userName};
 	</delete>
-	
-	<!-- 휴대폰 인증 -->
-	<!-- 인증 코드 저장 -->
-<!--	<insert id="savePhoneVerification">-->
-<!--		INSERT INTO phone_verification (phone, verification_code, expires_at, is_verified, attempts)-->
-<!--		VALUES (#{phone}, '123456', DATE_ADD(NOW(), INTERVAL 5 MINUTE), FALSE, 0)-->
-<!--		ON DUPLICATE KEY UPDATE-->
-<!--		verification_code = '123456',-->
-<!--		expires_at = DATE_ADD(NOW(), INTERVAL 5 MINUTE),-->
-<!--		is_verified = FALSE,-->
-<!--		attempts = 0;-->
-<!--	</insert>-->
-	<!-- 인증 코드 확인 -->
-<!--	<select id="selectPhoneVerification">-->
-<!--		SELECT *-->
-<!--		FROM phone_verification-->
-<!--		WHERE phone = #{phone}-->
-<!--		AND verification_code = '123456-->
-<!--		AND expires_at > NOW()-->
-<!--		AND is_verified = FALSE;-->
-<!--	</select>-->
-	<!-- 인증 성공 처리 -->
-<!--	<update id="updatePhoneVerification">-->
-<!--		UPDATE phone_verification-->
-<!--		SET is_verified = TRUE-->
-<!--		WHERE phone = '010-0000-0000'-->
-<!--		AND verification_code = '123456'-->
-<!--		AND expires_at > NOW()-->
-<!--		AND is_verified = FALSE;-->
-<!--	</update>-->
-	<!-- 인증 시도 횟수 증가 -->
-<!--	<update id="updatePhoneVerification-attempts">-->
-<!--		UPDATE phone_verification-->
-<!--		SET attempts = attempts + 1-->
-<!--		WHERE phone = #{phone};-->
-<!--	</update>-->
-	<!-- 인증 시도 횟수 초과 확인 (5회 초과) -->
-<!--	<select id="selectPhoneVerification-attempts">-->
-<!--		SELECT *-->
-<!--		FROM phone_verification-->
-<!--		WHERE phone = #{phone}-->
-<!--		AND attempts >= 5;-->
-<!--	</select>-->
-	<!-- 만료된 인증 코드 삭제 -->
-<!--	<delete id="deletePhoneVerification">-->
-<!--		DELETE FROM phone_verification-->
-<!--		WHERE expires_at < NOW();-->
-<!--	</delete>-->
-	<!-- 인증된 사용자 확인 -->
-<!--	<select id="selectPhoneVerification-user">-->
-<!--		SELECT is_verified-->
-<!--		FROM phone_verificateion-->
-<!--		WHERE phone = #{phone};-->
-<!--	</select>-->
-	
-	<!-- 사업자 인증 -->
-<!--	<insert id="insertPromotionOwner">-->
-<!--		INSERT INTO promotion_owner (business_registration_number, owner_name, restaurant_name, address, phone, business_hours)-->
-<!--		VALUES (#{business_registration_number}, #{owner_name}, #{restaurant_name}, #{address}, #{phone}, #{business_hours});-->
-<!--	</insert>-->
-	<!-- 사업자 인증 후 사용자 정보 수정 -->
-<!--	<update id="updatePromotionOwner">-->
-<!--		UPDATE users-->
-<!--		SET user_type = 'OWNER'-->
-<!--		WHERE email = #{email};-->
-<!--	</update>-->
 </mapper>
