@@ -251,4 +251,9 @@ public class ReviewController {
     public User getUser(@PathVariable("user_id") Long userId) {
         return reviewService.selectUser(userId);
     }
+    // 모든 유저 조회
+    @GetMapping("/js/users/{restaurant_id}")
+    public List<User> getAllUsers(@PathVariable("restaurant_id") Long restaurantId) {
+        return reviewService.getAllUsers(restaurantId);
+    }
 }

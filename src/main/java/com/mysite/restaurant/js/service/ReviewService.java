@@ -88,4 +88,5 @@ public class ReviewService {
     public List<RestaurantImg> selectShopImg(Long restaurantId) { return reviewMapper.selectShopImg(restaurantId); }
     public Reservation selectReservation(Long reservationId) { return reviewMapper.selectReservation(reservationId); }
     public User selectUser(Long userId) { return reviewMapper.selectUser(userId); }
+    public List<User> getAllUsers(Long restaurantId) { return reviewMapper.selectAllUser(restaurantId); }
 }

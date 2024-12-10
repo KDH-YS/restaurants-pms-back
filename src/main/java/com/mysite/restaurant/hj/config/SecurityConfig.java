@@ -46,6 +46,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/schedule/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/reviews/**").permitAll()
 						.requestMatchers("/api/restaurants/**").permitAll()
+						.requestMatchers("/api/js/**").permitAll()
 						.requestMatchers("/api/schedule/**").permitAll()
 						.requestMatchers("/api/restaurants/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/reservations/manager/**").permitAll()// 인증 없이 허용할 경로

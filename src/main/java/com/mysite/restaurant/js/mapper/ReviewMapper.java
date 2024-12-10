@@ -38,5 +38,6 @@ public interface ReviewMapper {
     List<RestaurantImg> selectShopImg(Long restaurantId);
     Reservation selectReservation(Long reservationId);
     User selectUser(Long userId);
+    List<User> selectAllUser(@Param("restaurantId") Long restaurantId);
 
 }

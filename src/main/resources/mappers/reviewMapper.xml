@@ -181,5 +181,14 @@
         SELECT * FROM users WHERE user_id = #{userId};
     </select>
 
+    <!-- 유저정보 조회 -->
+    <select id="selectAllUser" resultType="map">
+        SELECT DISTINCT u.user_id AS userId,
+        u.name AS userName
+        FROM reviews r
+        JOIN users u ON r.user_id = u.user_id
+        WHERE r.restaurant_id = #{restaurantId};
+    </select>
+
 
 </mapper>
