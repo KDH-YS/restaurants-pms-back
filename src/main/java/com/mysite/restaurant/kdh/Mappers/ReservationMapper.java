@@ -1,5 +1,6 @@
 package com.mysite.restaurant.kdh.Mappers;
 
+import com.mysite.restaurant.jh.RestaurantDTO;
 import com.mysite.restaurant.kdh.Entity.ReservationEntity;
 import com.mysite.restaurant.kdh.Entity.ScheduleEntity;
 
@@ -22,4 +23,5 @@ public interface ReservationMapper {
     ReservationEntity selectReservation(Long reservationId);
     List<ScheduleEntity> selectSchedule(Long restaurantId);
     int deleteSchedule(Long ScheduleId);
+    List<RestaurantDTO> selectRestaurantByName(String name);
 }

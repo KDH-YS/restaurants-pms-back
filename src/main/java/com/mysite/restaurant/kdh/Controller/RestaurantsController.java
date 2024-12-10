@@ -2,6 +2,9 @@ package com.mysite.restaurant.kdh.Controller;
 
 import java.util.List;
 
+import com.github.pagehelper.PageInfo;
+import com.mysite.restaurant.jh.RestaurantDTO;
+import com.mysite.restaurant.kdh.Entity.ReservationEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,6 +56,14 @@ public class RestaurantsController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("일정 삭제가 실패했습니다.");
         }
+    }
+    @GetMapping
+    public PageInfo<RestaurantDTO> getRestaurantByName(
+            @RequestParam("name") String name,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
+        // 서비스 호출을 통해 결과 반환
+        return reservationService.getRestaurantByName(name, page, size);
     }
 
 }
