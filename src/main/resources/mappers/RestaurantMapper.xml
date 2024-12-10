@@ -120,7 +120,7 @@
         WHERE restaurant_id = #{restaurantId}
     </select>
     
-    <insert id="insertRestaurant" >
+    <insert id="insertRestaurant" useGeneratedKeys="true" keyProperty="restaurantId">
     INSERT INTO restaurants (
         name, description, postal_code, road_addr, jibun_addr, detail_addr, city, district, neighborhood, phone, food_type, parking_available, total_seats
     ) VALUES (
@@ -201,10 +201,28 @@ SET
 	    WHERE image_id = #{imageId} AND restaurant_id = #{restaurantId}
 	</delete>
 	
+	<!-- 1. 모든 이미지의 image_order를 false로 설정 -->
+    <update id="updateImageOrderToFalse">
+        UPDATE restaurant_images
+        SET image_order = false
+        WHERE restaurant_id = #{restaurantId}
+    </update>
+
+    <!-- 2. 특정 이미지의 image_order를 true로 설정 (대표 이미지로 설정) -->
+    <update id="updateImage">
+        UPDATE restaurant_images
+        SET image_order = #{imageOrder}
+        WHERE image_id = #{imageId} AND restaurant_id = #{restaurantId}
+    </update>
+	
 	<select id="getScheduleById" resultType="com.mysite.restaurant.jh.Schedule">
     SELECT * FROM schedule
     WHERE restaurant_id = #{restaurantId}
 	</select>
 	
-	
+	<select id="getMaxImageOrder" resultType="java.lang.Boolean">
+    SELECT image_order = 1 FROM restaurant_images
+    WHERE restaurant_id = #{restaurantId} AND image_order = true
+    LIMIT 1
+</select>
 </mapper>

@@ -76,9 +76,11 @@ public class RestaurantService {
         return restaurantMapper.getMenusByRestaurantId(restaurantId);  // List로 반환
     }
 
-	public void insertRestaurant(RestaurantDTO restaurant) {
-		restaurantMapper.insertRestaurant(restaurant);
-	};
+    public int insertRestaurant(RestaurantDTO restaurant) {
+        // 레스토랑 등록 후, 해당 레코드의 ID를 반환
+        return restaurantMapper.insertRestaurant(restaurant);
+    }
+    
 	public void updateRestaurant(RestaurantDTO restaurant) {
         // restaurantId를 기준으로 전체 레코드를 수정
         restaurantMapper.updateRestaurant(restaurant);
@@ -106,7 +108,19 @@ public class RestaurantService {
 	public void deleteImage(int restaurantId,int imageId) {
 		restaurantMapper.deleteImage(restaurantId, imageId);
 	}
+	public Boolean getMaxImageOrder(int restaurantId) {
+	    // DB에서 해당 레스토랑에 등록된 이미지들의 최대 image_order 값을 가져옵니다.
+	    return restaurantMapper.getMaxImageOrder(restaurantId);
+	}
+	
+	public void updateImage(ImageDTO imageDTO) {
+        // 1. 해당 레스토랑의 모든 이미지에서 imageOrder를 false로 설정
+        restaurantMapper.updateImageOrderToFalse(imageDTO.getRestaurantId());
 
+        // 2. 선택된 이미지를 대표 이미지로 설정 (imageOrder = true)
+        restaurantMapper.updateImage(imageDTO);
+    }
+	
 	public List<Schedule> getScheduleById(int restaurantId){
     	return restaurantMapper.getScheduleById(restaurantId);
 	}
