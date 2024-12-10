@@ -3,6 +3,9 @@ package com.mysite.restaurant.hj.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.mysite.restaurant.hj.domain.entity.UserStatus;
+import com.mysite.restaurant.hj.domain.entity.UserType;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,18 +31,7 @@ public class UserDTO {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private int isDeleted;
-	private Status status;
+	private UserStatus status;
 	
 	private List<UserAuthDTO> authorities;
-//	private String status;
-	
-	public enum UserType {
-		CUSTOMER,
-		OWNER,
-		USER
-	}
-	
-	public enum Status {
-		ACTIVE
-	}
 }

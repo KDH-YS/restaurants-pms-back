@@ -1,6 +1,6 @@
 package com.mysite.restaurant.hj.dto;
 
-import com.mysite.restaurant.hj.dto.UserDTO.UserType;
+import com.mysite.restaurant.hj.domain.entity.UserType;
 
 import lombok.Builder;
 import lombok.Getter;

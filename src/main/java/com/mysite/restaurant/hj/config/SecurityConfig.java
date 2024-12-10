@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -42,11 +44,10 @@ public class SecurityConfig {
 			.formLogin(formLogin -> formLogin.disable()) // 시큐리티 제공 기본 로그인 페이지와 처리를 비활성화
 //			JWT는 세션을 필요하지 않음
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(auth -> auth.requestMatchers(
-					"/api/auth/**"
-					).permitAll()
-			.requestMatchers("/api/auth/me").authenticated()
-			.anyRequest().authenticated())
+			.authorizeHttpRequests(auth -> auth
+					.requestMatchers("/api/users/**").permitAll()
+					.requestMatchers("/api/auth/**").permitAll()
+					.anyRequest().authenticated())
 //			예외처리
 //			스프링 시큐리티 인증/인가 과정에서의 예외발생 처리
 			.exceptionHandling(exc -> exc

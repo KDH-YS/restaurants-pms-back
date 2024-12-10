@@ -20,9 +20,9 @@ public class MailController {
 	private final MailService mailService;
 	
 	@PostMapping ("/verify-email")
-    public String mailSend(@RequestBody @Valid EmailRequestDTO emailDto) {
-        System.out.println("이메일 인증 이메일 :" + emailDto.getEmail());
-        return mailService.joinEmail(emailDto.getEmail());
+    public String mailSend(@RequestBody @Valid EmailRequestDTO emailDTO) {
+        System.out.println("이메일 인증 이메일 :" + emailDTO.getEmail());
+        return mailService.joinEmail(emailDTO.getEmail());
     }
 	
 	@PostMapping("/verify-emailCheck")

@@ -2,11 +2,15 @@ package com.mysite.restaurant.hj.service;
 
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mysite.restaurant.hj.dto.LoginRequest;
 import com.mysite.restaurant.hj.dto.UserAuthDTO;
 import com.mysite.restaurant.hj.dto.UserDTO;
+import com.mysite.restaurant.hj.jwt.JwtTokenProvider;
 import com.mysite.restaurant.hj.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserMapper userMapper;
+	private final PasswordEncoder passwordEncoder;
+	private final JwtTokenProvider jwtTokenProvider;
 	
 	public boolean existsUserByUserId(String userName) {
 		return userMapper.selectUserByUserId(userName) != null;

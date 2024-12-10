@@ -25,22 +25,38 @@ public class JwtFilter extends OncePerRequestFilter {
 									HttpServletResponse response,
 									FilterChain filterChain)
 					throws ServletException, IOException {
+		
+//		로그아웃 요청은 JWT 필터에서 검증하지 않도록 예외 처리
+		if (isLogoutRequest(request.getRequestURI())) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+		
 		String jwt = resolveToken(request);
 		
-		try {
-//			토큰이 존재 && 유효한 토큰인가?
-			if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-//				토큰에서 클레임 추출 후 추출한 클레임에서 권한 정보를 추출하여 Authentication 객체를 생성
-				Authentication authentication = tokenProvider.getAuthentication(jwt);
-//				SecurityContext에 Authentication 객체를 저장 -> 이제 이 요청은 인증된 요청이 됨.
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-				log.debug("Security Context에 '{}' 인증 정보를 저장했습니다.", authentication.getName());
+		if (jwt != null && tokenProvider.validateToken(jwt)) {
+//			회원가입 및 로그인 엔드포인트로의 요청을 검사
+			if (isSignupOrLoginRequest(request.getRequestURI()) && tokenProvider.validateToken(jwt)) {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				
+				String jsonMessage = "{\"message\": \"이미 로그인된 사용자입니다.\"}";
+				response.getWriter().write(jsonMessage);
+				response.getWriter().flush();
+				return; // 이미 토큰이 있는 사용자는 로그인 또는 회원가입 불가
 			}
-		} catch (Exception e) {
-			log.error("사용자 인증을 설정할 수 없음: {}", e.getMessage());
+			
+//			JWT가 유효하다면 사용자 인증 정보를 SecurityContext에 설정
+			Authentication authentication = tokenProvider.getAuthentication(jwt);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 		
 		filterChain.doFilter(request, response);
+	}
+	
+	private boolean isSignupOrLoginRequest(String requestUri) {
+		return requestUri.contains("/signup") || requestUri.contains("/login");
 	}
 	
 	private String resolveToken(HttpServletRequest request) {
@@ -49,5 +65,10 @@ public class JwtFilter extends OncePerRequestFilter {
 			return bearerToken.substring(7);
 		}
 		return null;
+	}
+	
+//	로그아웃 요청인지 확인하는 메서드
+	private boolean isLogoutRequest(String requestUri) {
+		return requestUri.contains("/logout");
 	}
 }
