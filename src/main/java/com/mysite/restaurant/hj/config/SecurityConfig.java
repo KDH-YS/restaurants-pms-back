@@ -42,7 +42,8 @@ public class SecurityConfig {
 				.formLogin(formLogin -> formLogin.disable()) // 시큐리티 제공 기본 로그인 페이지와 처리를 비활성화
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/**").permitAll()  // 인증 없이 허용할 경로
+						.requestMatchers("/api/auth/**").permitAll()
+						.requestMatchers("/api/schedule/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/restaurant/**").permitAll()  // /api/restaurant 경로는 인증 없이 허용
 						.requestMatchers("/api/auth/me").authenticated()  // 인증이 필요한 경로
 						.anyRequest().authenticated()  // 그 외의 모든 요청은 인증이 필요
