@@ -43,7 +43,9 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/api/schedule/**").permitAll()// 인증 없이 허용할 경로
+						.requestMatchers("/api/schedule/**").permitAll()
+						.requestMatchers("/api/restaurants/**").permitAll()// 인증 없이 허용할 경로
+						.requestMatchers("/api/reservations/manager/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/restaurant/**").permitAll()  // /api/restaurant 경로는 인증 없이 허용
 						.requestMatchers("/api/auth/me").authenticated()  // 인증이 필요한 경로
 						.anyRequest().authenticated()  // 그 외의 모든 요청은 인증이 필요
