@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.mysite.restaurant.hj.domain.entity.UserStatus;
+
 import lombok.Getter;
 
 @Getter
@@ -39,18 +41,23 @@ public class CustomUserDetails implements UserDetails {
 		return true;
 	}
 	
-//	@Override
-//	public boolean isAccountNonLocked() {
-//		return !"SUSPENDED".equals(user.getStatus());
-//	}
+	@Override
+	public boolean isAccountNonLocked() {
+		return !"SUSPENDED".equals(user.getStatus());
+	}
 	
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
 	
-//	@Override
-//	public boolean isEnabled() {
-//		return "ACTIVE".equals(user.getStatus());
-//	}
+	@Override
+	public boolean isEnabled() {
+		return user.getStatus() == UserStatus.ACTIVE;
+	}
+	
+	@Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 }

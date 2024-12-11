@@ -1,7 +1,11 @@
 package com.mysite.restaurant.hj.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -17,12 +21,14 @@ import com.mysite.restaurant.hj.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Validated
 @CrossOrigin(origins = "http://localhost:3000")
+@Slf4j
 public class AuthController {
 
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -66,16 +72,29 @@ public class AuthController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
 //    	토큰을 만들자
+//		사용자 정보 가져오기
 		String jwt = tokenProvider.createToken(authentication);
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+		
+//		user.getAuthorities() 호출 위치 이동
+		List<String> authorities = userDetails.getUser().getAuthorities().stream()
+		        .map(UserAuthDTO::getAuth)
+		        .collect(Collectors.toList());
+		
+//		사용자 상태 로깅 (authorities 포함)
+		log.info("User login attempt: userName={}, isEnabled={}, status={}, authorities={}",
+		        userDetails.getUsername(), userDetails.isEnabled(), userDetails.getUser().getStatus(), authorities);
+		
 		UserDTO user = userDetails.getUser();
 		
+//		마지막 로그인 시간 업데이트
 		userService.updateLastLogin(user.getUserName());
 		
 		TokenResponse tokenResponse = TokenResponse.builder()
 				.token(jwt)
 				.userName(user.getUserName())
 				.email(user.getEmail())
+				.authorities(authorities)
 				.build();
 		
 		return ResponseEntity.ok(JsonResponse.builder()
@@ -89,6 +108,7 @@ public class AuthController {
 //  로그아웃
     
 //	사용자 정보 조회
+	@PreAuthorize("hasRole('USER')")
     @GetMapping("/me/{userName}")
     public ResponseEntity<UserDTO> getUser(@PathVariable("userName") String userName) {
         UserDTO user = customUserDetailsService.selectUserProfile(userName);
@@ -101,12 +121,14 @@ public class AuthController {
     }
     
 //  사용자 정보 수정
+	@PreAuthorize("hasRole('USER')")
     @PutMapping("/me")
     public int updateUserProfile(@RequestBody UserDTO user) {
     	return customUserDetailsService.updateUserProfile(user);
     }
     
 //  회원 탈퇴
+	@PreAuthorize("hasRole('USER')")
     @DeleteMapping("/deleteUser")
     public int deleteUser(@RequestParam("userName") String userName) {
     	return customUserDetailsService.deleteUser(userName);
