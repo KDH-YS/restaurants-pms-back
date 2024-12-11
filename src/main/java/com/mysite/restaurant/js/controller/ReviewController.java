@@ -196,7 +196,13 @@ public class ReviewController {
         reports.setReviewId(reviewId);
         return reviewService.insertReport(reports);
     }
+
     // 신고 삭제
+    @DeleteMapping("/report/{report_id}")
+    public void deleteReport(@PathVariable("report_id") Long reportId) {
+        reviewService.deleteReport(reportId);
+    }
+
 
     // 도움 등록/삭제 API
     @PostMapping("/reviews/{review_id}/helpful")

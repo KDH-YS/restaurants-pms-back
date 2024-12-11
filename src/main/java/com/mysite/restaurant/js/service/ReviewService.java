@@ -35,6 +35,7 @@ public class ReviewService {
     public int insertReviewImage(ReviewImg reviewImg) {
         return reviewMapper.insertReviewImg(reviewImg);
     }
+
     // 리뷰 수정
     public int updateReview(Reviews review) {
         return reviewMapper.updateReview(review);
@@ -43,6 +44,7 @@ public class ReviewService {
     public int deleteReview(Long reviewId) {
         return reviewMapper.deleteReview(reviewId);
     }
+
     // 답글 조회
     public List<Replies> selectReplies(Long reviewId) {
         return reviewMapper.selectReplies(reviewId);
@@ -51,6 +53,7 @@ public class ReviewService {
     public int insertReplie(Replies replies) {
         return reviewMapper.insertReplie(replies);
     }
+
     // 신고 조회
     public List<Map<String, Object>> getReports(Long restaurantId) {
         return reviewMapper.selectReportDetails(restaurantId);
@@ -59,7 +62,10 @@ public class ReviewService {
     public int insertReport(Reports reports) {
         return reviewMapper.insertReport(reports);
     }
+    // 신고 삭제
+    public void deleteReport(Long reportId) { reviewMapper.deleteReport(reportId);}
 
+    // 좋아요 작성
     public void addHelpful(Helpful helpful) {
         // 이미 투표한 내역이 있는지 확인
         Boolean isHelpful = reviewMapper.isHelpfulExist(helpful.getReviewId(), helpful.getUserId());

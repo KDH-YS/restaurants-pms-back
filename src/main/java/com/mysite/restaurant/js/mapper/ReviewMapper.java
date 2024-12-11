@@ -29,7 +29,7 @@ public interface ReviewMapper {
 
     int insertReport(Reports reports);
     List<Map<String, Object>> selectReportDetails(@Param("restaurant_id") Long restaurantId);
-    int deleteReport(Long reportId);
+    void deleteReport(Long reportId);
 
     int insertHelpful(Helpful helpful);
     void deleteHelpful(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
