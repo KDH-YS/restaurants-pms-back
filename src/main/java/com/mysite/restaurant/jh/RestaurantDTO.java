@@ -8,7 +8,7 @@ public class RestaurantDTO {
 	  private int restaurantId;
 	    private String name;
 	    private String description;
-	    private String postelCode;
+	    private String postalCode;
 	    private String roadAddr;
 	    private String jibunAddr;
 	    private String phone;

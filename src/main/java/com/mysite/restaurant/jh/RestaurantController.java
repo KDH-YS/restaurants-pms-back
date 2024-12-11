@@ -182,21 +182,27 @@ public class RestaurantController {
     }
     	
     	 // 레스토랑 등록 API (POST)
-        @PostMapping("api/restaurant/create")
-        public ResponseEntity<Map<String, String>> insertRestaurant(@RequestBody RestaurantDTO restaurant) {
-            try {
-                restaurantService.insertRestaurant(restaurant);
-                // 분
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "레스토랑 등록 성공");
-                
-                return ResponseEntity.ok(response);  // 200 OK 응답
-            } catch (Exception e) {
-                Map<String, String> errorResponse = new HashMap<>();
-                errorResponse.put("error", "레스토랑 등록에 실패했습니다.");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // 500 오류 응답
-            }
-        }
+    	@PostMapping("/api/restaurant/create")
+    	public ResponseEntity<Map<String, Object>> insertRestaurant(@RequestBody RestaurantDTO restaurant) {
+    	    try {
+    	        // 레스토랑 등록
+    	        int restaurantId = restaurantService.insertRestaurant(restaurant);
+
+    	        // 응답에 restaurantId 포함
+    	        Map<String, Object> response = new HashMap<>();
+    	        response.put("message", "레스토랑 등록 성공");
+    	        response.put("restaurantId", restaurantId);  // 등록된 restaurantId를 응답에 포함
+
+    	        return ResponseEntity.status(HttpStatus.CREATED).body(response);  // HTTP 201 응답
+    	    } catch (Exception e) {
+    	        // 예외 발생 시 응답
+    	        Map<String, Object> errorResponse = new HashMap<>();
+    	        errorResponse.put("error", "레스토랑 등록에 실패했습니다.");
+
+    	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);  // HTTP 500 오류 응답
+    	    }
+    	}
+
 
         // 레스토랑 정보 수정 API (PUT)
         @PutMapping("/api/restaurant/update/{restaurantId}")

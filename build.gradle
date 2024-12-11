@@ -47,10 +47,8 @@ dependencies {
 	// Pagination Support
 	implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:2.1.0'
 
-	// JSON Web Token
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+  	// implementation 'org.springframework.boot:spring-boot-starter-security'
+  	// testImplementation 'org.springframework.security:spring-security-test'
 
 	// Jakarta and Validation
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.1'

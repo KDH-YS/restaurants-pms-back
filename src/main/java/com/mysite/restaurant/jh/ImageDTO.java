@@ -7,6 +7,6 @@ public class ImageDTO {
 		private int imageId;
 		private int restaurantId;
 		private String imageUrl;
-		private Integer imageOrder;
+		private boolean imageOrder;
 		private String uid;
 }
