@@ -84,21 +84,21 @@
     </select>
 
     <!-- 신고 상세 조회 -->
-    <select id="selectReport" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reports">
+    <select id="selectReportDetails" parameterType="Long" resultType="map">
         SELECT
-            rev.review_id,
-            u.name,
-            rev.review_content,
-            rev.created_at,
-            r.name,
-            rrt.report_id,
-            rrt.reason,
-            rrt.report_description,
-            rrt.status
+        rev.review_id,
+        u.name AS user_name,
+        rev.review_content,
+        rev.created_at,
+        rrt.report_id,
+        rrt.reason,
+        rrt.report_description,
+        rrt.status
         FROM review_reports rrt
         JOIN reviews rev ON rev.review_id = rrt.review_id
         JOIN users u ON u.user_id = rev.user_id
-        JOIN restaurants r ON r.restaurant_id = rev.restaurant_id;
+        JOIN restaurants r ON r.restaurant_id = rev.restaurant_id
+        WHERE r.restaurant_id = #{restaurant_id} <!-- 가게 ID로 필터링 -->
     </select>
 
     <!-- 도움 카운트 조회 -->

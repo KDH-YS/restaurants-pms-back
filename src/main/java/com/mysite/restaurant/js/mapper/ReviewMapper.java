@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 @Repository
@@ -27,7 +28,7 @@ public interface ReviewMapper {
     int deleteReply(Long replyId);
 
     int insertReport(Reports reports);
-    List<Reports> selectReports(Long reportId);
+    List<Map<String, Object>> selectReportDetails(@Param("restaurant_id") Long restaurantId);
     int deleteReport(Long reportId);
 
     int insertHelpful(Helpful helpful);

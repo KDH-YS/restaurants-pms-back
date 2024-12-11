@@ -182,15 +182,12 @@ public class ReviewController {
     }
 
     // 신고 조회
-    @GetMapping("/admin/reports")
-    public List<Reports> getReports(@RequestParam("userId") Long userId) {
-        return reviewService.selectReports(userId);
-    }
 
-    // 신고 상세 조회
-    @GetMapping("/admin/reports/{report_id}")
-    public List<Reports> getReportsDetail(@PathVariable("report_id") Long reportId) {
-        return reviewService.selectReports(reportId);
+    // 가게 신고리뷰 조회
+    @GetMapping("/js/reports/{restaurant_id}")
+    public ResponseEntity<List<Map<String, Object>>> getReportsDetails(@PathVariable("restaurant_id") Long restaurantId) {
+        List<Map<String, Object>> reports = reviewService.getReports(restaurantId);
+        return ResponseEntity.ok(reports);
     }
 
     // 리뷰 신고 작성
