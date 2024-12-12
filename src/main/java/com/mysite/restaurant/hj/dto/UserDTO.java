@@ -29,7 +29,9 @@ public class UserDTO {
 	private LocalDateTime updatedAt;
 	private int isDeleted;
 	private Status status;
-	
+
+	private long restaurantId;
+
 	private List<UserAuthDTO> authorities;
 //	private String status;
 	
