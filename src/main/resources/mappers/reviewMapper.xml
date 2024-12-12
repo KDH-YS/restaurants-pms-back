@@ -61,10 +61,28 @@
 
     <!-- 리뷰 정보만 조회 -->
     <select id="selectMyReviews" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reviews">
-        SELECT rev.*, ri.*
+        SELECT
+        rev.review_id,
+        rev.user_id,
+        rev.review_content AS review_content,
+        rev.created_at,
+        r.restaurant_id,
+        r.name AS restaurant_name,
+        r.jibun_addr,
+        r.food_type,
+        r.phone,
+        r.average_rating,
+        JSON_ARRAYAGG(
+        JSON_OBJECT(
+        'review_image_id', ri.review_image_id,
+        'image_url', ri.image_url
+        )
+        ) AS review_images
         FROM reviews rev
+        JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
         LEFT JOIN review_images ri ON rev.review_id = ri.review_id
-        WHERE rev.user_id = #{userId};
+        WHERE rev.user_id = 1
+        GROUP BY rev.review_id;
     </select>
     <select id="selectMyRestaurants" parameterType="Long" resultType="com.mysite.restaurant.js.model.Restaurants">
         SELECT DISTINCT r.*
