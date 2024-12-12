@@ -76,11 +76,14 @@ public class ReviewController {
             List<ReviewImg> imgs = reviewService.selectReviewImg(review.getReviewId());
             reviewImages.addAll(imgs);
         }
+        // 레스토랑 조회
+        List<Restaurants> restaurants = reviewService.selectMyRestaurants(userId);
 
         // 결과를 Map으로 묶어서 반환
         Map<String, Object> result = new HashMap<>();
         result.put("reviews", reviews);
         result.put("reviewImages", reviewImages);
+        result.put("restaurants", restaurants);
 
         return result;
     }
