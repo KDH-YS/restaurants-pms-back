@@ -59,18 +59,18 @@ public class ReservationController {
         }
     }
     
-    //예약 취소 요청
-    @PatchMapping("/user/{reservationId}")
-    public ResponseEntity<String> cancelReservationRequest(@PathVariable("reservationId") Long reservationId) {
-        boolean isCancelled = reservationService.cancelReservationRequest(reservationId);
-        
-        if (isCancelled) {
-            return ResponseEntity.ok("예약 취소 요청이 성공적으로 처리되었습니다.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약 취소 요청에 실패했습니다.");
-        }
-    }
-    
+//    //예약 취소 요청
+//    @PatchMapping("/user/{reservationId}")
+//    public ResponseEntity<String> cancelReservationRequest(@PathVariable("reservationId") Long reservationId) {
+//        boolean isCancelled = reservationService.cancelReservationRequest(reservationId);
+//
+//        if (isCancelled) {
+//            return ResponseEntity.ok("예약 취소 요청이 성공적으로 처리되었습니다.");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약 취소 요청에 실패했습니다.");
+//        }
+//    }
+//
     //예약 목록 조회(업주)
     @GetMapping("/manager/{restaurantId}")
     public PageInfo<ReservationEntity> getReservationsByRestaurant(

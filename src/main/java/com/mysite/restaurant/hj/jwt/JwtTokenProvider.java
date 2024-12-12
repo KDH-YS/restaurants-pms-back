@@ -59,8 +59,6 @@ public class JwtTokenProvider {
 		
 		long now = System.currentTimeMillis();
 		Date validity = new Date(now + this.tokenValidityInSeconds * 1000);
-		System.out.println("User details: " + userDetails.getUser());
-		System.out.println("Restaurant ID: " + userDetails.getUser().getRestaurantId());
 
 		return Jwts.builder()
 //				Header

@@ -30,7 +30,7 @@ public class UserDTO {
 	private int isDeleted;
 	private Status status;
 
-	private long restaurantId;
+	private Long restaurantId;
 
 	private List<UserAuthDTO> authorities;
 //	private String status;
