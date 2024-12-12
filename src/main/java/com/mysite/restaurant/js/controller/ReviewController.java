@@ -28,7 +28,10 @@ public class ReviewController {
 
     // 가게 리뷰와 리뷰 이미지 및 좋아요 상태 조회
     @GetMapping("/restaurants/{restaurant_id}/reviews")
-    public Map<String, Object> getReviewsWithImages(@PathVariable("restaurant_id") Long restaurantId, @RequestParam("userId") Long userId) {
+    public Map<String, Object> getReviewsWithImages(
+            @PathVariable("restaurant_id") Long restaurantId,
+            @RequestParam(value = "userId", required = false) Long userId
+    ) {
         // 가게 리뷰 조회
         List<Reviews> reviews = reviewService.selectRestaurantReviews(restaurantId);
 
