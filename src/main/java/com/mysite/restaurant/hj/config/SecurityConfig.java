@@ -46,7 +46,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
 					.requestMatchers("/api/users/**").permitAll()
-					.requestMatchers("/api/auth/**").permitAll()
+					.requestMatchers("/api/admin/**").permitAll()
 					.anyRequest().authenticated())
 //			예외처리
 //			스프링 시큐리티 인증/인가 과정에서의 예외발생 처리

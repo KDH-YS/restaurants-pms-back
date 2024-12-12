@@ -81,4 +81,45 @@
 		DELETE FROM users
 		WHERE user_name = #{userName};
 	</delete>
+	
+	<!-- 회원 관리 -->
+	<select id="selectAllMembers" resultMap="userMap">
+	    SELECT u.*, ua.auth_no, ua.auth
+	    FROM users u
+	    LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+	    WHERE u.is_deleted = FALSE
+	    ORDER BY u.user_id
+	</select>
+	
+	<!-- 회원 검색 -->
+	<select id="searchMembersByKeyword" resultMap="userMap">
+	    SELECT u.*, ua.auth_no, ua.auth
+	    FROM users u
+	    LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+	    WHERE u.is_deleted = FALSE
+	    AND (u.name LIKE CONCAT('%', #{keyword}, '%')
+	    OR u.email LIKE CONCAT('%', #{keyword}, '%'))
+	    ORDER BY u.user_id
+	</select>
+	
+	<!-- 회원 조회 -->
+	<select id="selectUserById" resultMap="userMap">
+	    SELECT u.*, ua.auth_no, ua.auth
+	    FROM users u
+	    LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+	    WHERE u.user_id = #{id}
+	</select>
+	
+	<!-- 권한 관리 -->
+	<update id="updateUserType">
+	    UPDATE users
+	    SET user_type = #{userType}
+	    WHERE user_id = #{userId}
+	</update>
+	
+	<!-- 회원 삭제 -->
+	<delete id="deleteUserById">
+	    DELETE FROM users
+	    WHERE user_id = #{id}
+	</delete>
 </mapper>

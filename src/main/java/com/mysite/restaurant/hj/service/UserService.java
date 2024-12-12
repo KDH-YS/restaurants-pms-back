@@ -1,5 +1,6 @@
 package com.mysite.restaurant.hj.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -56,5 +57,29 @@ public class UserService {
 	
 	public Optional<UserDTO> getUserByUsername(String userName) {
 		return userMapper.selectUserByUsername(userName);
+	}
+	
+//	회원 조회
+	public List<UserDTO> getAllMembers() {
+		return userMapper.selectAllMembers();
+	}
+	
+//	회원 검색
+	public List<UserDTO> searchMembers(String keyword) {
+		return userMapper.searchMembersByKeyword(keyword);
+	}
+	
+//	권한 관리
+	public UserDTO updateMemberType(Long id, UserDTO user) {
+		UserDTO existingUser = userMapper.selectUserById(id)
+				.orElseThrow(() -> new RuntimeException("Memeber not found"));
+		existingUser.setUserType(user.getUserType());
+		userMapper.updateUserType(existingUser);
+		return existingUser;
+	}
+	
+//	회원 삭제
+	public void deleteMemberById(Long id) {
+		userMapper.deleteUserById(id);
 	}
 }
