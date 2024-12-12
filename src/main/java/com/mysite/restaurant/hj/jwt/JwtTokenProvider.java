@@ -59,8 +59,8 @@ public class JwtTokenProvider {
 		
 		long now = System.currentTimeMillis();
 		Date validity = new Date(now + this.tokenValidityInSeconds * 1000);
-
-		Long userId = userDetails.getUser().getUserId();
+		System.out.println("User details: " + userDetails.getUser());
+		System.out.println("Restaurant ID: " + userDetails.getUser().getRestaurantId());
 
 		return Jwts.builder()
 //				Header
@@ -73,6 +73,7 @@ public class JwtTokenProvider {
 //				-- Custom Claims
 				.claim("userName", userDetails.getUser().getName()) // User에 정의된 이름(실명 또는 닉네임)
 				.claim("userId", userDetails.getUser().getUserId())
+				.claim("restaurantId", userDetails.getUser().getRestaurantId())
 				.claim("auth", authorities)
 				.compact();
 	}
