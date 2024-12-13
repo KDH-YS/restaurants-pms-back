@@ -118,7 +118,7 @@ public class ImageController {
         String newFileName = UUID.randomUUID().toString() + extension;
 
         // 업로드 디렉토리 절대 경로로 설정
-        String absoluteUploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "images";
+        String absoluteUploadDir = Paths.get(uploadDir).toAbsolutePath().toString();
 
         // 디렉토리 확인 및 생성
         File dir = new File(absoluteUploadDir);
