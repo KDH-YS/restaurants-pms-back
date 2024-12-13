@@ -23,6 +23,10 @@ public class ReviewService {
     public List<Reviews> selectMyReviews(Long userId) {
         return reviewMapper.selectMyReviews(userId);
     }
+    public List<Restaurants> selectMyRestaurants(Long userId) {
+        return reviewMapper.selectMyRestaurants(userId);
+    }
+
     // 리뷰 이미지 조회
     public List<ReviewImg> selectReviewImg(Long reviewId) {
         return reviewMapper.selectReviewImg(reviewId);

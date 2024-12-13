@@ -13,7 +13,8 @@
         <result property="notificationAgreed" column="notification_agreed"/>
         <result property="userType" column="user_type"/>
         <result property="createdAt" column="created_at"/>
-        <result property="updatedAt" column="updated_at"/>
+		<result property="updatedAt" column="updated_at"/>
+		<result property="restaurantId" column="restaurant_id"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="status" column="status"/>
         <collection property="authorities" ofType="com.mysite.restaurant.hj.dto.UserAuthDTO">

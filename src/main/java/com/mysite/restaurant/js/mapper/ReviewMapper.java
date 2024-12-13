@@ -13,7 +13,8 @@ import java.util.Map;
 public interface ReviewMapper {
 	
     List<Reviews> selectRestaurantReviews(Long restaurantId);
-    List<Reviews> selectMyReviews(Long restaurantId);
+    List<Reviews> selectMyReviews(Long userId);
+    List<Restaurants> selectMyRestaurants(Long userId);
     List<ReviewImg> selectReviewImg (Long reviewid);
     int insertReview(Reviews review);
     int insertReviewImg(ReviewImg reviewImg);
