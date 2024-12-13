@@ -53,6 +53,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/map/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/restaurant/**").permitAll()  // /api/restaurant 경로는 인증 없이 허용
 						.requestMatchers("/api/auth/me").authenticated()  // 인증이 필요한 경로
+                        .requestMatchers("/images/**").permitAll()  // 이미지 경로에 대한 접근을 허용
 						.anyRequest().authenticated()  // 그 외의 모든 요청은 인증이 필요
 				)
 				.exceptionHandling(exc -> exc

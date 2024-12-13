@@ -33,25 +33,40 @@ public class ImageController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
- // 이미지 파일을 제공하는 엔드포인트
     @GetMapping("/images/{filename}")
     public ResponseEntity<Resource> serveFile(@PathVariable("filename") String filename) {
         try {
-            // 로컬 파일 시스템에서 이미지 파일을 가져옵니다.
-            Resource file = new FileSystemResource(Paths.get(uploadDir, filename).toString());
-            
+            // 이미지 확장자 기반으로 MIME 타입 설정
+            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+            String mimeType = "image/jpeg";  // 기본값
+            if (fileExtension.equals("png")) {
+                mimeType = "image/png";
+            } else if (fileExtension.equals("gif")) {
+                mimeType = "image/gif";
+            }
+
+            // 로컬 파일 경로 확인
+            String filePath = Paths.get(uploadDir, filename).toString();
+            System.out.println("File path: " + filePath); // 경로 로그 출력
+
+            Resource file = new FileSystemResource(filePath);
+
+            // 파일이 존재하는지 확인
             if (file.exists()) {
-                // 이미지의 MIME 타입을 설정합니다. (필요 시 확장자를 기반으로 동적으로 설정 가능)
+                System.out.println("File found: " + filename);  // 파일이 존재하면 출력
                 return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_TYPE, "image/jpeg") // 이미지 MIME 타입 설정
+                        .header(HttpHeaders.CONTENT_TYPE, mimeType)
                         .body(file);
             } else {
+                System.out.println("File not found: " + filename);  // 파일이 없으면 출력
                 return ResponseEntity.notFound().build(); // 파일이 없으면 404 오류 반환
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build(); // 에러 발생 시 500 오류 반환
         }
     }
+
     
     // 이미지 조회하기
     @GetMapping("/api/restaurant/{restaurantId}/image")
@@ -65,6 +80,13 @@ public class ImageController {
         // 이미지 URL을 절대 경로로 수정
         for (ImageDTO image : images) {
             // "/images/"를 제외하고 절대 경로로 추가
+            String originalUrl = image.getImageUrl(); // 변환 전 URL 확인
+            String updatedUrl = baseUrl + originalUrl.substring(7); // 절대 경로로 변환
+
+            // 변환 전후 URL 콘솔에 출력
+            System.out.println("Original URL: " + originalUrl);
+            System.out.println("Updated URL: " + updatedUrl);
+            System.out.println("uploadDir URL: " + uploadDir);
             image.setImageUrl(baseUrl + image.getImageUrl().substring(7));
         }
 
