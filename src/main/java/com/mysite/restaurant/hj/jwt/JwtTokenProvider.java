@@ -37,7 +37,7 @@ public class JwtTokenProvider {
 	
 	@Value("${jwt.token-validity-in-seconds}")
 	private long tokenValidityInSeconds;
-	
+
 	private SecretKey key;
 	
 //	생성자(Construct)가 호출된 후(Post)에 실행 또는
@@ -59,7 +59,7 @@ public class JwtTokenProvider {
 		
 		long now = System.currentTimeMillis();
 		Date validity = new Date(now + this.tokenValidityInSeconds * 1000);
-		
+
 		return Jwts.builder()
 //				Header
 				.signWith(key, SignatureAlgorithm.HS512) // , SignatureAlgorithm.HS512 제거
@@ -70,6 +70,8 @@ public class JwtTokenProvider {
 				.expiration(validity)
 //				-- Custom Claims
 				.claim("userName", userDetails.getUser().getName()) // User에 정의된 이름(실명 또는 닉네임)
+				.claim("userId", userDetails.getUser().getUserId())
+				.claim("restaurantId", userDetails.getUser().getRestaurantId())
 				.claim("auth", authorities)
 				.compact();
 	}
@@ -86,7 +88,7 @@ public class JwtTokenProvider {
 					.map(SimpleGrantedAuthority::new)
 					.collect(Collectors.toList());
 		
-		User principal = new User(claims.getSubject(), "", authorities);
+		User principal = new User(claims.getSubject(), 	"", authorities);
 		
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
 	}

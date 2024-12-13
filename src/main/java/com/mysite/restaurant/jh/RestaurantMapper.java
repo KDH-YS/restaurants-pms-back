@@ -27,7 +27,7 @@ public interface RestaurantMapper {
 	 List<RestaurantDTO> getRestaurants(@Param("offset") int offset, @Param("size") int size);
 	public int countTotal(); 
 	public RestaurantDTO getRestaurantById(int restaurantId);
-	void insertRestaurant(RestaurantDTO restaurant);
+	int insertRestaurant(RestaurantDTO restaurant);
 	void updateAddress();
 	void updateRestaurant(RestaurantDTO restaurant);
    
@@ -40,6 +40,10 @@ public interface RestaurantMapper {
 	public List<ImageDTO> getRestaurantImageById(int restaurantId);
 	void insertImage(ImageDTO image);
 	void deleteImage(@Param("restaurantId")int restaurantId,@Param("imageId")int imageId);
+	public Boolean getMaxImageOrder(int restaurantId); 
+	void updateImage(ImageDTO image);
+	// 레스토랑에 속한 모든 이미지의 image_order를 false로 설정
+    void updateImageOrderToFalse(int restaurantId);
 
 	public List<Schedule> getScheduleById(int restaurantId);
 	}

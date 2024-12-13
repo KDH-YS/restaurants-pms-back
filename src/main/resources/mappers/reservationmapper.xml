@@ -152,4 +152,18 @@
         	restaurants res ON r.restaurant_id = res.restaurant_id    	
     	WHERE r.reservation_id = #{reservationId};
 	</select>
+
+    <select id="selectRestaurantByName" resultType="com.mysite.restaurant.jh.RestaurantDTO">
+        SELECT
+        restaurant_id,
+        phone,
+        NAME,
+        road_addr,
+        jibun_addr,
+        detail_addr
+        FROM
+        restaurants
+        WHERE
+        NAME LIKE CONCAT('%', #{name}, '%')
+    </select>
 </mapper>

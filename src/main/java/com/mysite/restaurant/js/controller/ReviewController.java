@@ -28,7 +28,10 @@ public class ReviewController {
 
     // 가게 리뷰와 리뷰 이미지 및 좋아요 상태 조회
     @GetMapping("/restaurants/{restaurant_id}/reviews")
-    public Map<String, Object> getReviewsWithImages(@PathVariable("restaurant_id") Long restaurantId, @RequestParam("userId") Long userId) {
+    public Map<String, Object> getReviewsWithImages(
+            @PathVariable("restaurant_id") Long restaurantId,
+            @RequestParam(value = "userId", required = false) Long userId
+    ) {
         // 가게 리뷰 조회
         List<Reviews> reviews = reviewService.selectRestaurantReviews(restaurantId);
 
@@ -73,11 +76,14 @@ public class ReviewController {
             List<ReviewImg> imgs = reviewService.selectReviewImg(review.getReviewId());
             reviewImages.addAll(imgs);
         }
+        // 레스토랑 조회
+        List<Restaurants> restaurants = reviewService.selectMyRestaurants(userId);
 
         // 결과를 Map으로 묶어서 반환
         Map<String, Object> result = new HashMap<>();
         result.put("reviews", reviews);
         result.put("reviewImages", reviewImages);
+        result.put("restaurants", restaurants);
 
         return result;
     }
@@ -182,15 +188,12 @@ public class ReviewController {
     }
 
     // 신고 조회
-    @GetMapping("/admin/reports")
-    public List<Reports> getReports(@RequestParam("userId") Long userId) {
-        return reviewService.selectReports(userId);
-    }
 
-    // 신고 상세 조회
-    @GetMapping("/admin/reports/{report_id}")
-    public List<Reports> getReportsDetail(@PathVariable("report_id") Long reportId) {
-        return reviewService.selectReports(reportId);
+    // 가게 신고리뷰 조회
+    @GetMapping("/js/reports/{restaurant_id}")
+    public ResponseEntity<List<Map<String, Object>>> getReportsDetails(@PathVariable("restaurant_id") Long restaurantId) {
+        List<Map<String, Object>> reports = reviewService.getReports(restaurantId);
+        return ResponseEntity.ok(reports);
     }
 
     // 리뷰 신고 작성
@@ -199,7 +202,13 @@ public class ReviewController {
         reports.setReviewId(reviewId);
         return reviewService.insertReport(reports);
     }
+
     // 신고 삭제
+    @DeleteMapping("/report/{report_id}")
+    public void deleteReport(@PathVariable("report_id") Long reportId) {
+        reviewService.deleteReport(reportId);
+    }
+
 
     // 도움 등록/삭제 API
     @PostMapping("/reviews/{review_id}/helpful")
@@ -250,5 +259,10 @@ public class ReviewController {
     @GetMapping("/js/user/{user_id}")
     public User getUser(@PathVariable("user_id") Long userId) {
         return reviewService.selectUser(userId);
+    }
+    // 모든 유저 조회
+    @GetMapping("/js/users/{restaurant_id}")
+    public List<User> getAllUsers(@PathVariable("restaurant_id") Long restaurantId) {
+        return reviewService.getAllUsers(restaurantId);
     }
 }

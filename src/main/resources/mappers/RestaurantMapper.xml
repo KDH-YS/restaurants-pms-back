@@ -120,11 +120,11 @@
         WHERE restaurant_id = #{restaurantId}
     </select>
     
-    <insert id="insertRestaurant" >
+    <insert id="insertRestaurant" useGeneratedKeys="true" keyProperty="restaurantId">
     INSERT INTO restaurants (
-        name, description, postel_code, road_addr, jibun_addr, detail_addr, phone, food_type, parking_available, total_seats
+        name, description, postal_code, road_addr, jibun_addr, detail_addr, city, district, neighborhood, phone, food_type, parking_available, total_seats
     ) VALUES (
-        #{name}, #{description}, #{postelCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
+        #{name}, #{description}, #{postalCode}, #{roadAddr}, #{jibunAddr}, #{detailAddr}, #{city}, #{district}, #{neighborhood}, #{phone}, #{foodType}, #{parkingAvailable}, #{totalSeats}
     )
 	</insert>
     
@@ -132,23 +132,32 @@
     SELECT * FROM menus
     WHERE restaurant_id = #{restaurantId}
 </select>
-<!-- 
+
 	<update id="updateAddress">
-	    UPDATE restaurants 
-	    SET 
-	        city = SUBSTRING_INDEX(road_addr, ' ', 1),
-	        district = SUBSTRING_INDEX(SUBSTRING_INDEX(road_addr, ' ', 2), ' ', -1)
-	</update> -->
+	UPDATE restaurants
+SET 
+    neighborhood = 
+        CASE
+            WHEN CHAR_LENGTH(district) - CHAR_LENGTH(REPLACE(district, ' ', '')) >= 1 THEN 
+                SUBSTRING_INDEX(district, ' ', -1)
+            ELSE
+                NULL
+        END
+
+	</update>
 	
 	<update id="updateRestaurant">
 	    UPDATE restaurants
 	    SET 
 	        name = #{name},
 	        description = #{description},
-	        postel_code = #{postelCode},
+	        postal_code = #{postalCode},
 	        road_addr = #{roadAddr},
 	        jibun_addr = #{jibunAddr},
 	        detail_addr = #{detailAddr},
+	       	city = #{city},
+	       	district = #{district},
+	       	neighborhood = #{neighborhood},
 	        phone = #{phone},
 	        food_type = #{foodType},
 	        parking_available = #{parkingAvailable},
@@ -192,10 +201,28 @@
 	    WHERE image_id = #{imageId} AND restaurant_id = #{restaurantId}
 	</delete>
 	
+	<!-- 1. 모든 이미지의 image_order를 false로 설정 -->
+    <update id="updateImageOrderToFalse">
+        UPDATE restaurant_images
+        SET image_order = false
+        WHERE restaurant_id = #{restaurantId}
+    </update>
+
+    <!-- 2. 특정 이미지의 image_order를 true로 설정 (대표 이미지로 설정) -->
+    <update id="updateImage">
+        UPDATE restaurant_images
+        SET image_order = #{imageOrder}
+        WHERE image_id = #{imageId} AND restaurant_id = #{restaurantId}
+    </update>
+	
 	<select id="getScheduleById" resultType="com.mysite.restaurant.jh.Schedule">
     SELECT * FROM schedule
     WHERE restaurant_id = #{restaurantId}
 	</select>
 	
-	
+	<select id="getMaxImageOrder" resultType="java.lang.Boolean">
+    SELECT image_order = 1 FROM restaurant_images
+    WHERE restaurant_id = #{restaurantId} AND image_order = true
+    LIMIT 1
+</select>
 </mapper>

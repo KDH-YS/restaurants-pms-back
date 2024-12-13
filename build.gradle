@@ -1,27 +1,26 @@
 plugins {
-    id 'org.springframework.boot' version '3.4.0'
-    id 'io.spring.dependency-management' version '1.1.6'
-    id 'java'
+	id 'org.springframework.boot' version '3.4.0'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id 'java'
 }
-
 
 group = 'com.mysite'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
 }
 
 configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
@@ -50,11 +49,10 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-    // (Optional) Spring Security
-    // implementation 'org.springframework.boot:spring-boot-starter-security'
-    // testImplementation 'org.springframework.security:spring-security-test'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+		// Development Only
+		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   	
     // Spring Security
   	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -67,17 +65,15 @@ dependencies {
     
     // jakarta
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.1'
-    
-    // 이메일 인증 설정
-	implementation 'javax.mail:mail:1.4.7'
-	// Spring Context Support
-	implementation 'org.springframework:spring-context-support:5.3.9'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-	// redis 추가
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+		// Spring Mail (for email support)
+		implementation 'javax.mail:mail:1.4.7'
+		implementation 'org.springframework:spring-context-support:5.3.9'
+		implementation 'org.springframework.boot:spring-boot-starter-mail'
+		
+    // redis 추가
+		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
-
 
 tasks.named('test') {
 	useJUnitPlatform()

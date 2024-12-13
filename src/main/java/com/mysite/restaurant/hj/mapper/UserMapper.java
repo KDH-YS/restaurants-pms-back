@@ -22,7 +22,7 @@ public interface UserMapper {
 	void updateLastLogin(String userName);
 	
 //	사용자 정보 조회
-	UserDTO selectUserProfile(String userName);
+	UserDTO selectUserProfile(Long userId);
 	
 //	사용자 정보 수정
 	int updateUserProfile(UserDTO user);

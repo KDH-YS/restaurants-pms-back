@@ -59,13 +59,36 @@
         SELECT * FROM reviews WHERE restaurant_id = #{restaurantId}
     </select>
 
-    <!-- 내 리뷰 조회 -->
+    <!-- 리뷰 정보만 조회 -->
     <select id="selectMyReviews" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reviews">
-        SELECT rev.*, ri.*, r.*
+        SELECT
+        rev.review_id,
+        rev.user_id,
+        rev.review_content AS review_content,
+        rev.created_at,
+        r.restaurant_id,
+        r.name AS restaurant_name,
+        r.jibun_addr,
+        r.food_type,
+        r.phone,
+        r.average_rating,
+        JSON_ARRAYAGG(
+        JSON_OBJECT(
+        'review_image_id', ri.review_image_id,
+        'image_url', ri.image_url
+        )
+        ) AS review_images
         FROM reviews rev
         JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
         LEFT JOIN review_images ri ON rev.review_id = ri.review_id
-        WHERE user_id = #{userId};
+        WHERE rev.user_id = 1
+        GROUP BY rev.review_id;
+    </select>
+    <select id="selectMyRestaurants" parameterType="Long" resultType="com.mysite.restaurant.js.model.Restaurants">
+        SELECT DISTINCT r.*
+        FROM restaurants r
+        JOIN reviews rev ON rev.restaurant_id = r.restaurant_id
+        WHERE rev.user_id = #{userId};
     </select>
 
     <!-- 리뷰 이미지 조회 -->
@@ -84,21 +107,21 @@
     </select>
 
     <!-- 신고 상세 조회 -->
-    <select id="selectReport" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reports">
+    <select id="selectReportDetails" parameterType="Long" resultType="map">
         SELECT
-            rev.review_id,
-            u.name,
-            rev.review_content,
-            rev.created_at,
-            r.name,
-            rrt.report_id,
-            rrt.reason,
-            rrt.report_description,
-            rrt.status
+        rev.review_id,
+        u.name AS user_name,
+        rev.review_content,
+        rev.created_at,
+        rrt.report_id,
+        rrt.reason,
+        rrt.report_description,
+        rrt.status
         FROM review_reports rrt
         JOIN reviews rev ON rev.review_id = rrt.review_id
         JOIN users u ON u.user_id = rev.user_id
-        JOIN restaurants r ON r.restaurant_id = rev.restaurant_id;
+        JOIN restaurants r ON r.restaurant_id = rev.restaurant_id
+        WHERE r.restaurant_id = #{restaurant_id} <!-- 가게 ID로 필터링 -->
     </select>
 
     <!-- 도움 카운트 조회 -->
@@ -179,6 +202,15 @@
     <!-- 유저정보 조회 -->
     <select id="selectUser" resultType="com.mysite.restaurant.js.model.User">
         SELECT * FROM users WHERE user_id = #{userId};
+    </select>
+
+    <!-- 유저정보 조회 -->
+    <select id="selectAllUser" resultType="map">
+        SELECT DISTINCT u.user_id AS userId,
+        u.name AS userName
+        FROM reviews r
+        JOIN users u ON r.user_id = u.user_id
+        WHERE r.restaurant_id = #{restaurantId};
     </select>
 
 

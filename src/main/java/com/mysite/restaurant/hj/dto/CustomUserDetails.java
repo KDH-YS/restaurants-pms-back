@@ -25,17 +25,22 @@ public class CustomUserDetails implements UserDetails {
                 .map(auth -> new SimpleGrantedAuthority(auth.getAuth()))
                 .collect(Collectors.toList());
     }
-	
+
 	@Override
 	public String getPassword() {
 		return user.getPassword();
 	}
-	
+
+
+	public Long getRestaurantId() {
+		return user.getRestaurantId();
+	}
+
 	@Override
 	public String getUsername() {
 		return user.getUserName();
 	}
-	
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;

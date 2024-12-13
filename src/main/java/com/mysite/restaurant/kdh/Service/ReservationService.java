@@ -2,6 +2,7 @@ package com.mysite.restaurant.kdh.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.mysite.restaurant.jh.RestaurantDTO;
 import com.mysite.restaurant.kdh.Entity.ReservationEntity;
 import com.mysite.restaurant.kdh.Entity.ScheduleEntity;
 import com.mysite.restaurant.kdh.Mappers.ReservationMapper;
@@ -81,6 +82,11 @@ public class ReservationService {
     public ReservationEntity updateReservationManager(ReservationEntity reservation) {
     		 reservationMapper.updateReservationManager(reservation);
     	return reservationMapper.selectReservation(reservation.getReservationId());
+    }
+    public PageInfo<RestaurantDTO> getRestaurantByName(String name, int page, int size) {
+        PageHelper.startPage(page, size);
+        List<RestaurantDTO> restaurant = reservationMapper.selectRestaurantByName(name);
+        return new PageInfo<>(restaurant);
     }
 
 }

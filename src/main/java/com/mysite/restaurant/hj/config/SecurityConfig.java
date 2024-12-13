@@ -34,53 +34,58 @@ public class SecurityConfig {
 	private final JwtTokenProvider tokenProvider;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-	
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(csrf -> csrf.disable())
-			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			.httpBasic(httpBasic -> httpBasic.disable())
-			.formLogin(formLogin -> formLogin.disable()) // 시큐리티 제공 기본 로그인 페이지와 처리를 비활성화
-//			JWT는 세션을 필요하지 않음
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(auth -> auth
-					.requestMatchers("/api/users/**").permitAll()
-					.requestMatchers("/api/admin/**").permitAll()
-					.anyRequest().authenticated())
-//			예외처리
-//			스프링 시큐리티 인증/인가 과정에서의 예외발생 처리
-			.exceptionHandling(exc -> exc
-					.authenticationEntryPoint(jwtAuthenticationEntryPoint) // 비인증 사용자가 권한이 요구되는 리소스 접근 - 401 Unauthorized
-					.accessDeniedHandler(jwtAccessDeniedHandler)) // 인증 사용자가 접근하는 리소스에 권한 없음 - 405 Forbidden
-//			UsernamePasswordAuthenticationFilter를 실행하기 전에 JwtFilter를 실행한다.
-			.addFilterBefore(new JwtFilter(tokenProvider),
-					UsernamePasswordAuthenticationFilter.class);
+				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+				.httpBasic(httpBasic -> httpBasic.disable())
+				.formLogin(formLogin -> formLogin.disable()) // 시큐리티 제공 기본 로그인 페이지와 처리를 비활성화
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/api/users/**").permitAll()
+						.requestMatchers("/api/admin/**").permitAll()
+						.requestMatchers("/api/schedule/**").permitAll()// 인증 없이 허용할 경로
+						.requestMatchers("/api/reviews/**").permitAll()
+						.requestMatchers("/api/restaurants/**").permitAll()
+						.requestMatchers("/api/js/**").permitAll()
+						.requestMatchers("/api/schedule/**").permitAll()
+						.requestMatchers("/api/restaurants/**").permitAll()// 인증 없이 허용할 경로
+						.requestMatchers("/api/reservations/manager/**").permitAll()// 인증 없이 허용할 경로
+						.requestMatchers("/api/map/**").permitAll()// 인증 없이 허용할 경로
+						.requestMatchers("/api/restaurant/**").permitAll()  // /api/restaurant 경로는 인증 없이 허용
+						.requestMatchers("/api/users/me").authenticated()  // 인증이 필요한 경로
+						.requestMatchers("/images/**").permitAll()  // 이미지 경로에 대한 접근을 허용
+						.anyRequest().authenticated()  // 그 외의 모든 요청은 인증이 필요
+				)
+				.exceptionHandling(exc -> exc
+						.authenticationEntryPoint(jwtAuthenticationEntryPoint) // 비인증 사용자가 권한이 요구되는 리소스 접근 - 401 Unauthorized
+						.accessDeniedHandler(jwtAccessDeniedHandler)) // 인증 사용자가 접근하는 리소스에 권한 없음 - 403 Forbidden
+				.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+
+>>>>>>> b4d8f5351c7e8af5ad0f4588e5f7f870a2e7ecb8
 		return http.build();
 	}
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
-//	스프링 시큐리티에서 실제로 인증을 처리하는 인터페이스
-//	JWT 토큰 발급 전 사용자 인증에 사용
-//	username/password 검증에 사용
+
 	@Bean
-	public AuthenticationManager AuthenticationManager(
-			AuthenticationConfiguration authenticationConfiguration) throws Exception {
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
-	
+
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(List.of("*"));
-		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
 		configuration.setAllowedHeaders(List.of("*"));
 		configuration.setExposedHeaders(List.of("Authorization"));
-		
+
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;

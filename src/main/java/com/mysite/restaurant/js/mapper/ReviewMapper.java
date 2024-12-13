@@ -6,13 +6,15 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 @Repository
 public interface ReviewMapper {
 	
     List<Reviews> selectRestaurantReviews(Long restaurantId);
-    List<Reviews> selectMyReviews(Long restaurantId);
+    List<Reviews> selectMyReviews(Long userId);
+    List<Restaurants> selectMyRestaurants(Long userId);
     List<ReviewImg> selectReviewImg (Long reviewid);
     int insertReview(Reviews review);
     int insertReviewImg(ReviewImg reviewImg);
@@ -27,8 +29,8 @@ public interface ReviewMapper {
     int deleteReply(Long replyId);
 
     int insertReport(Reports reports);
-    List<Reports> selectReports(Long reportId);
-    int deleteReport(Long reportId);
+    List<Map<String, Object>> selectReportDetails(@Param("restaurant_id") Long restaurantId);
+    void deleteReport(Long reportId);
 
     int insertHelpful(Helpful helpful);
     void deleteHelpful(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
@@ -38,5 +40,6 @@ public interface ReviewMapper {
     List<RestaurantImg> selectShopImg(Long restaurantId);
     Reservation selectReservation(Long reservationId);
     User selectUser(Long userId);
+    List<User> selectAllUser(@Param("restaurantId") Long restaurantId);
 
 }

@@ -4,6 +4,7 @@ import com.mysite.restaurant.js.model.*;
 import com.mysite.restaurant.js.mapper.ReviewMapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,10 @@ public class ReviewService {
     public List<Reviews> selectMyReviews(Long userId) {
         return reviewMapper.selectMyReviews(userId);
     }
+    public List<Restaurants> selectMyRestaurants(Long userId) {
+        return reviewMapper.selectMyRestaurants(userId);
+    }
+
     // 리뷰 이미지 조회
     public List<ReviewImg> selectReviewImg(Long reviewId) {
         return reviewMapper.selectReviewImg(reviewId);
@@ -34,6 +39,7 @@ public class ReviewService {
     public int insertReviewImage(ReviewImg reviewImg) {
         return reviewMapper.insertReviewImg(reviewImg);
     }
+
     // 리뷰 수정
     public int updateReview(Reviews review) {
         return reviewMapper.updateReview(review);
@@ -42,6 +48,7 @@ public class ReviewService {
     public int deleteReview(Long reviewId) {
         return reviewMapper.deleteReview(reviewId);
     }
+
     // 답글 조회
     public List<Replies> selectReplies(Long reviewId) {
         return reviewMapper.selectReplies(reviewId);
@@ -50,15 +57,19 @@ public class ReviewService {
     public int insertReplie(Replies replies) {
         return reviewMapper.insertReplie(replies);
     }
+
     // 신고 조회
-    public List<Reports> selectReports(Long userId) {
-        return reviewMapper.selectReports(userId);
+    public List<Map<String, Object>> getReports(Long restaurantId) {
+        return reviewMapper.selectReportDetails(restaurantId);
     }
     // 신고 작성
     public int insertReport(Reports reports) {
         return reviewMapper.insertReport(reports);
     }
+    // 신고 삭제
+    public void deleteReport(Long reportId) { reviewMapper.deleteReport(reportId);}
 
+    // 좋아요 작성
     public void addHelpful(Helpful helpful) {
         // 이미 투표한 내역이 있는지 확인
         Boolean isHelpful = reviewMapper.isHelpfulExist(helpful.getReviewId(), helpful.getUserId());
@@ -88,4 +99,5 @@ public class ReviewService {
     public List<RestaurantImg> selectShopImg(Long restaurantId) { return reviewMapper.selectShopImg(restaurantId); }
     public Reservation selectReservation(Long reservationId) { return reviewMapper.selectReservation(reservationId); }
     public User selectUser(Long userId) { return reviewMapper.selectUser(userId); }
+    public List<User> getAllUsers(Long restaurantId) { return reviewMapper.selectAllUser(restaurantId); }
 }

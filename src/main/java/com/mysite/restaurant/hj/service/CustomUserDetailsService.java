@@ -42,12 +42,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 //	로그아웃
 	
 //	사용자 정보 조회
-	public UserDTO selectUserProfile(String userName) {
+	public UserDTO selectUserProfile(Long userId) {
         // 데이터베이스에서 유저 조회
-        UserDTO user = userMapper.selectUserProfile(userName);
+        UserDTO user = userMapper.selectUserProfile(userId);
 
         if (user == null) {
-            throw new IllegalArgumentException("User not found with user_name: " + userName);
+            throw new IllegalArgumentException("User not found with user_name: " + userId);
         }
 
         return user;

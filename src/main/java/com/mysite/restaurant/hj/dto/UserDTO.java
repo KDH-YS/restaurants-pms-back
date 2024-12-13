@@ -32,8 +32,10 @@ public class UserDTO {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private int isDeleted;
-	private UserStatus status;
-	
+	private Status status;
+
+	private Long restaurantId;
+
 	private List<UserAuthDTO> authorities;
 	
 	public String getAuth() {
