@@ -22,7 +22,7 @@ public class SignupRequest {
 	private String userName;
 	
 //	@NotNull
-	@Size(min = 8, max = 16, message = "비밀번호는 8자에서 16자 사이여야 합니다.")
+	@Size(min = 3, max = 16, message = "비밀번호는 8자에서 16자 사이여야 합니다.")
 	@NotBlank(message = "비밀번호는 비어 있을 수 없습니다.")
     // 길이조건 8-16자
     // 필수 포함
