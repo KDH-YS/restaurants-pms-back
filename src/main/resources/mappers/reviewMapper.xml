@@ -81,7 +81,7 @@
         FROM reviews rev
         JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
         LEFT JOIN review_images ri ON rev.review_id = ri.review_id
-        WHERE rev.user_id = 1
+        WHERE rev.user_id = #{userId}
         GROUP BY rev.review_id;
     </select>
     <select id="selectMyRestaurants" parameterType="Long" resultType="com.mysite.restaurant.js.model.Restaurants">
