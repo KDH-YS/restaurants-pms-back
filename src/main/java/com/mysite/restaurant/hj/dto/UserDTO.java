@@ -32,7 +32,7 @@ public class UserDTO {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private int isDeleted;
-	private Status status;
+	private UserStatus status;
 
 	private Long restaurantId;
 

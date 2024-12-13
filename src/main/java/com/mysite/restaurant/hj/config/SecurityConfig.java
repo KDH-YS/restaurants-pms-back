@@ -63,8 +63,6 @@ public class SecurityConfig {
 						.authenticationEntryPoint(jwtAuthenticationEntryPoint) // 비인증 사용자가 권한이 요구되는 리소스 접근 - 401 Unauthorized
 						.accessDeniedHandler(jwtAccessDeniedHandler)) // 인증 사용자가 접근하는 리소스에 권한 없음 - 403 Forbidden
 				.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-
->>>>>>> b4d8f5351c7e8af5ad0f4588e5f7f870a2e7ecb8
 		return http.build();
 	}
 

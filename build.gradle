@@ -49,14 +49,17 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-		// Development Only
-		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	// Development Only
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   	
     // Spring Security
   	implementation 'org.springframework.boot:spring-boot-starter-security'
   	testImplementation 'org.springframework.security:spring-security-test'
+  	
+  	// Pagination Support
+	implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:2.1.0'
     
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
@@ -66,13 +69,13 @@ dependencies {
     // jakarta
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.1'
 
-		// Spring Mail (for email support)
-		implementation 'javax.mail:mail:1.4.7'
-		implementation 'org.springframework:spring-context-support:5.3.9'
-		implementation 'org.springframework.boot:spring-boot-starter-mail'
+	// Spring Mail (for email support)
+	implementation 'javax.mail:mail:1.4.7'
+	implementation 'org.springframework:spring-context-support:5.3.9'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 		
     // redis 추가
-		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

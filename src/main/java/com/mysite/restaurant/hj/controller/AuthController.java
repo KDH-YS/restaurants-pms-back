@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import com.mysite.restaurant.hj.dto.*;
 import com.mysite.restaurant.hj.jwt.JwtTokenProvider;
 import com.mysite.restaurant.hj.service.CustomUserDetailsService;
-import com.mysite.restaurant.hj.service.UserService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,20 +39,7 @@ public class AuthController {
 		private final UserService userService;
 		private final CustomUserDetailsService customUserDetailsService;
 		private final PasswordEncoder passwordEncoder;
-
-		public AuthController(
-				AuthenticationManagerBuilder authenticationManagerBuilder,
-				JwtTokenProvider tokenProvider,
-				UserService userService,
-				CustomUserDetailsService customUserDetailsService,
-				PasswordEncoder passwordEncoder
-		) {
-			this.authenticationManagerBuilder = authenticationManagerBuilder;
-			this.tokenProvider = tokenProvider;
-			this.userService = userService;
-			this.customUserDetailsService = customUserDetailsService;
-			this.passwordEncoder = passwordEncoder;
-		}
+		
 //	회원가입 처리
 		@PostMapping("/signup")
 		public ResponseEntity<JsonResponse> signup(@Valid @RequestBody SignupRequest request) {
@@ -128,8 +113,8 @@ public class AuthController {
 //	사용자 정보 조회
 		@PreAuthorize("hasRole('USER')")
     @GetMapping("/me/{userName}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("userName") String userName) {
-        UserDTO user = customUserDetailsService.selectUserProfile(userName);
+    public ResponseEntity<UserDTO> getUser(@PathVariable("userName") Long userId) {
+        UserDTO user = customUserDetailsService.selectUserProfile(userId);
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
