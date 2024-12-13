@@ -188,7 +188,11 @@ public class ReviewController {
     }
 
     // 신고 조회
-
+    @GetMapping("/js/reports/mypage/{user_id}")
+    public ResponseEntity<List<Map<String, Object>>> getMyReports(@PathVariable("user_id") Long userId) {
+        List<Map<String, Object>> reports = reviewService.getMyReports(userId);
+        return ResponseEntity.ok(reports);
+    }
     // 가게 신고리뷰 조회
     @GetMapping("/js/reports/{restaurant_id}")
     public ResponseEntity<List<Map<String, Object>>> getReportsDetails(@PathVariable("restaurant_id") Long restaurantId) {

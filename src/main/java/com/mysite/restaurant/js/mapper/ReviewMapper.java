@@ -29,6 +29,7 @@ public interface ReviewMapper {
     int deleteReply(Long replyId);
 
     int insertReport(Reports reports);
+    List<Map<String, Object>> selectMyReport(@Param("user_id") Long userId);
     List<Map<String, Object>> selectReportDetails(@Param("restaurant_id") Long restaurantId);
     void deleteReport(Long reportId);
 

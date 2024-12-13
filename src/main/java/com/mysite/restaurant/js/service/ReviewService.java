@@ -58,6 +58,10 @@ public class ReviewService {
         return reviewMapper.insertReplie(replies);
     }
 
+    // 내신고 조회
+    public List<Map<String, Object>> getMyReports(Long userId) {
+        return reviewMapper.selectMyReport(userId);
+    }
     // 신고 조회
     public List<Map<String, Object>> getReports(Long restaurantId) {
         return reviewMapper.selectReportDetails(restaurantId);
