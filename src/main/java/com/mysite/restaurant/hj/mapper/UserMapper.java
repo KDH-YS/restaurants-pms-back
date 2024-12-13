@@ -37,9 +37,9 @@ public interface UserMapper {
 	List<UserDTO> searchMembersByKeyword(String keyword);
 	
 //	권한 관리
-	Optional<UserDTO> selectUserById(Long id);
-	void updateUserType(UserDTO user);
+	Optional<UserDTO> selectUserById(Long userId);
+	void updateUserAuth(UserDTO user);
 	
 //	회원 삭제
-	void deleteUserById(Long id);
+	void deleteUserById(Long userId);
 }

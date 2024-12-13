@@ -1,6 +1,7 @@
 package com.mysite.restaurant.hj.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mysite.restaurant.hj.domain.entity.UserStatus;
@@ -34,4 +35,25 @@ public class UserDTO {
 	private UserStatus status;
 	
 	private List<UserAuthDTO> authorities;
+	
+	public String getAuth() {
+        if (authorities != null && !authorities.isEmpty()) {
+            return authorities.get(0).getAuth();
+        }
+        return null;
+    }
+	public void setAuth(String auth) {
+	    if (authorities == null) {
+	        authorities = new ArrayList<>();
+	    }
+	    if (authorities.isEmpty()) {
+	        UserAuthDTO userAuth = UserAuthDTO.builder()
+	                .userId(this.userId)
+	                .auth(auth)
+	                .build();
+	        authorities.add(userAuth);
+	    } else {
+	        authorities.get(0).setAuth(auth); // 기존 UserAuthDTO의 auth 값을 업데이트
+	    }
+	}
 }

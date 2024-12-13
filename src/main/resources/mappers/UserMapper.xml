@@ -18,7 +18,9 @@
         <result property="status" column="status"/>
         <collection property="authorities" ofType="com.mysite.restaurant.hj.dto.UserAuthDTO">
             <id property="authNo" column="auth_no"/>
+            <result property="userId" column="user_id"/>
             <result property="auth" column="auth"/>
+            <result property="isDeleted" column="is_deleted"/>
         </collection>
     </resultMap>
 
@@ -107,19 +109,19 @@
 	    SELECT u.*, ua.auth_no, ua.auth
 	    FROM users u
 	    LEFT JOIN user_auth ua ON u.user_id = ua.user_id
-	    WHERE u.user_id = #{id}
+	    WHERE u.user_id = #{userId}
 	</select>
 	
 	<!-- 권한 관리 -->
-	<update id="updateUserType">
-	    UPDATE users
-	    SET user_type = #{userType}
+	<update id="updateUserAuth">
+	    UPDATE user_auth
+	    SET auth = #{auth}
 	    WHERE user_id = #{userId}
 	</update>
 	
 	<!-- 회원 삭제 -->
 	<delete id="deleteUserById">
 	    DELETE FROM users
-	    WHERE user_id = #{id}
+	    WHERE user_id = #{userId}
 	</delete>
 </mapper>

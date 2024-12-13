@@ -33,27 +33,27 @@ public class AdminController {
 	
 //	회원 관리
 	@GetMapping("/membership")
-	public ResponseEntity<List<UserDTO>> getMembers(@RequestParam(required = false) String keyword) {
+	public ResponseEntity<List<UserDTO>> getMembers(@RequestParam(value = "keyword", required = false) String keyword) {
 		List<UserDTO> members;
 		if (keyword == null || keyword.isEmpty()) {
-			members = userService.getAllMembers(); // getAllMemgers 메서드 추가 필요
+			members = userService.getAllMembers();
 		} else {
-			members = userService.searchMembers(keyword); // searchMembers 메서드 추가 필요
+			members = userService.searchMembers(keyword);
 		}
 		return new ResponseEntity<>(members, HttpStatus.OK);
 	}
 	
 //	유저 권한 관리
-	@PutMapping("/membership/{id}")
-	public ResponseEntity<UserDTO> updateMember(@PathVariable Long id, @RequestBody UserDTO user) {
-		UserDTO updateMember = userService.updateMemberType(id, user); // 서비스에 updateMemberType 메서드 추가
+	@PutMapping("/membership/{userId}")
+	public ResponseEntity<UserDTO> updateMember(@PathVariable("userId") Long userId, @RequestBody UserDTO user) {
+		UserDTO updateMember = userService.updateMemberType(userId, user);
 		return new ResponseEntity<>(updateMember, HttpStatus.OK);
 	}
 	
 //	회원 삭제
-	@DeleteMapping("/membership/{id}")
-	public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
-		userService.deleteMemberById(id); // 서비스에 deletMemberById 메서드 추가
+	@DeleteMapping("/membership/{userId}")
+	public ResponseEntity<Void> deleteMember(@PathVariable("userId") Long userId) {
+		userService.deleteMemberById(userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
