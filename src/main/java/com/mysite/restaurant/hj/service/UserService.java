@@ -1,18 +1,12 @@
 package com.mysite.restaurant.hj.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mysite.restaurant.hj.dto.LoginRequest;
 import com.mysite.restaurant.hj.dto.UserAuthDTO;
 import com.mysite.restaurant.hj.dto.UserDTO;
-import com.mysite.restaurant.hj.jwt.JwtTokenProvider;
 import com.mysite.restaurant.hj.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserMapper userMapper;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtTokenProvider jwtTokenProvider;
 	
 	public boolean existsUserByUserId(String userName) {
 		return userMapper.selectUserByUserId(userName) != null;
@@ -32,7 +24,7 @@ public class UserService {
 	
 //	회원가입
 	@Transactional
-    public void signup(UserDTO userDTO) {
+    public void signup(UserDTO userDTO, boolean isOwner) {
         UserDTO user = new UserDTO();
         user.setUserName(userDTO.getUserName());
         user.setPassword(userDTO.getPassword());
@@ -46,7 +38,7 @@ public class UserService {
         // 권한도 같이 생성
         UserAuthDTO userAuth = UserAuthDTO.builder()
         		.userId(user.getUserId())
-        		.auth("ROLE_USER")
+        		.auth(isOwner ? "ROLE_OWNER" : "ROLE_USER")
         		.build();
         userMapper.createAuth(userAuth);
     }

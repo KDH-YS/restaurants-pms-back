@@ -47,7 +47,7 @@ public class AuthController {
 	    UserDTO member = request.toUserDTO(passwordEncoder);
 
 	    // 회원가입 처리
-	    userService.signup(member);
+	    userService.signup(member, request.getIsOwner());
 
 	    return ResponseEntity
 	            .status(HttpStatus.CREATED)
