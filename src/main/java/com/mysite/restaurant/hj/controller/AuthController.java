@@ -111,7 +111,7 @@ public class AuthController {
 //  로그아웃
     
 	//사용자 정보 조회
-		@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+		@PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @GetMapping("/me/{user_id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable("user_id") Long userId) {
         UserDTO user = customUserDetailsService.selectUserProfile(userId);
@@ -124,7 +124,7 @@ public class AuthController {
     }
 
 	//  사용자 정보 수정
-		@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+		@PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
     @PutMapping("/me")
     public int updateUserProfile(@RequestBody UserDTO user) {
     	return customUserDetailsService.updateUserProfile(user);
