@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.mysite.restaurant.hj.domain.entity.UserStatus;
 import com.mysite.restaurant.hj.domain.entity.UserType;
+import com.mysite.restaurant.jh.RestaurantDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,9 +35,14 @@ public class UserDTO {
 	private int isDeleted;
 	private UserStatus status;
 
-	private Long restaurantId;
+	private List<RestaurantDTO> restaurants;
+	private String restaurantName;
 
 	private List<UserAuthDTO> authorities;
+	
+	public UserDTO(String restaurantName) {
+		this.restaurantName = restaurantName;
+	}
 	
 	public String getAuth() {
         if (authorities != null && !authorities.isEmpty()) {

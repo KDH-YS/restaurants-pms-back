@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mysite.restaurant.hj.dto.UserAuthDTO;
 import com.mysite.restaurant.hj.dto.UserDTO;
 import com.mysite.restaurant.hj.jwt.JwtTokenProvider;
-import com.mysite.restaurant.hj.mapper.AdminMapper;
 import com.mysite.restaurant.hj.mapper.UserMapper;
+import com.mysite.restaurant.jh.RestaurantDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminService {
 
 	private final UserMapper userMapper;
-	private final AdminMapper adminMapper;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	
@@ -31,18 +30,23 @@ public class AdminService {
 	
 //	회원 조회
 	public List<UserDTO> getAllMembers() {
-		return adminMapper.selectAllMembers();
+		List<UserDTO> userList = userMapper.selectAllMembers();
+	    for (UserDTO user : userList) {
+	    	String restaurantName = userMapper.getRestaurantNameByUserId(user.getUserId());
+	        user.setRestaurantName(restaurantName != null ? restaurantName : "없음");
+	    }
+	    return userList;
 	}
 	
 //	회원 검색
 	public List<UserDTO> searchMembers(String keyword) {
-		return adminMapper.searchMembersByKeyword(keyword);
+		return userMapper.searchMembersByKeyword(keyword);
 	}
 	
 //	권한 관리
 	@Transactional
 	public UserDTO updateMemberType(Long userId, UserDTO user) {
-		UserDTO existingUser = adminMapper.selectUserById(userId)
+		UserDTO existingUser = userMapper.selectUserById(userId)
 				.orElseThrow(() -> new RuntimeException("Memeber not found"));
 		
 		// user.getAuthorities()가 null이 아닌지 확인
@@ -64,13 +68,13 @@ public class AdminService {
 	    updatedAuthorities.add(userAuth);
 	    existingUser.setAuthorities(updatedAuthorities);
 	    
-	    adminMapper.updateUserAuth(existingUser);
+	    userMapper.updateUserAuth(existingUser);
 	    
 		return existingUser;
 	}
 	
 //	회원 삭제
 	public void deleteMemberById(Long id) {
-		adminMapper.deleteUserById(id);
+		userMapper.deleteUserById(id);
 	}
 }

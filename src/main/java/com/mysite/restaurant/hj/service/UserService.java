@@ -2,6 +2,7 @@ package com.mysite.restaurant.hj.service;
 
 import java.util.Optional;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,11 @@ public class UserService {
 //	회원가입
 	@Transactional
     public void signup(UserDTO userDTO, boolean isOwner) {
+		// 이메일 중복 검사
+        if (userMapper.findByEmail(userDTO.getEmail()) != null) { // 수정된 부분
+            throw new DuplicateKeyException("이미 사용 중인 이메일입니다: " + userDTO.getEmail()); // 수정된 부분
+        }
+        
         UserDTO user = new UserDTO();
         user.setUserName(userDTO.getUserName());
         user.setPassword(userDTO.getPassword());

@@ -21,4 +21,5 @@ public class RestaurantDTO {
 	    private String district;
 	    private String neighborhood;
 	    private String detailAddr;
+	    private Long userId;
 }
