@@ -14,7 +14,6 @@
         <result property="userType" column="user_type"/>
         <result property="createdAt" column="created_at"/>
 		<result property="updatedAt" column="updated_at"/>
-		<result property="restaurantId" column="restaurant_id"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="status" column="status"/>
         <collection property="authorities" ofType="com.mysite.restaurant.hj.dto.UserAuthDTO">
@@ -23,6 +22,27 @@
             <result property="auth" column="auth"/>
             <result property="isDeleted" column="is_deleted"/>
         </collection>
+<!--        <collection property="restaurants" ofType="com.mysite.restaurant.jh.RestaurantDTO" resultMap="restaurantResultMap"></collection>-->
+    </resultMap>
+    
+    <resultMap id="restaurantResultMap" type="com.mysite.restaurant.jh.RestaurantDTO">
+        <id property="restaurantId" column="restaurant_id"/>
+        <result property="name" column="name"/>
+        <result property="restaurantPhone" column="phone"/>
+        <result property="foodType" column="food_type"/>
+        <result property="parkingAvailable" column="parking_available"/>
+        <result property="totalSeats" column="total_seats"/>
+        <result property="description" column="description"/>
+        <result property="averageRating" column="average_rating"/>
+        <result property="reservationAvailable" column="reservation_available"/>
+        <result property="postalCode" column="postal_code"/>
+        <result property="jibunAddr" column="jibun_addr"/>
+        <result property="roadAddr" column="road_addr"/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
+        <result property="neighborhood" column="neighborhood"/>
+        <result property="detailAddr" column="detail_addr"/>
+        <result property="userId" column="user_id"/>
     </resultMap>
 
 	<!-- 회원가입 -->
@@ -35,6 +55,10 @@
 		INSERT INTO user_auth (user_id, auth)
 		VALUES (#{userId}, #{auth})
 	</insert>
+	
+	<select id="findByEmail" resultMap="userMap">
+	    SELECT * FROM users WHERE email = #{email}
+	</select>
 	
 	<!-- 로그인 -->
 	<select id="selectUserByUsername" resultMap="userMap">
@@ -85,24 +109,32 @@
 		WHERE user_name = #{userName};
 	</delete>
 	
-	<!-- 회원 관리 -->
+	<!-- 회원 명단 출력 -->
 	<select id="selectAllMembers" resultMap="userMap">
-	    SELECT u.*, ua.auth_no, ua.auth
+		SELECT u.*, r.restaurant_id, r.name AS restaurant_name, ua.auth_no, ua.auth
+		FROM users u
+		LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+		LEFT JOIN restaurants r ON u.user_id = r.user_id
+		WHERE u.is_deleted = FALSE
+		ORDER BY u.user_id
+	</select>
+	
+	<select id="getRestaurantNameByUserId" resultType="java.lang.String">
+	    SELECT r.name
 	    FROM users u
-	    LEFT JOIN user_auth ua ON u.user_id = ua.user_id
-	    WHERE u.is_deleted = FALSE
-	    ORDER BY u.user_id
+	    LEFT JOIN restaurants r ON u.user_id = r.user_id
+	    WHERE u.user_id = #{userId}
 	</select>
 	
 	<!-- 회원 검색 -->
 	<select id="searchMembersByKeyword" resultMap="userMap">
-	    SELECT u.*, ua.auth_no, ua.auth
-	    FROM users u
-	    LEFT JOIN user_auth ua ON u.user_id = ua.user_id
-	    WHERE u.is_deleted = FALSE
-	    AND (u.name LIKE CONCAT('%', #{keyword}, '%')
-	    OR u.email LIKE CONCAT('%', #{keyword}, '%'))
-	    ORDER BY u.user_id
+	    SELECT u.*, r.restaurant_id, r.name, ua.auth_no, ua.auth
+		FROM users u
+		LEFT JOIN user_auth ua ON u.user_id = ua.user_id
+		LEFT JOIN restaurants r ON u.user_id = r.user_id
+		WHERE u.is_deleted = FALSE
+		AND (u.name LIKE CONCAT('%', #{keyword}, '%') OR u.email LIKE CONCAT('%', #{keyword}, '%'))
+		ORDER BY u.user_id
 	</select>
 	
 	<!-- 회원 조회 -->

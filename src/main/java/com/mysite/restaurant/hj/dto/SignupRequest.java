@@ -45,6 +45,8 @@ public class SignupRequest {
 	@NotNull
 	private String phone;
 	
+	private Boolean isOwner;
+	
 	private Integer notificationAgreed;
 	
 	public UserDTO toUserDTO(PasswordEncoder passwordEncoder) {

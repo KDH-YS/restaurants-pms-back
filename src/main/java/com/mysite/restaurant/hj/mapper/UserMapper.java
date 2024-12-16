@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.mysite.restaurant.hj.dto.UserAuthDTO;
 import com.mysite.restaurant.hj.dto.UserDTO;
+import com.mysite.restaurant.jh.RestaurantDTO;
 
 @Mapper
 public interface UserMapper {
@@ -15,6 +16,7 @@ public interface UserMapper {
 	int save(UserDTO user);
 	void create(UserDTO user);
 	void createAuth(UserAuthDTO userAuth);
+	UserDTO findByEmail(String email);
 	
 //	로그인
 	Optional<UserDTO> selectUserByUsername(String userName);
@@ -32,6 +34,7 @@ public interface UserMapper {
 	
 //	회원 조회
 	List<UserDTO> selectAllMembers();
+	String getRestaurantNameByUserId(Long userId);
 	
 //	회원 검색
 	List<UserDTO> searchMembersByKeyword(String keyword);

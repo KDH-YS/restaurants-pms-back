@@ -1,6 +1,7 @@
 package com.mysite.restaurant.hj.dto;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.mysite.restaurant.hj.domain.entity.UserStatus;
+import com.mysite.restaurant.jh.RestaurantDTO;
 
 import lombok.Getter;
 
@@ -29,11 +31,6 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public String getPassword() {
 		return user.getPassword();
-	}
-
-
-	public Long getRestaurantId() {
-		return user.getRestaurantId();
 	}
 
 	@Override
