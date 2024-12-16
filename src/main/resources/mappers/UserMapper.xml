@@ -61,7 +61,7 @@
 	
 	<!-- 사용자 정보 조회 -->
 	<select id="selectUserProfile" resultType="com.mysite.restaurant.hj.dto.UserDTO">
-		SELECT NAME, email, phone, notification_agreed
+		SELECT user_id, user_name, name, email, phone
 		FROM users
 		WHERE user_id = #{userId};
 	</select>

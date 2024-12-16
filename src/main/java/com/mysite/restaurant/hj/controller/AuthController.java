@@ -110,10 +110,10 @@ public class AuthController {
     
 //  로그아웃
     
-//	사용자 정보 조회
-		@PreAuthorize("hasRole('USER')")
-    @GetMapping("/me/{userName}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("userName") Long userId) {
+	//사용자 정보 조회
+		@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @GetMapping("/me/{user_id}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable("user_id") Long userId) {
         UserDTO user = customUserDetailsService.selectUserProfile(userId);
 
         if (user == null) {
@@ -122,9 +122,9 @@ public class AuthController {
 
         return ResponseEntity.ok(user);
     }
-    
-//  사용자 정보 수정
-		@PreAuthorize("hasRole('USER')")
+
+	//  사용자 정보 수정
+		@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping("/me")
     public int updateUserProfile(@RequestBody UserDTO user) {
     	return customUserDetailsService.updateUserProfile(user);
