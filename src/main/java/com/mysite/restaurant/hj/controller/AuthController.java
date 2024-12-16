@@ -96,6 +96,7 @@ public class AuthController {
 		TokenResponse tokenResponse = TokenResponse.builder()
 				.token(jwt)
 				.userName(user.getUserName())
+				.name(user.getName())
 				.email(user.getEmail())
 				.authorities(authorities)
 				.build();
