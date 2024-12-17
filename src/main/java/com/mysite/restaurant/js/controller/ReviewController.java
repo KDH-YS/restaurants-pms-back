@@ -239,7 +239,16 @@ public class ReviewController {
 
     // 가게 정보
     @GetMapping("/restaurants/{restaurant_id}")
-    public ResponseEntity<Map<String, Object>> getShopDetails(@PathVariable("restaurant_id") Long restaurantId) {
+    public ResponseEntity<Map<String, Object>> getShopDetails(
+            @PathVariable("restaurant_id") Long restaurantId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "desc") String order) {
+
+        if (!order.equalsIgnoreCase("asc") && !order.equalsIgnoreCase("desc")) {
+            order = "desc"; // 잘못된 값은 기본값으로 DESC 설정
+        }
 
         // 가게 정보*이미지 조회
         Restaurants restaurant = reviewService.selectShop(restaurantId);
