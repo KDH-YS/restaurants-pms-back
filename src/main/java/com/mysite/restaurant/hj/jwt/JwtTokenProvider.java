@@ -55,6 +55,7 @@ public class JwtTokenProvider {
 		
 		String authorities = authentication.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
+				.map(auth -> auth.replaceFirst("^ROLE_", ""))
 				.collect(Collectors.joining(","));
 		
 		long now = System.currentTimeMillis();

@@ -40,7 +40,7 @@
     </update>
 
        <!-- 예약 조회 (업주) -->
-	<select id="selectReservationsByRestaurant" resultMap="reservationResultMap" parameterType="Long">
+	<select id="selectReservationsByRestaurant" resultType="com.mysite.restaurant.kdh.Entity.ReservationEntity" parameterType="Long">
     SELECT  r.*,u.*
     	FROM reservation r
     	JOIN users u ON r.user_id = u.user_id
