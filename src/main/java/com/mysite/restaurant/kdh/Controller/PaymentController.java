@@ -49,10 +49,6 @@ public class PaymentController {
                 return createErrorResponse("Payment amount mismatch.");
             }
 
-            // 결제 상태 검증 주석 처리됨
-            // if (!payment.getPaymentStatus().equals(paymentStatusFromApi)) {
-            //     return createErrorResponse("Payment status mismatch.");
-            // }
 
             payment.setPaymentStatus(paymentStatusFromApi);
             paymentService.savePayment(payment);
