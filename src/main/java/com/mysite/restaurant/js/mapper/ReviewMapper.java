@@ -36,6 +36,7 @@ public interface ReviewMapper {
     int insertHelpful(Helpful helpful);
     void deleteHelpful(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
     Boolean isHelpfulExist(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+    int selectHelpfulCount(@Param("reviewId") Long reviewId);
 
     Restaurants selectShop(Long restaurantId);
     List<RestaurantImg> selectShopImg(Long restaurantId);

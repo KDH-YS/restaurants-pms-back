@@ -46,11 +46,13 @@ public class ReviewController {
 
             // 각 리뷰의 좋아요 상태 확인
             Boolean isHelpful = reviewService.isHelpfulExist(review.getReviewId(), userId);
-
+            // 각 리뷰의 좋아요 수
+            int helpfulCount = reviewService.getHelpfulCount(review.getReviewId()); // 좋아요 수 조회
             // 리뷰와 좋아요 상태를 함께 담기
             Map<String, Object> reviewWithStatus = new HashMap<>();
             reviewWithStatus.put("review", review);
             reviewWithStatus.put("isHelpful", isHelpful); // 좋아요 여부 추가
+            reviewWithStatus.put("helpfulCount", helpfulCount); // 좋아요 수 추가
 
             reviewWithStatusList.add(reviewWithStatus);
         }
@@ -94,11 +96,9 @@ public class ReviewController {
             @RequestParam("review_content") String reviewContent,
             @RequestParam("restaurant_id") Long restaurantId,
             @RequestParam("user_id") Long userId,
-            @RequestParam("taste_rating") Double tasteRating,
-            @RequestParam("service_rating") Double serviceRating,
-            @RequestParam("atmosphere_rating") Double atmosphereRating,
-            @RequestParam("value_rating") Double valueRating,
+            @RequestParam("rating") Integer rating,
             @RequestParam("reservation_id") Long reservationId,
+            @RequestParam("averageRating") Double averageRating,
             @RequestParam(value = "images", required = false) MultipartFile[] images) throws IOException {
 
         // 예약 정보 가져오기
@@ -126,11 +126,9 @@ public class ReviewController {
         review.setReviewContent(reviewContent);
         review.setRestaurantId(restaurantId);
         review.setUserId(userId);
-        review.setTasteRating(tasteRating);
-        review.setServiceRating(serviceRating);
-        review.setAtmosphereRating(atmosphereRating);
-        review.setValueRating(valueRating);
+        review.setRating(rating);
         review.setReservationId(reservationId);
+        review.setAverageRating(averageRating);
 
         int reviewId = reviewService.insertReview(review);
 

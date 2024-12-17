@@ -145,7 +145,6 @@
 	    LEFT JOIN user_auth ua ON u.user_id = ua.user_id
 	    WHERE u.user_id = #{userId}
 	</select>
-	
 	<!-- 권한 관리 -->
 	<update id="updateUserAuth">
 	    UPDATE user_auth
