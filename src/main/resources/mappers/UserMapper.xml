@@ -22,28 +22,29 @@
             <result property="auth" column="auth"/>
             <result property="isDeleted" column="is_deleted"/>
         </collection>
-<!--        <collection property="restaurants" ofType="com.mysite.restaurant.jh.RestaurantDTO" resultMap="restaurantResultMap"></collection>-->
+  <collection property="restaurants" ofType="com.mysite.restaurant.jh.RestaurantDTO" resultMap="restaurantResultMap"/>
     </resultMap>
-    
-    <resultMap id="restaurantResultMap" type="com.mysite.restaurant.jh.RestaurantDTO">
-        <id property="restaurantId" column="restaurant_id"/>
-        <result property="name" column="name"/>
-        <result property="restaurantPhone" column="phone"/>
-        <result property="foodType" column="food_type"/>
-        <result property="parkingAvailable" column="parking_available"/>
-        <result property="totalSeats" column="total_seats"/>
-        <result property="description" column="description"/>
-        <result property="averageRating" column="average_rating"/>
-        <result property="reservationAvailable" column="reservation_available"/>
-        <result property="postalCode" column="postal_code"/>
-        <result property="jibunAddr" column="jibun_addr"/>
-        <result property="roadAddr" column="road_addr"/>
-        <result property="city" column="city"/>
-        <result property="district" column="district"/>
-        <result property="neighborhood" column="neighborhood"/>
-        <result property="detailAddr" column="detail_addr"/>
-        <result property="userId" column="user_id"/>
-    </resultMap>
+
+	<resultMap id="restaurantResultMap" type="com.mysite.restaurant.jh.RestaurantDTO">
+		<id property="restaurantId" column="restaurant_id"/>
+		<result property="name" column="name"/>
+		<result property="phone" column="phone"/>
+		<result property="foodType" column="food_type"/>
+		<result property="parkingAvailable" column="parking_available"/>
+		<result property="totalSeats" column="total_seats"/>
+		<result property="description" column="description"/>
+		<result property="averageRating" column="average_rating"/>
+		<result property="reservationAvailable" column="reservation_available"/>
+		<result property="postalCode" column="postal_code"/>
+		<result property="jibunAddr" column="jibun_addr"/>
+		<result property="roadAddr" column="road_addr"/>
+		<result property="city" column="city"/>
+		<result property="district" column="district"/>
+		<result property="neighborhood" column="neighborhood"/>
+		<result property="detailAddr" column="detail_addr"/>
+		<result property="userId" column="user_id"/>
+	</resultMap>
+
 
 	<!-- 회원가입 -->
 	<insert id="save" parameterType="com.mysite.restaurant.hj.dto.UserDTO" useGeneratedKeys="true" keyProperty="userId" keyColumn="user_id">
@@ -157,7 +158,6 @@
 	    LEFT JOIN user_auth ua ON u.user_id = ua.user_id
 	    WHERE u.user_id = #{userId}
 	</select>
-	
 	<!-- 권한 관리 -->
 	<update id="updateUserAuth">
 	    UPDATE user_auth

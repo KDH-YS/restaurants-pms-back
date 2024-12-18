@@ -21,12 +21,6 @@ public class UserAuthDTO {
 	private boolean isDeleted;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-	
-	public String getAuth() {
-        return auth;
-    }
 
-    public void setAuth(String auth) {
-        this.auth = auth;
-    }
+
 }

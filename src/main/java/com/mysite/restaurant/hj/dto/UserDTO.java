@@ -51,17 +51,20 @@ public class UserDTO {
         return null;
     }
 	public void setAuth(String auth) {
-	    if (authorities == null) {
-	        authorities = new ArrayList<>();
-	    }
-	    if (authorities.isEmpty()) {
-	        UserAuthDTO userAuth = UserAuthDTO.builder()
-	                .userId(this.userId)
-	                .auth(auth)
-	                .build();
-	        authorities.add(userAuth);
-	    } else {
-	        authorities.get(0).setAuth(auth); // 기존 UserAuthDTO의 auth 값을 업데이트
-	    }
+		if (authorities == null) {
+			authorities = new ArrayList<>();
+		}
+
+		// 중복 권한 방지
+		boolean authExists = authorities.stream()
+				.anyMatch(userAuth -> auth.equals(userAuth.getAuth()));
+
+		if (!authExists) {
+			authorities.add(UserAuthDTO.builder()
+					.userId(this.userId)
+					.auth(auth)
+					.build());
+		}
 	}
+
 }
