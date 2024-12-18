@@ -45,4 +45,11 @@ public interface UserMapper {
 	
 //	회원 삭제
 	void deleteUserById(Long userId);
+	
+	//지현 레스토랑등록 관
+    // 유저 조회 (userId로)
+    UserDTO selectUserById(int userId);
+
+    // 유저의 레스토랑 ID 업데이트
+    int updateRestaurantIdForUser(int userId, int restaurantId);
 }

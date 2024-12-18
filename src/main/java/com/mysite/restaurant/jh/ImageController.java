@@ -3,6 +3,8 @@ package com.mysite.restaurant.jh;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,17 +24,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.minio.MinioClient;
+import io.minio.UploadObjectArgs;
+import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
 public class ImageController {
     private final RestaurantService restaurantService;
-
+    private final MinioClient minioClient;
+    
     // application.properties에서 설정된 upload-dir 값을 주입받음
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Value("${minio.url}")
+    private String minioUrl;
+    
+    @Value("${minio.bucket-name}")
+    private String bucketName;
+    
     @GetMapping("/images/{filename}")
     public ResponseEntity<Resource> serveFile(@PathVariable("filename") String filename) {
         try {
@@ -75,7 +87,7 @@ public class ImageController {
         List<ImageDTO> images = restaurantService.getRestaurantImageById(restaurantId);
         
         // 이미지 URL을 절대 경로로 변환
-        String baseUrl = "http://localhost:8080/images"; // 실제 서버 주소로 변경해야 함
+        String baseUrl = "https://storage.cofile.co.kr/ysit24restaurant-bucket/images"; // 실제 서버 주소로 변경해야 함
         
         // 이미지 URL을 절대 경로로 수정
         for (ImageDTO image : images) {
@@ -130,10 +142,24 @@ public class ImageController {
         File destFile = new File(absoluteUploadDir + File.separator + newFileName);
         try {
             file.transferTo(destFile);  // 파일 저장
-            // 저장된 이미지의 URL을 설정 (상대 경로로 설정)
+            
+         // MinIO 업로드
+            try {
+                minioClient.uploadObject(
+                    UploadObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object("images/" + newFileName)
+                        .filename(destFile.getAbsolutePath()) // 파일 경로
+                        .build());
+            } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+                e.printStackTrace();  // 예외 로그 출력
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // 500 오류 반환
+            }
+            
+            // 저장된 이미지의 URL을 설정 
             // URL에서 중복된 슬래시 제거
             String imageUrl = "/images/" + newFileName;
-            image.setImageUrl(imageUrl);  // 상대 경로로 설정
+            image.setImageUrl(imageUrl);  
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
