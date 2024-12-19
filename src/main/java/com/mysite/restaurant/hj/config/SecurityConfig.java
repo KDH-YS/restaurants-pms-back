@@ -46,7 +46,6 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/users/**").permitAll()
 						.requestMatchers("/api/admin/**").permitAll()
-						.requestMatchers("/api/schedule/**").permitAll()// 인증 없이 허용할 경로
 						// 주성
 						.requestMatchers("/api/reviews/**").permitAll()
 						.requestMatchers("/api/restaurants/**").permitAll()
