@@ -1,7 +1,11 @@
 package com.mysite.restaurant.jh;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.mysite.restaurant.hj.mapper.UserMapper;
+
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 
@@ -10,6 +14,7 @@ import java.util.List;
 public class RestaurantService {
 
     private final RestaurantMapper restaurantMapper;
+    @Autowired UserMapper userMapper;
 
     public RestaurantPageResponse getRestaurants(int page, int size) {
         // 페이지가 1보다 작으면 1로 설정
@@ -103,6 +108,7 @@ public class RestaurantService {
 		return restaurantMapper.getRestaurantImageById(restaurantId);
 	}
 	public void insertImage(ImageDTO image) {
+		restaurantMapper.updateImageOrderToFalse(image.getRestaurantId());
 		restaurantMapper.insertImage(image);
 	}
 	public void deleteImage(int restaurantId,int imageId) {

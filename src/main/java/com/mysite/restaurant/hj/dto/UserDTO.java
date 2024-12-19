@@ -37,6 +37,7 @@ public class UserDTO {
 
 	private List<RestaurantDTO> restaurants;
 	private String restaurantName;
+    private int restaurantId;  // 여기에 restaurantId 추가
 
 	private List<UserAuthDTO> authorities;
 	
