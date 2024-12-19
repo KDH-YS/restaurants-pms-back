@@ -79,7 +79,6 @@
         r.jibun_addr,
         r.food_type,
         r.phone,
-        r.average_rating,
         JSON_ARRAYAGG(
         JSON_OBJECT(
         'review_image_id', ri.review_image_id,
