@@ -46,11 +46,13 @@ public class ReviewController {
 
             // 각 리뷰의 좋아요 상태 확인
             Boolean isHelpful = reviewService.isHelpfulExist(review.getReviewId(), userId);
-
+            // 각 리뷰의 좋아요 수
+            int helpfulCount = reviewService.getHelpfulCount(review.getReviewId()); // 좋아요 수 조회
             // 리뷰와 좋아요 상태를 함께 담기
             Map<String, Object> reviewWithStatus = new HashMap<>();
             reviewWithStatus.put("review", review);
             reviewWithStatus.put("isHelpful", isHelpful); // 좋아요 여부 추가
+            reviewWithStatus.put("helpfulCount", helpfulCount); // 좋아요 수 추가
 
             reviewWithStatusList.add(reviewWithStatus);
         }
@@ -64,7 +66,7 @@ public class ReviewController {
     }
 
     // 내 리뷰와 리뷰 이미지 조회
-    @GetMapping("/mypage/{user_id}/reviews")
+    @GetMapping("/reviews/mypage/{user_id}")
     public Map<String, Object> getMyReviewsWithImages(@PathVariable("user_id") Long userId) {
         // 사용자 리뷰 조회
         List<Reviews> reviews = reviewService.selectMyReviews(userId);
@@ -94,10 +96,7 @@ public class ReviewController {
             @RequestParam("review_content") String reviewContent,
             @RequestParam("restaurant_id") Long restaurantId,
             @RequestParam("user_id") Long userId,
-            @RequestParam("taste_rating") Double tasteRating,
-            @RequestParam("service_rating") Double serviceRating,
-            @RequestParam("atmosphere_rating") Double atmosphereRating,
-            @RequestParam("value_rating") Double valueRating,
+            @RequestParam("rating") Integer rating,
             @RequestParam("reservation_id") Long reservationId,
             @RequestParam(value = "images", required = false) MultipartFile[] images) throws IOException {
 
@@ -126,10 +125,7 @@ public class ReviewController {
         review.setReviewContent(reviewContent);
         review.setRestaurantId(restaurantId);
         review.setUserId(userId);
-        review.setTasteRating(tasteRating);
-        review.setServiceRating(serviceRating);
-        review.setAtmosphereRating(atmosphereRating);
-        review.setValueRating(valueRating);
+        review.setRating(rating);
         review.setReservationId(reservationId);
 
         int reviewId = reviewService.insertReview(review);
@@ -188,7 +184,11 @@ public class ReviewController {
     }
 
     // 신고 조회
-
+    @GetMapping("/js/reports/mypage/{user_id}")
+    public ResponseEntity<List<Map<String, Object>>> getMyReports(@PathVariable("user_id") Long userId) {
+        List<Map<String, Object>> reports = reviewService.getMyReports(userId);
+        return ResponseEntity.ok(reports);
+    }
     // 가게 신고리뷰 조회
     @GetMapping("/js/reports/{restaurant_id}")
     public ResponseEntity<List<Map<String, Object>>> getReportsDetails(@PathVariable("restaurant_id") Long restaurantId) {
@@ -204,7 +204,7 @@ public class ReviewController {
     }
 
     // 신고 삭제
-    @DeleteMapping("/report/{report_id}")
+    @DeleteMapping("/js/reports/{report_id}")
     public void deleteReport(@PathVariable("report_id") Long reportId) {
         reviewService.deleteReport(reportId);
     }
@@ -238,7 +238,7 @@ public class ReviewController {
     // 가게 정보
     @GetMapping("/restaurants/{restaurant_id}")
     public ResponseEntity<Map<String, Object>> getShopDetails(@PathVariable("restaurant_id") Long restaurantId) {
-
+    	
         // 가게 정보*이미지 조회
         Restaurants restaurant = reviewService.selectShop(restaurantId);
         List<RestaurantImg> restaurantImg = reviewService.selectShopImg(restaurantId);

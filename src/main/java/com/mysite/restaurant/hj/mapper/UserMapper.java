@@ -16,7 +16,11 @@ public interface UserMapper {
 	int save(UserDTO user);
 	void create(UserDTO user);
 	void createAuth(UserAuthDTO userAuth);
-	UserDTO findByEmail(String email);
+//	아이디 중복 확인
+    boolean existsByUserName(String userName);
+    UserDTO findByUserName(String userName);
+//  이메일 중복 확인
+    UserDTO findByEmail(String email);
 	
 //	로그인
 	Optional<UserDTO> selectUserByUsername(String userName);
@@ -45,4 +49,11 @@ public interface UserMapper {
 	
 //	회원 삭제
 	void deleteUserById(Long userId);
+	
+	//지현 레스토랑등록 관
+    // 유저 조회 (userId로)
+    UserDTO selectUserById(int userId);
+
+    // 유저의 레스토랑 ID 업데이트
+    int updateRestaurantIdForUser(int userId, int restaurantId);
 }

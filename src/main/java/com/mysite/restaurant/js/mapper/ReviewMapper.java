@@ -29,12 +29,14 @@ public interface ReviewMapper {
     int deleteReply(Long replyId);
 
     int insertReport(Reports reports);
+    List<Map<String, Object>> selectMyReport(@Param("user_id") Long userId);
     List<Map<String, Object>> selectReportDetails(@Param("restaurant_id") Long restaurantId);
     void deleteReport(Long reportId);
 
     int insertHelpful(Helpful helpful);
     void deleteHelpful(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
     Boolean isHelpfulExist(@Param("reviewId") Long reviewId, @Param("userId") Long userId);
+    int selectHelpfulCount(@Param("reviewId") Long reviewId);
 
     Restaurants selectShop(Long restaurantId);
     List<RestaurantImg> selectShopImg(Long restaurantId);

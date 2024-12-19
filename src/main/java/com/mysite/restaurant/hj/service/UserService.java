@@ -26,9 +26,14 @@ public class UserService {
 //	회원가입
 	@Transactional
     public void signup(UserDTO userDTO, boolean isOwner) {
+		// 아이디 중복 검사
+        if (userMapper.findByUserName(userDTO.getUserName()) != null) {
+            throw new DuplicateKeyException("이미 사용 중인 아이디입니다: " + userDTO.getUserName());
+        }
+        
 		// 이메일 중복 검사
-        if (userMapper.findByEmail(userDTO.getEmail()) != null) { // 수정된 부분
-            throw new DuplicateKeyException("이미 사용 중인 이메일입니다: " + userDTO.getEmail()); // 수정된 부분
+        if (userMapper.findByEmail(userDTO.getEmail()) != null) {
+            throw new DuplicateKeyException("이미 사용 중인 이메일입니다: " + userDTO.getEmail());
         }
         
         UserDTO user = new UserDTO();
@@ -48,6 +53,11 @@ public class UserService {
         		.build();
         userMapper.createAuth(userAuth);
     }
+	
+	public boolean existsByUsername(String userName) {
+	    boolean exists = userMapper.existsByUserName(userName);
+	    return exists;
+	}
 	
 //	로그인
 	@Transactional

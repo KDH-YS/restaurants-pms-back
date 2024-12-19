@@ -76,6 +76,13 @@ dependencies {
 		
     // redis 추가
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	
+	//미니오 파일서버
+	implementation "io.minio:minio:8.5.14"
+	
+	
 }
 
 tasks.named('test') {

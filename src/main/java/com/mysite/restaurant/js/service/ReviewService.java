@@ -58,6 +58,10 @@ public class ReviewService {
         return reviewMapper.insertReplie(replies);
     }
 
+    // 내신고 조회
+    public List<Map<String, Object>> getMyReports(Long userId) {
+        return reviewMapper.selectMyReport(userId);
+    }
     // 신고 조회
     public List<Map<String, Object>> getReports(Long restaurantId) {
         return reviewMapper.selectReportDetails(restaurantId);
@@ -95,6 +99,11 @@ public class ReviewService {
         Boolean isHelpful = reviewMapper.isHelpfulExist(reviewId, userId);
         return isHelpful != null && isHelpful;
     }
+    // 좋아요 개수 조회
+    public int getHelpfulCount(Long reviewId) {
+        return reviewMapper.selectHelpfulCount(reviewId);
+    }
+
     public Restaurants selectShop(Long restaurantId) { return reviewMapper.selectShop(restaurantId); }
     public List<RestaurantImg> selectShopImg(Long restaurantId) { return reviewMapper.selectShopImg(restaurantId); }
     public Reservation selectReservation(Long reservationId) { return reviewMapper.selectReservation(reservationId); }

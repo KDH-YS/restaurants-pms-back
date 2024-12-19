@@ -46,16 +46,17 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/users/**").permitAll()
 						.requestMatchers("/api/admin/**").permitAll()
-						.requestMatchers("/api/schedule/**").permitAll()// 인증 없이 허용할 경로
+						// 주성
 						.requestMatchers("/api/reviews/**").permitAll()
 						.requestMatchers("/api/restaurants/**").permitAll()
 						.requestMatchers("/api/js/**").permitAll()
+						// 동현
 						.requestMatchers("/api/schedule/**").permitAll()
-						.requestMatchers("/api/restaurants/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/reservations/manager/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/map/**").permitAll()// 인증 없이 허용할 경로
+						.requestMatchers("/api/board/**").permitAll()// 인증 없이 허용할 경로
+						// 지현
 						.requestMatchers("/api/restaurant/**").permitAll()  // /api/restaurant 경로는 인증 없이 허용
-						.requestMatchers("/api/users/me").authenticated()  // 인증이 필요한 경로
 						.requestMatchers("/images/**").permitAll()  // 이미지 경로에 대한 접근을 허용
 						.anyRequest().authenticated()  // 그 외의 모든 요청은 인증이 필요
 				)

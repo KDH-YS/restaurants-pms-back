@@ -55,6 +55,7 @@ public class JwtTokenProvider {
 		
 		String authorities = authentication.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
+				.map(auth -> auth.replaceFirst("^ROLE_", ""))
 				.collect(Collectors.joining(","));
 		
 		long now = System.currentTimeMillis();
@@ -69,7 +70,7 @@ public class JwtTokenProvider {
 				.issuedAt(new Date(now))
 				.expiration(validity)
 //				-- Custom Claims
-				.claim("userName", userDetails.getUser().getName()) // User에 정의된 이름(실명 또는 닉네임)
+				.claim("name", userDetails.getUser().getName()) // User에 정의된 이름(실명 또는 닉네임)
 				.claim("userId", userDetails.getUser().getUserId())
 				.claim("restaurantId", userDetails.getUser().getRestaurants())
 				.claim("auth", authorities)

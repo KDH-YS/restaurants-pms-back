@@ -5,12 +5,11 @@
     <!-- 리뷰 등록 -->
     <insert id="insertReview" parameterType="com.mysite.restaurant.js.model.Reviews">
         INSERT INTO reviews (
-            restaurant_id, user_id, reservation_id, taste_rating, service_rating,
-            atmosphere_rating, value_rating, review_content, is_verified_visit, helpful_count
+            restaurant_id, user_id, reservation_id, rating, review_content, is_verified_visit, helpful_count
         )
         VALUES (
-            #{restaurantId}, #{userId}, #{reservationId}, #{tasteRating}, #{serviceRating},
-            #{atmosphereRating}, #{valueRating}, #{reviewContent}, #{isVerifiedVisit}, #{helpfulCount}
+            #{restaurantId}, #{userId}, #{reservationId}, #{rating},
+            #{reviewContent}, #{isVerifiedVisit}, #{helpfulCount}
         );
     </insert>
 
@@ -56,7 +55,16 @@
 
 	<!-- 리뷰 목록 조회 -->
     <select id="selectRestaurantReviews" resultType="com.mysite.restaurant.js.model.Reviews">
-        SELECT * FROM reviews WHERE restaurant_id = #{restaurantId}
+        SELECT
+        r.*,
+        avg_data.average_rating
+        FROM reviews r
+        JOIN (
+        SELECT restaurant_id, AVG(rating) AS average_rating
+        FROM reviews
+        WHERE restaurant_id = #{restaurantId}
+        ) avg_data ON r.restaurant_id = avg_data.restaurant_id
+        WHERE r.restaurant_id = #{restaurantId};
     </select>
 
     <!-- 리뷰 정보만 조회 -->
@@ -71,7 +79,6 @@
         r.jibun_addr,
         r.food_type,
         r.phone,
-        r.average_rating,
         JSON_ARRAYAGG(
         JSON_OBJECT(
         'review_image_id', ri.review_image_id,
@@ -81,7 +88,7 @@
         FROM reviews rev
         JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
         LEFT JOIN review_images ri ON rev.review_id = ri.review_id
-        WHERE rev.user_id = 1
+        WHERE rev.user_id = #{userId}
         GROUP BY rev.review_id;
     </select>
     <select id="selectMyRestaurants" parameterType="Long" resultType="com.mysite.restaurant.js.model.Restaurants">
@@ -104,6 +111,24 @@
     <!-- 신고 목록 조회 -->
     <select id="selectReports" resultType="com.mysite.restaurant.js.model.Reports">
         SELECT * FROM review_reports WHERE report_id = #{reportId};
+    </select>
+
+    <!-- 내 신고 조회 -->
+    <select id="selectMyReport" parameterType="Long" resultType="map">
+        SELECT
+            rev.review_id,
+            u.name AS user_name,
+            rev.review_content,
+            rev.created_at,
+            rrt.report_id,
+            rrt.reason,
+            rrt.report_description,
+            rrt.status
+        FROM review_reports rrt
+        JOIN reviews rev ON rev.review_id = rrt.review_id
+        JOIN users u ON u.user_id = rev.user_id
+        JOIN restaurants r ON r.restaurant_id = rev.restaurant_id
+        WHERE rrt.user_id = #{user_id} <!-- 가게 ID로 필터링 -->
     </select>
 
     <!-- 신고 상세 조회 -->
@@ -129,6 +154,12 @@
         SELECT COUNT(1) > 0
         FROM helpful_votes
         WHERE review_id = #{reviewId} AND user_id = #{userId} AND state = 1;
+    </select>
+    <!-- 각 리뷰의 좋아요 수 조회 -->
+    <select id="selectHelpfulCount" parameterType="long" resultType="int">
+        SELECT COUNT(*)
+        FROM helpful_votes
+        WHERE review_id = #{reviewId}
     </select>
 
     <!-- 리뷰 삭제 -->
@@ -180,10 +211,11 @@
 
 
 
-
     <!-- 가게 조회 -->
     <select id="selectShop" resultType="com.mysite.restaurant.js.model.Restaurants">
-        SELECT * FROM restaurants WHERE restaurant_id = #{restaurantId};
+        SELECT *
+        FROM restaurants
+        WHERE restaurant_id = #{restaurantId};
     </select>
     <!-- 가게 이미지 조회 -->
     <select id="selectShopImg" resultType="com.mysite.restaurant.js.model.RestaurantImg">

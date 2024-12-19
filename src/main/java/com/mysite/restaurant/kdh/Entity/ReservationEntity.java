@@ -2,6 +2,7 @@ package com.mysite.restaurant.kdh.Entity;
 
 import java.time.LocalDateTime;
 
+import com.mysite.restaurant.hj.dto.UserDTO;
 import lombok.Data;
 @Data
 public class ReservationEntity {
@@ -17,7 +18,7 @@ public class ReservationEntity {
     
     private String restaurantName;
     
-    private UsersEntity user;
+    private UserDTO user;
     
     public enum ReservationStatus {
         RESERVING, COMPLETED, NOSHOW, PENDING,CANCELREQUEST
