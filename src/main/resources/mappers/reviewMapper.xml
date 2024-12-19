@@ -5,12 +5,11 @@
     <!-- 리뷰 등록 -->
     <insert id="insertReview" parameterType="com.mysite.restaurant.js.model.Reviews">
         INSERT INTO reviews (
-            restaurant_id, user_id, reservation_id, taste_rating, service_rating,
-            atmosphere_rating, value_rating, review_content, is_verified_visit, helpful_count
+            restaurant_id, user_id, reservation_id, rating, review_content, is_verified_visit, helpful_count
         )
         VALUES (
-            #{restaurantId}, #{userId}, #{reservationId}, #{tasteRating}, #{serviceRating},
-            #{atmosphereRating}, #{valueRating}, #{reviewContent}, #{isVerifiedVisit}, #{helpfulCount}
+            #{restaurantId}, #{userId}, #{reservationId}, #{rating},
+            #{reviewContent}, #{isVerifiedVisit}, #{helpfulCount}
         );
     </insert>
 
@@ -214,21 +213,10 @@
 
 
     <!-- 가게 조회 -->
-    <select id="getRestaurants" resultType="com.mysite.restaurant.js.model.Restaurants">
-        SELECT r.*, COALESCE(avg_data.average_rating, 0) AS averageRating
-        FROM restaurants r
-        LEFT JOIN (
-        SELECT restaurant_id, AVG(rating) AS average_rating
-        FROM reviews
-        GROUP BY restaurant_id
-        ) avg_data ON r.restaurant_id = avg_data.restaurant_id
-        <where>
-            <if test="keyword != null and keyword != ''">
-                AND r.name LIKE CONCAT('%', #{keyword}, '%')
-            </if>
-        </where>
-        ORDER BY avg_data.average_rating ${order} <!-- 동적 정렬 -->
-        LIMIT #{size} OFFSET #{(page - 1) * size}
+    <select id="selectShop" resultType="com.mysite.restaurant.js.model.Restaurants">
+        SELECT *
+        FROM restaurants
+        WHERE restaurant_id = #{restaurantId};
     </select>
     <!-- 가게 이미지 조회 -->
     <select id="selectShopImg" resultType="com.mysite.restaurant.js.model.RestaurantImg">

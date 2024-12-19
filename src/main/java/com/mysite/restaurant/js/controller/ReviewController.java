@@ -98,7 +98,6 @@ public class ReviewController {
             @RequestParam("user_id") Long userId,
             @RequestParam("rating") Integer rating,
             @RequestParam("reservation_id") Long reservationId,
-            @RequestParam("averageRating") Double averageRating,
             @RequestParam(value = "images", required = false) MultipartFile[] images) throws IOException {
 
         // 예약 정보 가져오기
@@ -128,7 +127,6 @@ public class ReviewController {
         review.setUserId(userId);
         review.setRating(rating);
         review.setReservationId(reservationId);
-        review.setAverageRating(averageRating);
 
         int reviewId = reviewService.insertReview(review);
 
@@ -239,17 +237,8 @@ public class ReviewController {
 
     // 가게 정보
     @GetMapping("/restaurants/{restaurant_id}")
-    public ResponseEntity<Map<String, Object>> getShopDetails(
-            @PathVariable("restaurant_id") Long restaurantId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "desc") String order) {
-
-        if (!order.equalsIgnoreCase("asc") && !order.equalsIgnoreCase("desc")) {
-            order = "desc"; // 잘못된 값은 기본값으로 DESC 설정
-        }
-
+    public ResponseEntity<Map<String, Object>> getShopDetails(@PathVariable("restaurant_id") Long restaurantId) {
+    	
         // 가게 정보*이미지 조회
         Restaurants restaurant = reviewService.selectShop(restaurantId);
         List<RestaurantImg> restaurantImg = reviewService.selectShopImg(restaurantId);
