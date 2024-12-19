@@ -130,10 +130,7 @@
     )
 	</insert>
     
-    <select id="getMenusByRestaurantId" resultType="com.mysite.restaurant.jh.MenuDTO">
-    SELECT * FROM menus
-    WHERE restaurant_id = #{restaurantId}
-</select>
+
 
 	<update id="updateAddress">
 	UPDATE restaurants
@@ -171,6 +168,12 @@ SET
 	    DELETE FROM restaurants
 	    WHERE restaurant_id = #{restaurantId}
 	</delete>
+	
+	
+	<select id="getMenusByRestaurantId" resultType="com.mysite.restaurant.jh.MenuDTO">
+    	SELECT * FROM menus
+   		 WHERE restaurant_id = #{restaurantId}
+	</select>
 	
 	<insert id="insertMenu">
 	    INSERT INTO menus (
