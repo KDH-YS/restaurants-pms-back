@@ -1,14 +1,18 @@
 package com.mysite.restaurant.js.controller;
 
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import com.mysite.restaurant.js.model.*;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.UploadObjectArgs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,11 +24,25 @@ import com.mysite.restaurant.js.service.ReviewService;
 @RequestMapping("/api")
 public class ReviewController {
 
-    @Autowired
-    ReviewService reviewService;
-
     private static final Logger logger = LoggerFactory.getLogger(ReviewController.class);
 
+    private final MinioClient minioClient;
+    private final ReviewService reviewService;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    @Value("${minio.url}")
+    private String minioUrl;
+
+    @Value("${minio.bucket-name}")
+    private String bucketName;
+
+    @Autowired
+    public ReviewController(MinioClient minioClient, ReviewService reviewService) {
+        this.minioClient = minioClient;
+        this.reviewService = reviewService;
+    }
 
     // 가게 리뷰와 리뷰 이미지 및 좋아요 상태 조회
     @GetMapping("/restaurants/{restaurant_id}/reviews")
@@ -35,19 +53,38 @@ public class ReviewController {
         // 가게 리뷰 조회
         List<Reviews> reviews = reviewService.selectRestaurantReviews(restaurantId);
 
+        // MinIO 설정
+        String bucketName = "ysit24restaurant-bucket";
+        String baseUrl = "https://storage.cofile.co.kr";
+
         // 각 리뷰에 해당하는 이미지 조회
         Map<Long, List<ReviewImg>> reviewImagesMap = new HashMap<>();
         List<Map<String, Object>> reviewWithStatusList = new ArrayList<>();
 
         for (Reviews review : reviews) {
-            // 리뷰에 해당하는 이미지 목록을 가져와서 Map 저장
+            // 리뷰에 해당하는 이미지 목록 조회
             List<ReviewImg> imgs = reviewService.selectReviewImg(review.getReviewId());
+
+            // 이미지 URL을 절대 경로로 변환
+            for (ReviewImg img : imgs) {
+                String objectName = img.getImageUrl(); // 예: "/reviews/<file-name>"
+                if (objectName.startsWith("/")) {
+                    objectName = objectName.substring(1); // 선행 슬래시 제거
+                }
+
+                // MinIO 절대 경로 생성
+                String absoluteUrl = baseUrl + "/" + bucketName + "/" + objectName;
+                img.setImageUrl(absoluteUrl); // URL 업데이트
+            }
+
+            // Map에 업데이트된 이미지 리스트 추가
             reviewImagesMap.put(review.getReviewId(), imgs);
 
             // 각 리뷰의 좋아요 상태 확인
             Boolean isHelpful = reviewService.isHelpfulExist(review.getReviewId(), userId);
-            // 각 리뷰의 좋아요 수
-            int helpfulCount = reviewService.getHelpfulCount(review.getReviewId()); // 좋아요 수 조회
+            // 각 리뷰의 좋아요 수 조회
+            int helpfulCount = reviewService.getHelpfulCount(review.getReviewId());
+
             // 리뷰와 좋아요 상태를 함께 담기
             Map<String, Object> reviewWithStatus = new HashMap<>();
             reviewWithStatus.put("review", review);
@@ -73,9 +110,26 @@ public class ReviewController {
 
         // 리뷰 이미지 조회
         List<ReviewImg> reviewImages = new ArrayList<>();
+
+        // MinIO 설정
+        String bucketName = "ysit24restaurant-bucket";
+        String baseUrl = "https://storage.cofile.co.kr";
+
         for (Reviews review : reviews) {
-            // 리뷰에 해당하는 이미지들을 조회하여 합침
             List<ReviewImg> imgs = reviewService.selectReviewImg(review.getReviewId());
+
+            for (ReviewImg img : imgs) {
+                // 기존 이미지 URL 추출
+                String objectName = img.getImageUrl(); // 예: "/reviews/<file-name>"
+                if (objectName.startsWith("/")) {
+                    objectName = objectName.substring(1); // 슬래시 제거
+                }
+
+                // MinIO 절대 경로 생성
+                String absoluteUrl = baseUrl + "/" + bucketName + "/" + objectName;
+                img.setImageUrl(absoluteUrl); // URL 업데이트
+            }
+
             reviewImages.addAll(imgs);
         }
         // 레스토랑 조회
@@ -112,15 +166,12 @@ public class ReviewController {
         LocalDateTime reviewPossibleTime = reservation.getReservationTime().plusMinutes(30);
 
         if (now.isBefore(reviewPossibleTime)) {
-            // 에러 메시지를 담을 Map 객체 생성
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "예약 시간 30분 후 부터 작성하실 수 있습니다.");
-
-            // JSON 형태로 반환
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
         }
 
-        // 1. 리뷰 내용과 평점 처리
+        // 리뷰 저장
         Reviews review = new Reviews();
         review.setReviewContent(reviewContent);
         review.setRestaurantId(restaurantId);
@@ -130,30 +181,60 @@ public class ReviewController {
 
         int reviewId = reviewService.insertReview(review);
 
-        // 2. 이미지가 있으면 이미지 처리
+        // 이미지 업로드 처리
         if (images != null && images.length > 0) {
-            String uploadDir = "uploads/reviews";
-            File dir = new File(uploadDir);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
+            try {
+                for (int i = 0; i < images.length; i++) {
+                    MultipartFile image = images[i];
 
-            for (int i = 0; i < images.length; i++) {
-                MultipartFile image = images[i];
-                String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-                Path filePath = Paths.get(uploadDir, fileName);
-                Files.copy(image.getInputStream(), filePath);
+                    // 파일 확장자 추출
+                    String originalFilename = image.getOriginalFilename();
+                    String extension = "";
+                    if (originalFilename != null && originalFilename.lastIndexOf(".") > 0) {
+                        extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    }
 
-                ReviewImg reviewImg = new ReviewImg();
-                reviewImg.setReviewId(Long.valueOf(reviewId));
-                reviewImg.setImageUrl(filePath.toString());
-                reviewImg.setImageOrder(i + 1);
+                    // 새로운 파일명 생성
+                    String newFileName = UUID.randomUUID().toString() + extension;
 
-                reviewService.insertReviewImage(reviewImg);
+                    // 임시 파일 생성
+                    File tempFile = File.createTempFile("upload-", extension);
+                    image.transferTo(tempFile);
+
+                    // MinIO에 파일 업로드
+                    try {
+                        minioClient.uploadObject(
+                                UploadObjectArgs.builder()
+                                        .bucket(bucketName)
+                                        .object("reviews/" + newFileName)
+                                        .filename(tempFile.getAbsolutePath()) // 임시 파일 경로
+                                        .build()
+                        );
+                    } catch (Exception e) {
+                        logger.error("Failed to upload to MinIO: ", e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("MinIO upload failed: " + e.getMessage());
+                    } finally {
+                        tempFile.delete(); // 임시 파일 삭제
+                    }
+
+                    // 업로드된 파일 URL 생성
+                    String imageUrl = "/reviews/" + newFileName;
+
+                    // ReviewImg DTO 설정 및 저장
+                    ReviewImg reviewImg = new ReviewImg();
+                    reviewImg.setReviewId(Long.valueOf(reviewId));
+                    reviewImg.setImageUrl(imageUrl);
+                    reviewImg.setImageOrder(i + 1);
+                    reviewService.insertReviewImage(reviewImg);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed: " + e.getMessage());
             }
         }
 
-        // 리뷰 작성 성공 시 생성된 리뷰 ID와 함께 HTTP 상태 코드 201 반환
+        // 성공적으로 리뷰 생성
         return ResponseEntity.status(HttpStatus.CREATED).body("Review created successfully with ID: " + reviewId);
     }
 
