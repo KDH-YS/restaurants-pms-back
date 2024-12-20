@@ -11,6 +11,12 @@
     (#{userId}, #{restaurantId}, #{reservationTime}, #{request}, #{numberOfPeople}, NOW(), NOW());
 	</insert>
 
+    <!-- 상태가 PENDING인 예약을 삭제하는 쿼리 -->
+    <delete id="deletePendingReservation" parameterType="long">
+        DELETE FROM reservation
+        WHERE reservation_id = #{reservationId}
+        AND status = 'PENDING'
+    </delete>
 
     <!-- 내 예약 목록 조회 (사용자 ID로 조회) -->
     <select id="selectReservationsByEmail" resultMap="reservationResultMap">
@@ -93,10 +99,10 @@
 	</delete>
     
     <!--예약수정(업주) -->
-    <update id="updateReservationManager" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+    <update id="noshow" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
         UPDATE reservation
         SET 
-            status = #{status} 
+            status = NOSHOW
         WHERE 
             reservation_id = #{reservationId};
     </update>

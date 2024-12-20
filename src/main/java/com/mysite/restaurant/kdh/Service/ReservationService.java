@@ -10,6 +10,7 @@ import com.mysite.restaurant.kdh.Mappers.ReservationMapper;
 
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,7 +27,18 @@ public class ReservationService {
         reservationMapper.insertReservation(reservation);  // 예약 저장
         return reservation;  // 생성된 예약 객체 반환
     }
-    
+    @Async
+    public void scheduleReservationDelete(Long reservationId, long delayMinutes) {
+        try {
+            // delayMinutes 만큼 기다린 후
+            Thread.sleep(delayMinutes * 60 * 1000);  // 밀리초 단위로 대기
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // 예약 상태 확인 후 삭제
+        reservationMapper.deletePendingReservation(reservationId);
+    }
     // 내 예약 조회
     public PageInfo<ReservationEntity> getReservationsByEmail(Long userId, int page, int size) {
     	PageHelper.startPage(page, size);
