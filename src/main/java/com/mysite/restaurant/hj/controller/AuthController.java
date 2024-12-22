@@ -131,8 +131,8 @@ public class AuthController {
     
 	//사용자 정보 조회
 	@PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/me/{user_id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("user_id") Long userId) {
+    @GetMapping("/me/{userId}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable("userId") Long userId) {
         UserDTO user = customUserDetailsService.selectUserProfile(userId);
 
         if (user == null) {
