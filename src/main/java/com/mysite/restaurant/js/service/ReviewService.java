@@ -45,8 +45,9 @@ public class ReviewService {
         return reviewMapper.updateReview(review);
     }
     // 리뷰 삭제
-    public int deleteReview(Long reviewId) {
-        return reviewMapper.deleteReview(reviewId);
+    public void deleteReview(Long reviewId) {
+        reviewMapper.deleteReviewReports(reviewId);
+        reviewMapper.deleteReview(reviewId);
     }
 
     // 답글 조회

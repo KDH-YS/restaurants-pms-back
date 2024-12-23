@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.mysite.restaurant.js.model.*;
 import io.minio.MinioClient;
@@ -53,51 +54,41 @@ public class ReviewController {
         // 가게 리뷰 조회
         List<Reviews> reviews = reviewService.selectRestaurantReviews(restaurantId);
 
-        // MinIO 설정
-        String bucketName = "ysit24restaurant-bucket";
-        String baseUrl = "https://storage.cofile.co.kr";
+        // 리뷰의 이미지
+        List<Map<String, Object>> reviewList = reviews.stream().map(review -> {
+            Map<String, Object> reviewData = new HashMap<>();
+            reviewData.put("review", review);
+            return reviewData;
+        }).collect(Collectors.toList());
 
-        // 각 리뷰에 해당하는 이미지 조회
-        Map<Long, List<ReviewImg>> reviewImagesMap = new HashMap<>();
-        List<Map<String, Object>> reviewWithStatusList = new ArrayList<>();
+        Map<Long, List<Map<String, Object>>> imagesMap = reviews.stream().collect(Collectors.toMap(
+                Reviews::getReviewId,
+                review -> reviewService.selectReviewImg(review.getReviewId())
+                        .stream()
+                        .map(image -> {
+                            Map<String, Object> imageData = new HashMap<>();
+                            imageData.put("imageUrl", image.getImageUrl());
+                            return imageData;
+                        })
+                        .collect(Collectors.toList())
+        ));
 
-        for (Reviews review : reviews) {
-            // 리뷰에 해당하는 이미지 목록 조회
-            List<ReviewImg> imgs = reviewService.selectReviewImg(review.getReviewId());
+        Map<Long, Boolean> isHelpfulMap = reviews.stream().collect(Collectors.toMap(
+                Reviews::getReviewId,
+                review -> reviewService.isHelpfulExist(review.getReviewId(), userId)
+        ));
 
-            // 이미지 URL을 절대 경로로 변환
-            for (ReviewImg img : imgs) {
-                String objectName = img.getImageUrl(); // 예: "/reviews/<file-name>"
-                if (objectName.startsWith("/")) {
-                    objectName = objectName.substring(1); // 선행 슬래시 제거
-                }
-
-                // MinIO 절대 경로 생성
-                String absoluteUrl = baseUrl + "/" + bucketName + "/" + objectName;
-                img.setImageUrl(absoluteUrl); // URL 업데이트
-            }
-
-            // Map에 업데이트된 이미지 리스트 추가
-            reviewImagesMap.put(review.getReviewId(), imgs);
-
-            // 각 리뷰의 좋아요 상태 확인
-            Boolean isHelpful = reviewService.isHelpfulExist(review.getReviewId(), userId);
-            // 각 리뷰의 좋아요 수 조회
-            int helpfulCount = reviewService.getHelpfulCount(review.getReviewId());
-
-            // 리뷰와 좋아요 상태를 함께 담기
-            Map<String, Object> reviewWithStatus = new HashMap<>();
-            reviewWithStatus.put("review", review);
-            reviewWithStatus.put("isHelpful", isHelpful); // 좋아요 여부 추가
-            reviewWithStatus.put("helpfulCount", helpfulCount); // 좋아요 수 추가
-
-            reviewWithStatusList.add(reviewWithStatus);
-        }
+        Map<Long, Integer> helpfulCountMap = reviews.stream().collect(Collectors.toMap(
+                Reviews::getReviewId,
+                review -> reviewService.getHelpfulCount(review.getReviewId())
+        ));
 
         // 결과를 Map에 묶어서 반환
         Map<String, Object> result = new HashMap<>();
-        result.put("reviews", reviewWithStatusList);
-        result.put("reviewImages", reviewImagesMap);
+        result.put("reviews", reviewList);
+        result.put("images", imagesMap);
+        result.put("isHelpful", isHelpfulMap);
+        result.put("helpfulCounts", helpfulCountMap);
 
         return result;
     }
@@ -260,8 +251,8 @@ public class ReviewController {
 
     // 리뷰 삭제
     @DeleteMapping("/reviews/{review_id}")
-    public int deleteReview(@PathVariable("review_id") Long reviewId) {
-        return reviewService.deleteReview(reviewId);
+    public void deleteReview(@PathVariable("review_id") Long reviewId) {
+        reviewService.deleteReview(reviewId);
     }
 
     // 신고 조회
