@@ -55,158 +55,154 @@
 
 	<!-- 리뷰 목록 조회 -->
     <select id="selectRestaurantReviews" resultType="com.mysite.restaurant.js.model.Reviews">
-        SELECT
-        r.*,
-        avg_data.average_rating
-        FROM reviews r
-        JOIN (
-        SELECT restaurant_id, AVG(rating) AS average_rating
-        FROM reviews
-        WHERE restaurant_id = #{restaurantId}
-        ) avg_data ON r.restaurant_id = avg_data.restaurant_id
-        WHERE r.restaurant_id = #{restaurantId};
+        SELECT r.*, avg_data.average_rating
+          FROM reviews r
+          JOIN (
+                SELECT restaurant_id, AVG(rating) AS average_rating
+                  FROM reviews
+                 WHERE restaurant_id = #{restaurantId}
+               ) avg_data ON r.restaurant_id = avg_data.restaurant_id
+         WHERE r.restaurant_id = #{restaurantId};
     </select>
 
     <!-- 리뷰 정보만 조회 -->
     <select id="selectMyReviews" parameterType="Long" resultType="com.mysite.restaurant.js.model.Reviews">
-        SELECT
-        rev.review_id,
-        rev.user_id,
-        rev.review_content AS review_content,
-        rev.created_at,
-        r.restaurant_id,
-        r.name AS restaurant_name,
-        r.jibun_addr,
-        r.food_type,
-        r.phone,
-        JSON_ARRAYAGG(
-        JSON_OBJECT(
-        'review_image_id', ri.review_image_id,
-        'image_url', ri.image_url
-        )
-        ) AS review_images
-        FROM reviews rev
-        JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
-        LEFT JOIN review_images ri ON rev.review_id = ri.review_id
-        WHERE rev.user_id = #{userId}
-        GROUP BY rev.review_id;
+        SELECT rev.review_id, rev.user_id, rev.review_content AS review_content, rev.created_at, r.restaurant_id,
+               r.name AS restaurant_name, r.jibun_addr, r.food_type, r.phone,
+               JSON_ARRAYAGG(
+                       JSON_OBJECT(
+                       'review_image_id', ri.review_image_id,
+                       'image_url', ri.image_url
+                      )) AS review_images
+          FROM reviews rev
+          JOIN restaurants r ON rev.restaurant_id = r.restaurant_id
+          LEFT JOIN review_images ri ON rev.review_id = ri.review_id
+         WHERE rev.user_id = #{userId}
+         GROUP BY rev.review_id;
     </select>
     <select id="selectMyRestaurants" parameterType="Long" resultType="com.mysite.restaurant.js.model.Restaurants">
         SELECT DISTINCT r.*
-        FROM restaurants r
-        JOIN reviews rev ON rev.restaurant_id = r.restaurant_id
-        WHERE rev.user_id = #{userId};
+          FROM restaurants r
+          JOIN reviews rev ON rev.restaurant_id = r.restaurant_id
+         WHERE rev.user_id = #{userId};
     </select>
 
     <!-- 리뷰 이미지 조회 -->
     <select id="selectReviewImg" resultType="com.mysite.restaurant.js.model.ReviewImg">
-        SELECT * FROM review_images WHERE review_id = #{reviewId};
+        SELECT *
+          FROM review_images
+         WHERE review_id = #{reviewId};
     </select>
     
     <!-- 답글 조회 조회 -->
     <select id="selectReplies" resultType="com.mysite.restaurant.js.model.Replies">
-        SELECT * FROM review_replies WHERE reply_id = #{replyId};
+        SELECT *
+          FROM review_replies
+         WHERE reply_id = #{replyId};
     </select>
     
     <!-- 신고 목록 조회 -->
     <select id="selectReports" resultType="com.mysite.restaurant.js.model.Reports">
-        SELECT * FROM review_reports WHERE report_id = #{reportId};
+        SELECT *
+          FROM review_reports
+         WHERE report_id = #{reportId};
     </select>
 
     <!-- 내 신고 조회 -->
     <select id="selectMyReport" parameterType="Long" resultType="map">
-        SELECT
-            rev.review_id,
-            u.name AS user_name,
-            rev.review_content,
-            rev.created_at,
-            rrt.report_id,
-            rrt.reason,
-            rrt.report_description,
-            rrt.status
-        FROM review_reports rrt
-        JOIN reviews rev ON rev.review_id = rrt.review_id
-        JOIN users u ON u.user_id = rev.user_id
-        JOIN restaurants r ON r.restaurant_id = rev.restaurant_id
-        WHERE rrt.user_id = #{user_id} <!-- 가게 ID로 필터링 -->
+        SELECT rev.review_id, u.name AS user_name, rev.review_content, rev.created_at, rrt.report_id,
+               rrt.reason, rrt.report_description, rrt.status
+          FROM review_reports rrt
+          JOIN reviews rev ON rev.review_id = rrt.review_id
+          JOIN users u ON u.user_id = rev.user_id
+          JOIN restaurants r ON r.restaurant_id = rev.restaurant_id
+         WHERE rrt.user_id = #{user_id} <!-- 가게 ID로 필터링 -->
     </select>
 
     <!-- 신고 상세 조회 -->
     <select id="selectReportDetails" parameterType="Long" resultType="map">
-        SELECT
-        rev.review_id,
-        u.name AS user_name,
-        rev.review_content,
-        rev.created_at,
-        rrt.report_id,
-        rrt.reason,
-        rrt.report_description,
-        rrt.status
-        FROM review_reports rrt
-        JOIN reviews rev ON rev.review_id = rrt.review_id
-        JOIN users u ON u.user_id = rev.user_id
-        JOIN restaurants r ON r.restaurant_id = rev.restaurant_id
-        WHERE r.restaurant_id = #{restaurant_id} <!-- 가게 ID로 필터링 -->
+        SELECT rev.review_id, u.name AS user_name, rev.review_content, rev.created_at, rrt.report_id,
+               rrt.reason, rrt.report_description, rrt.status
+          FROM review_reports rrt
+          JOIN reviews rev ON rev.review_id = rrt.review_id
+          JOIN users u ON u.user_id = rev.user_id
+          JOIN restaurants r ON r.restaurant_id = rev.restaurant_id
+         WHERE r.restaurant_id = #{restaurant_id} <!-- 가게 ID로 필터링 -->
     </select>
 
     <!-- 도움 카운트 조회 -->
     <select id="isHelpfulExist" parameterType="map" resultType="boolean">
         SELECT COUNT(1) > 0
-        FROM helpful_votes
-        WHERE review_id = #{reviewId} AND user_id = #{userId} AND state = 1;
+          FROM helpful_votes
+         WHERE review_id = #{reviewId} AND user_id = #{userId} AND state = 1;
     </select>
     <!-- 각 리뷰의 좋아요 수 조회 -->
     <select id="selectHelpfulCount" parameterType="long" resultType="int">
         SELECT COUNT(*)
-        FROM helpful_votes
-        WHERE review_id = #{reviewId}
+          FROM helpful_votes
+         WHERE review_id = #{reviewId}
     </select>
 
+    <!-- 리뷰 신고 데이터 삭제 -->
+    <delete id="deleteReviewReports" parameterType="Long">
+        DELETE
+        FROM review_reports
+        WHERE review_id = #{reviewId};
+    </delete>
     <!-- 리뷰 삭제 -->
     <delete id="deleteReview" parameterType="Long">
-        DELETE FROM reviews WHERE review_id = #{reviewId};
+        DELETE
+        FROM reviews
+        WHERE review_id = #{reviewId};
     </delete>
     
     <!-- 답글 삭제 -->
     <delete id="deleteReply" parameterType="Long">
-        DELETE FROM review_replies WHERE reply_id = #{replyId};
+        DELETE
+          FROM review_replies
+         WHERE reply_id = #{replyId};
     </delete>
 
     <!-- 리뷰 신고 삭제 -->
     <delete id="deleteReport" parameterType="Long">
-        DELETE FROM review_reports WHERE report_id = #{reportId};
+        DELETE
+          FROM review_reports
+         WHERE report_id = #{reportId};
     </delete>
     
     <!-- 리뷰 이미지 삭제 -->
     <delete id="deleteReviewImg" parameterType="Long">
-        DELETE FROM review_images WHERE review_image_id = #{reviewImgId};
+        DELETE
+          FROM review_images
+         WHERE review_image_id = #{reviewImgId};
     </delete>
     
     <!-- 도움 삭제 -->
     <delete id="deleteHelpful" parameterType="com.mysite.restaurant.js.model.Helpful">
-        DELETE FROM helpful_votes
-        WHERE review_id = #{reviewId} AND user_id = #{userId} AND state = 1;
+        DELETE
+          FROM helpful_votes
+         WHERE review_id = #{reviewId} AND user_id = #{userId} AND state = 1;
     </delete>
 
     <!-- 리뷰 수정 -->
     <update id="updateReview" parameterType="com.mysite.restaurant.js.model.Reviews">
         UPDATE reviews
-        SET review_content = #{reviewContent}
-        WHERE review_id = #{reviewId};
+           SET review_content = #{reviewContent}
+         WHERE review_id = #{reviewId};
     </update>
 
     <!-- 리뷰 이미지 수정 -->
     <update id="updateReviewImage" parameterType="com.mysite.restaurant.js.model.Reviews">
         UPDATE review_images
-        SET image_url = #{imageUrl}
-        WHERE review_image_id = #{reviewImageId};
+           SET image_url = #{imageUrl}
+         WHERE review_image_id = #{reviewImageId};
     </update>
     
     <!-- 답글 수정 -->
     <update id="updateReplies" parameterType="com.mysite.restaurant.js.model.Reviews">
         UPDATE review_replies
-        SET replies_content = #{repliesContent}
-        WHERE reply_id = #{replyId};
+           SET replies_content = #{repliesContent}
+         WHERE reply_id = #{replyId};
     </update>
 
 
@@ -214,35 +210,41 @@
     <!-- 가게 조회 -->
     <select id="selectShop" resultType="com.mysite.restaurant.js.model.Restaurants">
         SELECT *
-        FROM restaurants
-        WHERE restaurant_id = #{restaurantId};
+          FROM restaurants
+         WHERE restaurant_id = #{restaurantId};
     </select>
     <!-- 가게 이미지 조회 -->
     <select id="selectShopImg" resultType="com.mysite.restaurant.js.model.RestaurantImg">
-        SELECT * FROM restaurant_images WHERE restaurant_id = #{restaurantId};
+        SELECT *
+          FROM restaurant_images
+         WHERE restaurant_id = #{restaurantId};
     </select>
     <!-- 예약정보 조회 -->
     <select id="selectReservation" resultType="com.mysite.restaurant.js.model.Reservation">
-        SELECT * FROM reservation WHERE reservation_id = #{reservationId};
+        SELECT *
+          FROM reservation
+         WHERE reservation_id = #{reservationId};
     </select>
     <!-- 예약시간정보 조회 -->
     <select id="selectReservationByUserAndRestaurant" resultType="com.mysite.restaurant.js.model.Reservation">
-        SELECT * FROM reservation
-        WHERE user_id = #{userId} AND restaurant_id = #{restaurantId}
-        LIMIT 1;
+        SELECT *
+          FROM reservation
+         WHERE user_id = #{userId} AND restaurant_id = #{restaurantId}
+         LIMIT 1;
     </select>
     <!-- 유저정보 조회 -->
     <select id="selectUser" resultType="com.mysite.restaurant.js.model.User">
-        SELECT * FROM users WHERE user_id = #{userId};
+        SELECT *
+          FROM users
+         WHERE user_id = #{userId};
     </select>
 
     <!-- 유저정보 조회 -->
     <select id="selectAllUser" resultType="map">
-        SELECT DISTINCT u.user_id AS userId,
-        u.name AS userName
-        FROM reviews r
-        JOIN users u ON r.user_id = u.user_id
-        WHERE r.restaurant_id = #{restaurantId};
+        SELECT DISTINCT u.user_id AS userId, u.name AS userName
+          FROM reviews r
+          JOIN users u ON r.user_id = u.user_id
+         WHERE r.restaurant_id = #{restaurantId};
     </select>
 
 

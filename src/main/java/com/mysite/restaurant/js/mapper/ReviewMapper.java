@@ -20,7 +20,8 @@ public interface ReviewMapper {
     int insertReviewImg(ReviewImg reviewImg);
     int updateReview(Reviews review);
     int updateReviewImage(ReviewImg reviewImg);
-    int deleteReview(Long reviewId);
+    void deleteReview(Long reviewId);
+    void deleteReviewReports(Long reviewId);
     int deleteReviewImg(Long reviewImgId);
 
     List<Replies> selectReplies(Long replyId);

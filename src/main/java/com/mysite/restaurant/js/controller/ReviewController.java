@@ -93,9 +93,6 @@ public class ReviewController {
         return result;
     }
 
-
-
-
     // 내 리뷰와 리뷰 이미지 조회
     @GetMapping("/reviews/mypage/{user_id}")
     public Map<String, Object> getMyReviewsWithImages(@PathVariable("user_id") Long userId) {
@@ -254,8 +251,8 @@ public class ReviewController {
 
     // 리뷰 삭제
     @DeleteMapping("/reviews/{review_id}")
-    public int deleteReview(@PathVariable("review_id") Long reviewId) {
-        return reviewService.deleteReview(reviewId);
+    public void deleteReview(@PathVariable("review_id") Long reviewId) {
+        reviewService.deleteReview(reviewId);
     }
 
     // 신고 조회
