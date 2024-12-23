@@ -170,7 +170,7 @@ public class ReviewController {
         review.setRating(rating);
         review.setReservationId(reservationId);
 
-        int reviewId = reviewService.insertReview(review);
+        Long reviewId = reviewService.insertReview(review);
 
         // 이미지 업로드 처리
         if (images != null && images.length > 0) {
@@ -214,7 +214,7 @@ public class ReviewController {
 
                     // ReviewImg DTO 설정 및 저장
                     ReviewImg reviewImg = new ReviewImg();
-                    reviewImg.setReviewId(Long.valueOf(reviewId));
+                    reviewImg.setReviewId(reviewId);
                     reviewImg.setImageUrl(imageUrl);
                     reviewImg.setImageOrder(i + 1);
                     reviewService.insertReviewImage(reviewImg);

@@ -32,8 +32,9 @@ public class ReviewService {
         return reviewMapper.selectReviewImg(reviewId);
     }
     // 리뷰 작성
-    public int insertReview(Reviews review) {
-        return reviewMapper.insertReview(review);
+    public Long insertReview(Reviews review) {
+        reviewMapper.insertReview(review);
+        return review.getReviewId(); // MyBatis가 매핑한 reviewId 반환
     }
     // 리뷰 이미지 작성
     public int insertReviewImage(ReviewImg reviewImg) {

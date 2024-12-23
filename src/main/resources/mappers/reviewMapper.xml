@@ -3,14 +3,14 @@
 <mapper namespace="com.mysite.restaurant.js.mapper.ReviewMapper">
 
     <!-- 리뷰 등록 -->
-    <insert id="insertReview" parameterType="com.mysite.restaurant.js.model.Reviews">
+    <insert id="insertReview" parameterType="com.mysite.restaurant.js.model.Reviews" useGeneratedKeys="true" keyProperty="reviewId">
         INSERT INTO reviews (
-            restaurant_id, user_id, reservation_id, rating, review_content, is_verified_visit, helpful_count
-        )
+                              restaurant_id, user_id, reservation_id, rating, review_content, is_verified_visit, helpful_count
+                            )
         VALUES (
-            #{restaurantId}, #{userId}, #{reservationId}, #{rating},
-            #{reviewContent}, #{isVerifiedVisit}, #{helpfulCount}
-        );
+                 #{restaurantId}, #{userId}, #{reservationId}, #{rating},
+                 #{reviewContent}, #{isVerifiedVisit}, #{helpfulCount}
+               );
     </insert>
 
     <!-- 리뷰 이미지 등록 -->

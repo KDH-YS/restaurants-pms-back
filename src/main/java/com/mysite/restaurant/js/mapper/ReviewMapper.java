@@ -16,7 +16,7 @@ public interface ReviewMapper {
     List<Reviews> selectMyReviews(Long userId);
     List<Restaurants> selectMyRestaurants(Long userId);
     List<ReviewImg> selectReviewImg (Long reviewid);
-    int insertReview(Reviews review);
+    Long insertReview(Reviews review);
     int insertReviewImg(ReviewImg reviewImg);
     int updateReview(Reviews review);
     int updateReviewImage(ReviewImg reviewImg);
