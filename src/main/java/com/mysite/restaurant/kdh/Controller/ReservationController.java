@@ -29,8 +29,7 @@ public class ReservationController {
     public ResponseEntity<ReservationEntity> createReservation(@RequestBody ReservationEntity reservation) {
         // 예약 생성
         ReservationEntity createdReservation = reservationService.createReservation(reservation);
-        // 예약 생성 후 30분 뒤에 삭제 작업 예약
-        reservationService.scheduleReservationDelete(createdReservation.getReservationId(), 30);
+        reservationService.scheduleReservationDelete(createdReservation.getReservationId(), 20);
         // 생성된 예약 정보를 JSON 형식으로 반환
         return ResponseEntity.ok().body(createdReservation);
     }

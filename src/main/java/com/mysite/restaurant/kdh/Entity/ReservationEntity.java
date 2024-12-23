@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class ReservationEntity {
     private Long reservationId;
-    private long userId;
+    private Long userId;
     private Long restaurantId;
     private LocalDateTime reservationTime;
     private String request;
@@ -15,9 +15,9 @@ public class ReservationEntity {
     private int numberOfPeople;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
+
     private String restaurantName;
-    
+    private Long reviewId;
     private UserDTO user;
     
     public enum ReservationStatus {
