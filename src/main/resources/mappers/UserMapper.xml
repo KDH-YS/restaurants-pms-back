@@ -107,8 +107,8 @@
 	<!-- 사용자 정보 수정 -->
 	<update id="updateUserProfile">
 		UPDATE users
-		SET NAME = #{name}, phone = #{phone}, notification_agreed = #{notificationAgreed}
-		WHERE user_name = #{userName};
+		SET NAME = #{name}, email = #{email}, phone = #{phone}
+		WHERE user_id = #{userId};
 	</update>
 	
 	<!-- 회원 탈퇴 -->	

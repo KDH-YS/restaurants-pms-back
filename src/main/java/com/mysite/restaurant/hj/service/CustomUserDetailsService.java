@@ -62,15 +62,4 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public int deleteUser(String userName) {
 		return userMapper.deleteUser(userName);
 	}
-	
-//	소셜 로그인
-	
-//	이메일 인증
-	
-//	휴대폰 인증
-	
-//	사업자 인증
-	
-//	사업자 인증 후 사용자 정보 수정
-	
 }
