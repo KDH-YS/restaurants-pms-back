@@ -55,7 +55,7 @@ public class JwtTokenProvider {
 		
 		String authorities = authentication.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
-				.map(auth -> auth.replaceFirst("^ROLE_", ""))
+//				.map(auth -> auth.replaceFirst("^ROLE_", "")) < ROLE_ 제거하는 건데 제거할경우 JWT auth 파싱해서 Authentication 객체에 설정해야함
 				.collect(Collectors.joining(","));
 		
 		long now = System.currentTimeMillis();

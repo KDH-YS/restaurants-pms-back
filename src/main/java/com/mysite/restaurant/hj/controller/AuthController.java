@@ -131,8 +131,8 @@ public class AuthController {
 //  로그아웃
     
 	//사용자 정보 조회
-	@PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/me/{userId}")
+	@PreAuthorize("hasRole('USER') or hasRole('OWNER') or hasRole('ADMIN')")
+	@GetMapping("/me/{userId}")
     public ResponseEntity<UserDTO> getUser(@PathVariable("userId") Long userId) {
         UserDTO user = customUserDetailsService.selectUserProfile(userId);
 
@@ -144,8 +144,8 @@ public class AuthController {
     }
 
 	//  사용자 정보 수정
-	@PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @PutMapping("/me/editProfile/{userId}")
+	@PreAuthorize("hasRole('USER') or hasRole('OWNER') or hasRole('ADMIN')")
+	@PutMapping("/me/editProfile/{userId}")
     public ResponseEntity<JsonResponse> updateUserProfile(@PathVariable("userId") Long userId, @RequestBody UserDTO user) {
 		try {
 			// userId가 요청 본문에 포함되어 있지 않으므로 URL에서 가져온 userId를 설정
