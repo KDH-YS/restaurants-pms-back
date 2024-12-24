@@ -49,24 +49,10 @@ public class AdminService {
 		UserDTO existingUser = userMapper.selectUserById(userId)
 				.orElseThrow(() -> new RuntimeException("Memeber not found"));
 		
-		// user.getAuthorities()가 null이 아닌지 확인
+		// 권한 업데이트 로직을 UserDTO 내부 메서드로 이동
 	    if (user.getAuthorities() != null && !user.getAuthorities().isEmpty()) {
-	        existingUser.setAuth(user.getAuthorities().get(0).getAuth()); // auth 속성을 업데이트
+	        existingUser.updateAuthority(user.getAuthorities().get(0).getAuth());
 	    }
-		
-		// userId가 여전히 설정되어 있는지 확인
-	    if (existingUser.getUserId() == null) {
-	        existingUser.setUserId(userId);
-	    }
-	    
-//	    existingUser 객체의 authorities 업데이트
-	    List<UserAuthDTO> updatedAuthorities = new ArrayList<>();
-	    UserAuthDTO userAuth = UserAuthDTO.builder()
-	    		.userId(existingUser.getUserId())
-	    		.auth(existingUser.getAuth())
-	    		.build();
-	    updatedAuthorities.add(userAuth);
-	    existingUser.setAuthorities(updatedAuthorities);
 	    
 	    userMapper.updateUserAuth(existingUser);
 	    

@@ -116,6 +116,7 @@ public class AuthController {
 			.userName(user.getUserName())
 			.name(user.getName())
 			.email(user.getEmail())
+			.phone(user.getPhone())
 			.authorities(authorities)
 			.build();
 	
@@ -131,8 +132,8 @@ public class AuthController {
     
 	//사용자 정보 조회
 	@PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @GetMapping("/me/{user_id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("user_id") Long userId) {
+    @GetMapping("/me/{userId}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable("userId") Long userId) {
         UserDTO user = customUserDetailsService.selectUserProfile(userId);
 
         if (user == null) {
@@ -144,9 +145,34 @@ public class AuthController {
 
 	//  사용자 정보 수정
 	@PreAuthorize("hasAnyRole('USER', 'OWNER', 'ADMIN')")
-    @PutMapping("/me")
-    public int updateUserProfile(@RequestBody UserDTO user) {
-    	return customUserDetailsService.updateUserProfile(user);
+    @PutMapping("/me/editProfile/{userId}")
+    public ResponseEntity<JsonResponse> updateUserProfile(@PathVariable("userId") Long userId, @RequestBody UserDTO user) {
+		try {
+			// userId가 요청 본문에 포함되어 있지 않으므로 URL에서 가져온 userId를 설정
+			user.setUserId(userId);
+
+			// 사용자 정보 업데이트
+			int result = customUserDetailsService.updateUserProfile(user);
+
+			if (result > 0) {
+				return ResponseEntity.ok(JsonResponse.builder()
+						.success(true)
+						.message("사용자 정보가 성공적으로 업데이트되었습니다.")
+						.build());
+			} else {
+				return ResponseEntity.ok(JsonResponse.builder()
+						.success(false)
+						.message("사용자 정보 업데이트에 실패했습니다. 사용자 ID를 확인하세요.")
+						.build());
+			}
+		} catch (Exception e) {
+			// 예외 발생 시 로그 출력 및 실패 응답 반환
+			log.error("Error updating user profile for userId: {}", userId, e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(JsonResponse.builder()
+					.success(false)
+					.message("서버 오류로 인해 사용자 정보 업데이트에 실패했습니다.")
+					.build());
+		}
     }
     
 //  회원 탈퇴

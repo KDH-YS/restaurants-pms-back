@@ -2,7 +2,9 @@ package com.mysite.restaurant.hj.dto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.mysite.restaurant.hj.domain.entity.UserStatus;
 import com.mysite.restaurant.hj.domain.entity.UserType;
@@ -45,27 +47,39 @@ public class UserDTO {
 		this.restaurantName = restaurantName;
 	}
 	
-	public String getAuth() {
-        if (authorities != null && !authorities.isEmpty()) {
-            return authorities.get(0).getAuth();
-        }
-        return null;
-    }
-	public void setAuth(String auth) {
+	public List<String> getAuthoritiesAsString() {
 		if (authorities == null) {
-			authorities = new ArrayList<>();
-		}
+	        return Collections.emptyList();
+	    }
+	    return authorities.stream().map(UserAuthDTO::getAuth).collect(Collectors.toList());
+    }
+	public void setAuthoritiesAsString(List<String> authorities) {
+	    if (this.authorities == null) {
+	        this.authorities = new ArrayList<>();
+	    }
+	    this.authorities.clear(); // 기존 권한 제거
+	    for (String auth : authorities) {
+	        this.authorities.add(UserAuthDTO.builder()
+	            .userId(this.userId)
+	            .auth(auth)
+	            .build());
+	    }
+	}
+	
+	public void updateAuthority(String newAuth) {
+	    if (this.authorities == null) {
+	        this.authorities = new ArrayList<>();
+	    }
 
-		// 중복 권한 방지
-		boolean authExists = authorities.stream()
-				.anyMatch(userAuth -> auth.equals(userAuth.getAuth()));
-
-		if (!authExists) {
-			authorities.add(UserAuthDTO.builder()
-					.userId(this.userId)
-					.auth(auth)
-					.build());
-		}
+	    // 기존 권한 중 첫 번째 것만 변경하거나, 권한이 없으면 새로 추가
+	    if (!this.authorities.isEmpty()) {
+	        this.authorities.get(0).setAuth(newAuth);
+	    } else {
+	        this.authorities.add(UserAuthDTO.builder()
+	                .userId(this.userId)
+	                .auth(newAuth)
+	                .build());
+	    }
 	}
 
 }
