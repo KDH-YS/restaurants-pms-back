@@ -45,7 +45,7 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/users/**").permitAll()
-						.requestMatchers("/api/admin/**").permitAll()
+						.requestMatchers("/api/admin/**").hasRole("ADMIN")
 						// 주성
 						.requestMatchers("/api/reviews/**").permitAll()
 						.requestMatchers("/api/restaurants/**").permitAll()
@@ -80,13 +80,20 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("*"));
-		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
+
+		// 특정 도메인만 허용
+		configuration.setAllowedOrigins(List.of("http://cofile.co.kr:8183", "http://cofile.co.kr:8283"));
+
+		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(List.of("*"));
-		configuration.setExposedHeaders(List.of("Authorization"));
+
+		// 노출할 헤더로 Authorization과 Content-Type 추가
+		configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
+		source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 대해 적용
 		return source;
 	}
+
+
 }

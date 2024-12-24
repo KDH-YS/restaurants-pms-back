@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Validated
-@CrossOrigin(origins = "http://localhost:3000")
 @Slf4j
 public class AuthController {
 
