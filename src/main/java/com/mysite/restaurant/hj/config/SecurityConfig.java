@@ -82,7 +82,7 @@ public class SecurityConfig {
 		CorsConfiguration configuration = new CorsConfiguration();
 
 		// 특정 도메인만 허용
-		configuration.setAllowedOrigins(List.of("http://cofile.co.kr:8183", "http://cofile.co.kr:8283"));
+		configuration.setAllowedOrigins(List.of("http://206.189.35.254:8183", "http://206.189.35.254:8283"));
 
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(List.of("*"));
