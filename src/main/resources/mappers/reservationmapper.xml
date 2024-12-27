@@ -34,6 +34,7 @@
     <update id="updateReservation" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
         UPDATE reservation
         SET
+            status = ${status},
             reservation_time = #{reservationTime},
             request = #{request},
             number_of_people = #{numberOfPeople}

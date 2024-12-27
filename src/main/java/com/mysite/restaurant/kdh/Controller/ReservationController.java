@@ -45,9 +45,9 @@ public class ReservationController {
     }
     
  // 예약 수정
-    @PutMapping("/{id}")
-    public ResponseEntity<ReservationEntity> updateReservation(@PathVariable("id") Long id, @RequestBody ReservationEntity reservationEntity) {
-        reservationEntity.setReservationId(id);  // URL에서 받은 id로 예약 ID 설정
+    @PutMapping
+    public ResponseEntity<ReservationEntity> updateReservation(@RequestParam("reservationId") Long reservationId, @RequestBody ReservationEntity reservationEntity) {
+        reservationEntity.setReservationId(reservationId);  // URL에서 받은 id로 예약 ID 설정
 
         // 예약 수정
         ReservationEntity updatedReservation = reservationService.updateReservation(reservationEntity);
