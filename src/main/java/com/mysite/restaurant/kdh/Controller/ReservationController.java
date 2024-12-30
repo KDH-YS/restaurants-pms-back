@@ -46,8 +46,8 @@ public class ReservationController {
     
  // 예약 수정
     @PutMapping
-    public ResponseEntity<ReservationEntity> updateReservation(@RequestParam("reservationId") Long reservationId, @RequestBody ReservationEntity reservationEntity) {
-        reservationEntity.setReservationId(reservationId);  // URL에서 받은 id로 예약 ID 설정
+    public ResponseEntity<ReservationEntity> updateReservation(@RequestBody ReservationEntity reservationEntity) {
+
 
         // 예약 수정
         ReservationEntity updatedReservation = reservationService.updateReservation(reservationEntity);
@@ -99,5 +99,10 @@ public class ReservationController {
     	return ResponseEntity.ok().body(update);
     }
 
+    // 노쇼
+    @PutMapping("/{reservationId}/noshow")
+    public void markAsNoShow(@PathVariable("reservationId") Long reservationId) {
+        reservationService.noShow(reservationId);
+    }
     
 }

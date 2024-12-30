@@ -55,6 +55,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/reservations/manager/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/map/**").permitAll()// 인증 없이 허용할 경로
 						.requestMatchers("/api/board/**").permitAll()// 인증 없이 허용할 경로
+						.requestMatchers("/api/reservations/**").permitAll()// 인증 없이 허용할 경로
 						// 지현
 						.requestMatchers("/api/restaurant/**").permitAll()  // /api/restaurant 경로는 인증 없이 허용
 						.requestMatchers("/images/**").permitAll()  // 이미지 경로에 대한 접근을 허용

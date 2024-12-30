@@ -34,7 +34,7 @@
     <update id="updateReservation" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
         UPDATE reservation
         SET
-            status = ${status},
+            status = '${status}',
             reservation_time = #{reservationTime},
             request = #{request},
             number_of_people = #{numberOfPeople}
@@ -101,10 +101,10 @@
 	</delete>
     
     <!--예약수정(업주) -->
-    <update id="noshow" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
+    <update id="noShow" parameterType="com.mysite.restaurant.kdh.Entity.ReservationEntity">
         UPDATE reservation
         SET 
-            status = NOSHOW
+            status = 'NOSHOW'
         WHERE 
             reservation_id = #{reservationId};
     </update>
@@ -144,4 +144,6 @@
         WHERE
         NAME LIKE CONCAT('%', #{name}, '%')
     </select>
+
+
 </mapper>

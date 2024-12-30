@@ -100,5 +100,8 @@ public class ReservationService {
         List<RestaurantDTO> restaurant = reservationMapper.selectRestaurantByName(name);
         return new PageInfo<>(restaurant);
     }
-
+    //노쇼
+    public void noShow(Long reservationId) {
+        reservationMapper.noShow(reservationId);
+    }
 }
