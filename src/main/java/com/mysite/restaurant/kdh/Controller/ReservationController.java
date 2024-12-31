@@ -45,10 +45,11 @@ public class ReservationController {
     }
     
  // 예약 수정
-    @PutMapping
-    public ResponseEntity<ReservationEntity> updateReservation(@RequestBody ReservationEntity reservationEntity) {
-
-
+    @PutMapping("/{reservationId}")
+    public ResponseEntity<ReservationEntity> updateReservation(@PathVariable(value = "reservationId", required = false) Long reservationId, @RequestBody ReservationEntity reservationEntity) {
+        if(reservationId !=null){
+            reservationEntity.setReservationId(reservationId);
+        }
         // 예약 수정
         ReservationEntity updatedReservation = reservationService.updateReservation(reservationEntity);
 
