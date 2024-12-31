@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mysite.restaurant.kdh.Mappers.AdminMapper">
+
+
+    <!-- AdminDashboard 관련 카운트 정보 -->
+    <select id="dashBoardCount" resultType="com.mysite.restaurant.kdh.Entity.AdminCount">
+        SELECT
+        (SELECT COUNT(*) FROM reservation) AS reservations,
+        (SELECT COUNT(*) FROM restaurants) AS restaurants,
+        (SELECT COUNT(*) FROM reviews) AS reviews,
+        (SELECT COUNT(*) FROM users) AS users;
+    </select>
+
+    <!-- 일별 예약 통계 -->
+    <select id="getReservationsByDate" resultType="com.mysite.restaurant.kdh.Entity.AdminReservationStat$ReservationCountByDate">
+        SELECT
+        DATE(reservation_time) AS date,  <!-- 날짜별 그룹화 -->
+        COUNT(*) AS count
+        FROM reservation
+        GROUP BY DATE(reservation_time)
+        ORDER BY date;
+    </select>
+
+    <!-- 주별 예약 통계 -->
+    <select id="getReservationsByWeek" resultType="com.mysite.restaurant.kdh.Entity.AdminReservationStat$ReservationCountByWeek">
+        SELECT
+        YEARWEEK(reservation_time, 1) AS week,  <!-- 주별 그룹화 -->
+        COUNT(*) AS count
+        FROM reservation
+        GROUP BY YEARWEEK(reservation_time, 1)
+        ORDER BY week;
+    </select>
+
+    <!-- 월별 예약 통계 -->
+    <select id="getReservationsByMonth" resultType="com.mysite.restaurant.kdh.Entity.AdminReservationStat$ReservationCountByMonth">
+        SELECT
+        DATE_FORMAT(reservation_time, '%Y-%m') AS month,  <!-- 월별 그룹화 -->
+        COUNT(*) AS count
+        FROM reservation
+        GROUP BY DATE_FORMAT(reservation_time, '%Y-%m')
+        ORDER BY month;
+    </select>
+
+
+
+</mapper>
