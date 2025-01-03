@@ -59,8 +59,8 @@ public class PaymentController {
         }
     }
 
-    @PatchMapping
-    public ResponseEntity<String> successPayment(@RequestBody Long reservationId) {
+    @PatchMapping("/{reservationId}")
+    public ResponseEntity<String> successPayment(@PathVariable("reservationId") Long reservationId) {
         try {
             paymentService.updateStatus(reservationId);
             return ResponseEntity.ok("예약 성공");

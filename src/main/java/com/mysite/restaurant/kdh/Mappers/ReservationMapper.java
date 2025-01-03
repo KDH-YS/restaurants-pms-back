@@ -25,4 +25,5 @@ public interface ReservationMapper {
     int deleteSchedule(Long ScheduleId);
     List<RestaurantDTO> selectRestaurantByName(String name);
     void deletePendingReservation(Long reservationId);
+    void noShow(Long reservationId);
 }
